@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{410CA1C1-13F8-4167-9589-CDEC670130AA}</ProjectGuid>
     <RootNamespace>ModelingPlayground</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -47,11 +48,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -64,20 +68,58 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\src\glad.c" />
+    <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.c" />
+    <ClCompile Include="Application\ApplicationManager.cpp" />
+    <ClCompile Include="Application\ImGuiManager.cpp" />
+    <ClCompile Include="Application\Window.cpp" />
+    <ClCompile Include="Libraries\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Libraries\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Libraries\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
+    <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.h" />
+    <ClInclude Include="Application\ApplicationManager.h" />
+    <ClInclude Include="Application\ImGuiManager.h" />
+    <ClInclude Include="Application\Window.h" />
+    <ClInclude Include="Libraries\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="Libraries\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="Libraries\imgui\imconfig.h" />
+    <ClInclude Include="Libraries\imgui\imgui.h" />
+    <ClInclude Include="Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="Libraries\imgui\misc\cpp\imgui_stdlib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Libraries\imgui\misc\debuggers\imgui.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Libraries\imgui\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
