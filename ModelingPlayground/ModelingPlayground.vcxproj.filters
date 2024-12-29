@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\src\glad.c">
+      <Filter>Libraries\glad\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.c">
+      <Filter>Libraries\tinyfiledialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ApplicationManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Window.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ImGuiManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui.cpp">
+      <Filter>Libraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_demo.cpp">
+      <Filter>Libraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_draw.cpp">
+      <Filter>Libraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_tables.cpp">
+      <Filter>Libraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_widgets.cpp">
+      <Filter>Libraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>Libraries\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Libraries\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>Libraries\imgui\misc\cpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{98614a9b-a6e5-46ad-988f-d5328e759c08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\glad">
+      <UniqueIdentifier>{b13a3f9e-0c4c-48d0-ab70-60e8220bfc53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\glad\include">
+      <UniqueIdentifier>{269a7c91-5864-4342-8c22-a83bfd4572fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\glad\include\glad">
+      <UniqueIdentifier>{e7160ece-325a-4060-bebd-33f499ec0751}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\glad\src">
+      <UniqueIdentifier>{77e64271-f1aa-42b2-b282-00a337331012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\imgui">
+      <UniqueIdentifier>{357caeeb-a36d-4c7e-8449-38dd46ad58f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\imgui\backends">
+      <UniqueIdentifier>{6dce1b46-3034-4e1d-b02c-b5c5e61ffb13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\imgui\misc">
+      <UniqueIdentifier>{49da39f7-9cb7-45bc-a157-7b130657ff61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\imgui\misc\cpp">
+      <UniqueIdentifier>{0b5d498c-0bd7-4356-8935-e6d8c796c30c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\imgui\misc\debuggers">
+      <UniqueIdentifier>{0f60cba7-1401-4d7c-870c-5330e297a0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\tinyfiledialogs">
+      <UniqueIdentifier>{5fcf6cb8-0076-41e9-aaa9-23354cebc42d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{952b07bd-cf07-4157-893e-cc8f02913294}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h">
+      <Filter>Libraries\glad\include\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.h">
+      <Filter>Libraries\tinyfiledialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ApplicationManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Window.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ImGuiManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imconfig.h">
+      <Filter>Libraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imgui.h">
+      <Filter>Libraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imgui_internal.h">
+      <Filter>Libraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imstb_rectpack.h">
+      <Filter>Libraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imstb_textedit.h">
+      <Filter>Libraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imstb_truetype.h">
+      <Filter>Libraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\backends\imgui_impl_glfw.h">
+      <Filter>Libraries\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>Libraries\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>Libraries\imgui\misc\cpp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Libraries\imgui\misc\debuggers\imgui.natstepfilter">
+      <Filter>Libraries\imgui\misc\debuggers</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Libraries\imgui\misc\debuggers\imgui.natvis">
+      <Filter>Libraries\imgui\misc\debuggers</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>
