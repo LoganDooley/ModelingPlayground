@@ -50,6 +50,26 @@ void ImGuiManager::Render()
 		}
 	}
 
+	// Hierarchy
+	{
+
+	}
+
+	// Assets
+	{
+
+	}
+
+	// Scene Viewer
+	{
+
+	}
+
+	// Inspector
+	{
+
+	}
+
 	// Render widgets
 	ImGui::Render();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

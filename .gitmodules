@@ -1,4 +1,0 @@
-[submodule "ModelingPlayground/Libraries/imgui"]
-	path = ModelingPlayground/Libraries/imgui
-	url = https://github.com/ocornut/imgui.git
-	branch = docking
