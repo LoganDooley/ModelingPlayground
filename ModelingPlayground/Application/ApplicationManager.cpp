@@ -39,7 +39,7 @@ int ApplicationManager::Loop()
 {
 	while (!m_window->ShouldClose()) {
 		m_window->PollEvents();
-		m_imGuiManager->Render();
+		m_imGuiManager->Render(m_window);
 		m_window->SwapBuffers();
 	}
 	return 0;

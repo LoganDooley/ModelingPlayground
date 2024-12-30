@@ -8,6 +8,6 @@ public:
 	~ImGuiManager();
 
 	void Initialize(std::unique_ptr<Window>& window);
-	void Render();
+	void Render(std::unique_ptr<Window>& window);
 	void Close();
 };
