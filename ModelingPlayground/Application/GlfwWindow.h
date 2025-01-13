@@ -2,10 +2,10 @@
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
-class Window {
+class GlfwWindow {
 public:
-	Window();
-	~Window();
+	GlfwWindow();
+	~GlfwWindow();
 
 	int Initialize();
 	bool ShouldClose();

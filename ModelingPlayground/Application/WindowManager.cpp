@@ -1,20 +1,24 @@
-#include "ImGuiManager.h"
+#include "WindowManager.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
 #include <iostream>
+#include "Window/HierarchyWindow.h"
+#include "Window/SceneViewWindow.h"
+#include "Window/InspectorWindow.h"
+#include "Window/Window.h"
 
-ImGuiManager::ImGuiManager()
+WindowManager::WindowManager()
 {
 }
 
-ImGuiManager::~ImGuiManager()
+WindowManager::~WindowManager()
 {
 }
 
-void ImGuiManager::Initialize(std::unique_ptr<Window>& window)
+void WindowManager::Initialize(std::unique_ptr<GlfwWindow>& glfwWindow)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -25,7 +29,6 @@ void ImGuiManager::Initialize(std::unique_ptr<Window>& window)
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 	ImGui::StyleColorsDark();
 
-	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
@@ -33,11 +36,15 @@ void ImGuiManager::Initialize(std::unique_ptr<Window>& window)
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
 
-	ImGui_ImplGlfw_InitForOpenGL(window->GetWindowPointer(), true);
+	ImGui_ImplGlfw_InitForOpenGL(glfwWindow->GetWindowPointer(), true);
 	ImGui_ImplOpenGL3_Init();
+
+	m_windows.push_back(std::make_shared<HierarchyWindow>());
+	m_windows.push_back(std::make_shared<SceneViewWindow>());
+	m_windows.push_back(std::make_shared<InspectorWindow>());
 }
 
-void ImGuiManager::Render(std::unique_ptr<Window>& window)
+void WindowManager::Render(std::unique_ptr<GlfwWindow>& glfwWindow)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -68,27 +75,28 @@ void ImGuiManager::Render(std::unique_ptr<Window>& window)
 
 		// Dockspace
 		{
-			ImGuiID dockspace_id = ImGui::GetID("Root");
-			ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+			ImGuiID rootDockSpace = ImGui::GetID("Root");
+			ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
+			ImGui::DockSpace(rootDockSpace, ImVec2(0.0f, 0.0f), dockspaceFlags);
 			
 			static bool firstTime = true;
 			if (firstTime) {
 				firstTime = false;
 				// Clear out existing layout
-				ImGui::DockBuilderRemoveNode(dockspace_id);
+				ImGui::DockBuilderRemoveNode(rootDockSpace);
 				// Add empty node
-				ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
+				ImGui::DockBuilderAddNode(rootDockSpace, dockspaceFlags | ImGuiDockNodeFlags_DockSpace);
 				// Main node should cover entire window
-				ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
-				// get id of main dock space area
-				ImGuiID dockspace_main_id = dockspace_id;
+				ImGui::DockBuilderSetNodeSize(rootDockSpace, ImGui::GetWindowSize());
+				// Create a dock node for the middle docked window
+				ImGuiID middleDockSpace = ImGui::DockBuilderSplitNode(rootDockSpace, ImGuiDir_Right, 0.75f, nullptr, &rootDockSpace);
 				// Create a dock node for the right docked window
-				ImGuiID right = ImGui::DockBuilderSplitNode(dockspace_main_id, ImGuiDir_Right, 0.25f, nullptr, &dockspace_main_id);
+				ImGuiID rightDockSpace = ImGui::DockBuilderSplitNode(middleDockSpace, ImGuiDir_Right, 0.33f, nullptr, &middleDockSpace);
 
-				ImGui::DockBuilderDockWindow("Content", dockspace_main_id);
-				ImGui::DockBuilderDockWindow("Sidebar", right);
-				ImGui::DockBuilderFinish(dockspace_id);
+				ImGui::DockBuilderDockWindow(HierarchyWindow::Name.c_str(), rootDockSpace);
+				ImGui::DockBuilderDockWindow(SceneViewWindow::Name.c_str(), middleDockSpace);
+				ImGui::DockBuilderDockWindow(InspectorWindow::Name.c_str(), rightDockSpace);
+				ImGui::DockBuilderFinish(rootDockSpace);
 			}
 		}
 
@@ -114,68 +122,15 @@ void ImGuiManager::Render(std::unique_ptr<Window>& window)
 		ImGui::End();
 	}
 
-	// Menu bar
-	/*
-	{
-		ImGui::Begin("Main Window");
-		if (ImGui::BeginMainMenuBar()) {
-			if (ImGui::BeginMenu("File")) {
-				if (ImGui::MenuItem("Open")) {
-					
-				}
-				if (ImGui::MenuItem("Save")) {
-
-				}
-				if (ImGui::MenuItem("Save as...")) {
-
-				}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMainMenuBar();
-		}
-		ImGui::End();
-	}
-	*/
-
-	// Test
-	{
-		ImGui::Begin("Sidebar");   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window 1!");
-		ImGui::End();
-	}
-
-	// Test 2
-	{
-		ImGui::Begin("Content");   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window 2!");
-		ImGui::End();
-	}
-
-	// Hierarchy
-	{
-
-	}
-
-	// Assets
-	{
-
-	}
-
-	// Scene Viewer
-	{
-
-	}
-
-	// Inspector
-	{
-
+	for (auto window : m_windows) {
+		window->Render();
 	}
 
 	// Render widgets
 	ImGui::Render();
-	int display_w, display_h;
-	glfwGetFramebufferSize(window->GetWindowPointer(), &display_w, &display_h);
-	glViewport(0, 0, display_w, display_h);
+	int displayW, displayH;
+	glfwGetFramebufferSize(glfwWindow->GetWindowPointer(), &displayW, &displayH);
+	glViewport(0, 0, displayW, displayH);
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -189,7 +144,7 @@ void ImGuiManager::Render(std::unique_ptr<Window>& window)
 	glfwMakeContextCurrent(backup_current_context);
 }
 
-void ImGuiManager::Close()
+void WindowManager::Close()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

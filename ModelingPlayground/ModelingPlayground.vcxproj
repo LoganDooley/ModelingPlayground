@@ -87,8 +87,11 @@
     <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\src\glad.c" />
     <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.c" />
     <ClCompile Include="Application\ApplicationManager.cpp" />
-    <ClCompile Include="Application\ImGuiManager.cpp" />
-    <ClCompile Include="Application\Window.cpp" />
+    <ClCompile Include="Application\WindowManager.cpp" />
+    <ClCompile Include="Application\GlfwWindow.cpp" />
+    <ClCompile Include="Application\Window\HierarchyWindow.cpp" />
+    <ClCompile Include="Application\Window\InspectorWindow.cpp" />
+    <ClCompile Include="Application\Window\SceneViewWindow.cpp" />
     <ClCompile Include="Libraries\imgui-docking\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="Libraries\imgui-docking\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Libraries\imgui-docking\imgui.cpp" />
@@ -98,13 +101,18 @@
     <ClCompile Include="Libraries\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.h" />
     <ClInclude Include="Application\ApplicationManager.h" />
-    <ClInclude Include="Application\ImGuiManager.h" />
-    <ClInclude Include="Application\Window.h" />
+    <ClInclude Include="Application\WindowManager.h" />
+    <ClInclude Include="Application\GlfwWindow.h" />
+    <ClInclude Include="Application\Window\HierarchyWindow.h" />
+    <ClInclude Include="Application\Window\InspectorWindow.h" />
+    <ClInclude Include="Application\Window\SceneViewWindow.h" />
+    <ClInclude Include="Application\Window\Window.h" />
     <ClInclude Include="Libraries\imgui-docking\backends\imgui_impl_glfw.h" />
     <ClInclude Include="Libraries\imgui-docking\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="Libraries\imgui-docking\imconfig.h" />
@@ -114,6 +122,7 @@
     <ClInclude Include="Libraries\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Scene\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter" />

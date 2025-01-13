@@ -11,10 +11,10 @@
     <ClCompile Include="Application\ApplicationManager.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Window.cpp">
+    <ClCompile Include="Application\GlfwWindow.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="Application\ImGuiManager.cpp">
+    <ClCompile Include="Application\WindowManager.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="Libraries\imgui-docking\backends\imgui_impl_glfw.cpp">
@@ -40,6 +40,18 @@
     </ClCompile>
     <ClCompile Include="Libraries\imgui-docking\imgui_widgets.cpp">
       <Filter>Libraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Window\HierarchyWindow.cpp">
+      <Filter>Application\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Window\InspectorWindow.cpp">
+      <Filter>Application\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Window\SceneViewWindow.cpp">
+      <Filter>Application\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +91,12 @@
     <Filter Include="Application">
       <UniqueIdentifier>{952b07bd-cf07-4157-893e-cc8f02913294}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{f1fbb9f2-e00c-449d-993c-23abac006a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Window">
+      <UniqueIdentifier>{adc49387-cbf4-4956-adf1-e6e778679e83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h">
@@ -90,10 +108,10 @@
     <ClInclude Include="Application\ApplicationManager.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Window.h">
+    <ClInclude Include="Application\GlfwWindow.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="Application\ImGuiManager.h">
+    <ClInclude Include="Application\WindowManager.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="Libraries\imgui-docking\backends\imgui_impl_glfw.h">
@@ -122,6 +140,21 @@
     </ClInclude>
     <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h">
       <Filter>Libraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Window\Window.h">
+      <Filter>Application\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Window\HierarchyWindow.h">
+      <Filter>Application\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Window\InspectorWindow.h">
+      <Filter>Application\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Window\SceneViewWindow.h">
+      <Filter>Application\Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

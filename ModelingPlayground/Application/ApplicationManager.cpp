@@ -1,8 +1,8 @@
 #include "ApplicationManager.h"
 
 ApplicationManager::ApplicationManager():
-	m_window(std::make_unique<Window>()),
-	m_imGuiManager(std::make_unique<ImGuiManager>())
+	m_glfwWindow(std::make_unique<GlfwWindow>()),
+	m_windowManager(std::make_unique<WindowManager>())
 {
 
 }
@@ -30,23 +30,23 @@ int ApplicationManager::Run()
 
 int ApplicationManager::Initialize()
 {
-	m_window->Initialize();
-	m_imGuiManager->Initialize(m_window);
+	m_glfwWindow->Initialize();
+	m_windowManager->Initialize(m_glfwWindow);
 	return 0;
 }
 
 int ApplicationManager::Loop()
 {
-	while (!m_window->ShouldClose()) {
-		m_window->PollEvents();
-		m_imGuiManager->Render(m_window);
-		m_window->SwapBuffers();
+	while (!m_glfwWindow->ShouldClose()) {
+		m_glfwWindow->PollEvents();
+		m_windowManager->Render(m_glfwWindow);
+		m_glfwWindow->SwapBuffers();
 	}
 	return 0;
 }
 
 int ApplicationManager::End()
 {
-	m_window->Close();
+	m_glfwWindow->Close();
 	return 0;
 }

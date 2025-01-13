@@ -1,16 +1,16 @@
-#include "Window.h"
+#include "GlfwWindow.h"
 #include "glad/glad.h"
 
-Window::Window() :
+GlfwWindow::GlfwWindow() :
 	m_window(nullptr)
 {
 }
 
-Window::~Window()
+GlfwWindow::~GlfwWindow()
 {
 }
 
-int Window::Initialize()
+int GlfwWindow::Initialize()
 {
 	if (!glfwInit()) {
 		return -1;
@@ -30,25 +30,25 @@ int Window::Initialize()
 	return 0;
 }
 
-bool Window::ShouldClose() {
+bool GlfwWindow::ShouldClose() {
 	return glfwWindowShouldClose(m_window);
 }
 
-void Window::PollEvents()
+void GlfwWindow::PollEvents()
 {
 	glfwPollEvents();
 }
 
-void Window::SwapBuffers() {
+void GlfwWindow::SwapBuffers() {
 	glfwSwapBuffers(m_window);
 }
 
-void Window::Close()
+void GlfwWindow::Close()
 {
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
 }
 
-GLFWwindow* Window::GetWindowPointer() {
+GLFWwindow* GlfwWindow::GetWindowPointer() {
 	return m_window;
 }
