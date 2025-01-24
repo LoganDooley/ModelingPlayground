@@ -107,6 +107,7 @@
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.h" />
     <ClInclude Include="Application\ApplicationManager.h" />
+    <ClInclude Include="Application\ShaderLoader.h" />
     <ClInclude Include="Application\WindowManager.h" />
     <ClInclude Include="Application\GlfwWindow.h" />
     <ClInclude Include="Application\Window\HierarchyWindow.h" />
@@ -129,6 +130,10 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Libraries\imgui-docking\misc\debuggers\imgui.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shaders\default.frag" />
+    <Content Include="Shaders\default.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
