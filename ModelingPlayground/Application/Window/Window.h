@@ -6,7 +6,7 @@ class Window
 {
 public:
 	Window() {};
-	~Window() {};
+	virtual ~Window() {};
 
 	virtual void Render() = 0;
 };

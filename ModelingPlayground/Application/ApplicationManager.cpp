@@ -1,10 +1,13 @@
 #include "ApplicationManager.h"
 
 ApplicationManager::ApplicationManager():
+	m_scene(std::make_shared<Scene>()),
 	m_glfwWindow(std::make_unique<GlfwWindow>()),
-	m_windowManager(std::make_unique<WindowManager>())
+	m_windowManager(std::make_unique<WindowManager>(m_scene))
 {
-
+	SceneObject sceneObject = SceneObject("object 1", PrimitiveType::Triangle);
+	std::shared_ptr<SceneObjectNode> node = std::make_shared<SceneObjectNode>(sceneObject);
+	m_scene->AddRootLevelSceneObjectNode(node);
 }
 
 ApplicationManager::~ApplicationManager() {

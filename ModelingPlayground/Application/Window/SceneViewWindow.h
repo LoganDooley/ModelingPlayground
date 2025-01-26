@@ -1,13 +1,17 @@
 #pragma once
 
+#include <memory>
+
 #include "Window.h"
 #include "glad/glad.h"
+
+class Scene;
 
 class SceneViewWindow : public Window
 {
 public:
-	SceneViewWindow();
-	~SceneViewWindow();
+	SceneViewWindow(const std::shared_ptr<Scene>& scene);
+	~SceneViewWindow() override;
 
 	void Render() override;
 
@@ -24,5 +28,7 @@ private:
 	GLuint m_framebufferRenderbuffer;
 	
 	GLuint m_defaultShader;
+
+	std::shared_ptr<Scene> m_scene;
 };
 

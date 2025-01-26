@@ -10,7 +10,8 @@
 #include "Window/InspectorWindow.h"
 #include "Window/Window.h"
 
-WindowManager::WindowManager()
+WindowManager::WindowManager(const std::shared_ptr<Scene>& scene):
+	m_scene(scene)
 {
 }
 
@@ -39,9 +40,9 @@ void WindowManager::Initialize(std::unique_ptr<GlfwWindow>& glfwWindow)
 	ImGui_ImplGlfw_InitForOpenGL(glfwWindow->GetWindowPointer(), true);
 	ImGui_ImplOpenGL3_Init();
 
-	m_windows.push_back(std::make_shared<HierarchyWindow>());
-	m_windows.push_back(std::make_shared<SceneViewWindow>());
-	m_windows.push_back(std::make_shared<InspectorWindow>());
+	m_windows.push_back(std::make_shared<HierarchyWindow>(m_scene));
+	m_windows.push_back(std::make_shared<SceneViewWindow>(m_scene));
+	m_windows.push_back(std::make_shared<InspectorWindow>(m_scene));
 }
 
 void WindowManager::Render(std::unique_ptr<GlfwWindow>& glfwWindow)

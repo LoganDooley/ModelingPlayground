@@ -49,7 +49,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -69,7 +69,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -102,6 +102,8 @@
     <ClCompile Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\SceneObject.cpp" />
+    <ClCompile Include="Scene\SceneObjectNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
@@ -124,6 +126,8 @@
     <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\SceneObject.h" />
+    <ClInclude Include="Scene\SceneObjectNode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter" />

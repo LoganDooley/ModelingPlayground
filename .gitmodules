@@ -1,0 +1,3 @@
+[submodule "ModelingPlayground/Libraries/glm"]
+	path = ModelingPlayground/Libraries/glm
+	url = https://github.com/g-truc/glm.git

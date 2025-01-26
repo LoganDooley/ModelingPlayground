@@ -1,7 +1,8 @@
 #include "InspectorWindow.h"
 #include "imgui.h"
 
-InspectorWindow::InspectorWindow()
+InspectorWindow::InspectorWindow(const std::shared_ptr<Scene>& scene):
+	m_scene(scene)
 {
 }
 

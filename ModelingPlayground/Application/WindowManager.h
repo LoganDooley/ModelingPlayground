@@ -4,9 +4,11 @@
 #include <memory>
 #include <vector>
 
+#include "../Scene/Scene.h"
+
 class WindowManager {
 public:
-	WindowManager();
+	WindowManager(const std::shared_ptr<Scene>& scene);
 	~WindowManager();
 
 	void Initialize(std::unique_ptr<GlfwWindow>& glfwWindow);
@@ -15,4 +17,5 @@ public:
 
 private:
 	std::vector<std::shared_ptr<Window>> m_windows;
+	std::shared_ptr<Scene> m_scene;
 };

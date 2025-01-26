@@ -6,7 +6,8 @@
 #include "imgui.h"
 #include "../ShaderLoader.h"
 
-SceneViewWindow::SceneViewWindow()
+SceneViewWindow::SceneViewWindow(const std::shared_ptr<Scene>& scene):
+	m_scene(scene)
 {
 	InitializeOpenGLObjects();
 }
