@@ -5,8 +5,7 @@
 class Window
 {
 public:
-	Window() {};
-	virtual ~Window() {};
+	virtual ~Window() = default;
 
 	virtual void Render() = 0;
 };

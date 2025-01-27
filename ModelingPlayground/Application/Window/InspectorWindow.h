@@ -10,7 +10,6 @@ class InspectorWindow : public Window
 {
 public:
 	InspectorWindow(const std::shared_ptr<Scene>& scene);
-	~InspectorWindow() override;
 
 	void Render() override;
 

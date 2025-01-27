@@ -2,9 +2,16 @@
 
 #include <iostream>
 #include <ostream>
+#include <stack>
 
 #include "imgui.h"
 #include "../ShaderLoader.h"
+#include "../../Scene/Object.h"
+#include "../../Scene/Scene.h"
+#include "../../Scene/Components/ClearColorComponent.h"
+#include "../../Scene/Components/MeshComponent.h"
+#include "../../Scene/Components/TransformComponent.h"
+#include "glm/glm.hpp"
 
 SceneViewWindow::SceneViewWindow(const std::shared_ptr<Scene>& scene):
 	m_scene(scene)
@@ -12,20 +19,10 @@ SceneViewWindow::SceneViewWindow(const std::shared_ptr<Scene>& scene):
 	InitializeOpenGLObjects();
 }
 
-SceneViewWindow::~SceneViewWindow()
-{
-}
-
 void SceneViewWindow::Render()
 {
-	// Draw triangle to framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-	glViewport(0, 0, 600, 600);
-	glBindVertexArray(m_triangleVAO);
-	glUseProgram(m_defaultShader);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	DrawScene();
+	
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
 	ImGui::Text("I'm the scene view!");
 	{
@@ -58,6 +55,8 @@ void SceneViewWindow::InitializeOpenGLObjects()
 	// Create shader
 	m_defaultShader = ShaderLoader::createShaderProgram("Shaders/default.vert", "Shaders/default.frag");
 
+	m_modelMatrixLocation = glGetUniformLocation(m_defaultShader, "modelMatrix");
+
 	// Create framebuffer
 	glGenFramebuffers(1, &m_framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
@@ -87,3 +86,65 @@ void SceneViewWindow::InitializeOpenGLObjects()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void SceneViewWindow::DrawScene() const
+{
+	// Switch to offscreen framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+	// Adjust the viewport size
+	glViewport(0, 0, 600, 600);
+
+	// DFS draw objects
+	std::stack<std::pair<std::shared_ptr<SceneNode>, glm::mat4>> traversal;
+	traversal.push({m_scene->GetRootSceneNode(), glm::mat4(1.0f)});
+	while (!traversal.empty())
+	{
+		std::pair<std::shared_ptr<SceneNode>, glm::mat4> sceneNodeToProcess = traversal.top();
+		std::shared_ptr<SceneNode> sceneNode = sceneNodeToProcess.first;
+		glm::mat4 cumulativeModelMatrix = sceneNodeToProcess.second;
+		traversal.pop();
+		ProcessObject(sceneNode->GetObject(), cumulativeModelMatrix);
+
+		// Add children to stack in reverse order
+		const std::vector<std::shared_ptr<SceneNode>>& children = sceneNode->GetChildren();
+		for (int i = children.size() - 1; i >= 0; i--)
+		{
+			traversal.push({children[i], cumulativeModelMatrix});
+		}
+	}
+
+	// Restore framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void SceneViewWindow::ProcessObject(const std::shared_ptr<Object>& object, glm::mat4& cumulativeModelMatrix) const
+{
+	std::vector<std::shared_ptr<MeshComponent>> meshComponents = object->GetComponents<MeshComponent>();
+	if (meshComponents.size() == 1)
+	{
+		std::vector<std::shared_ptr<TransformComponent>> transformComponents = object->GetComponents<TransformComponent>();
+		if (transformComponents.size() == 1)
+		{
+			DrawMesh(meshComponents[0], transformComponents[0], cumulativeModelMatrix);
+		}
+	}
+
+	std::vector<std::shared_ptr<ClearColorComponent>> clearColorComponents = object->GetComponents<ClearColorComponent>();
+	if (clearColorComponents.size() == 1)
+	{
+		glm::vec4 clearColor = clearColorComponents[0]->GetClearColor();
+		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+}
+
+void SceneViewWindow::DrawMesh(const std::shared_ptr<MeshComponent>& meshComponent,
+	const std::shared_ptr<TransformComponent>& transformComponent, glm::mat4& cumulativeModelMatrix) const
+{
+	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent->GetModelMatrix();
+	glBindVertexArray(m_triangleVAO);
+	glUseProgram(m_defaultShader);
+	glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &cumulativeModelMatrix[0][0]);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+

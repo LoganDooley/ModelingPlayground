@@ -1,14 +1,11 @@
 #include "HierarchyWindow.h"
 #include "imgui.h"
+#include "SceneViewWindow.h"
 #include "../../Scene/Scene.h"
-#include "../../Scene/SceneObjectNode.h"
+#include "../../Scene/SceneNode/SceneNodeGenerator.h"
 
 HierarchyWindow::HierarchyWindow(const std::shared_ptr<Scene>& scene):
 	m_scene(scene)
-{
-}
-
-HierarchyWindow::~HierarchyWindow()
 {
 }
 
@@ -16,29 +13,30 @@ void HierarchyWindow::Render()
 {
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
 	ImGui::Text("I'm the hierarchy window!");
-	for (const std::shared_ptr<SceneObjectNode>& rootLevelSceneObjectNode : m_scene->GetRootLevelSceneObjectNodes())
-	{
-		DrawNode(rootLevelSceneObjectNode);
-	}
+	DrawNode(m_scene->GetRootSceneNode());
 	ImGui::End();
 }
 
-void HierarchyWindow::DrawNode(const std::shared_ptr<SceneObjectNode>& node)
+void HierarchyWindow::DrawNode(const std::shared_ptr<SceneNode>& node)
 {
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_None;
 	if (!node->HasChildren())
 	{
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf;
 	}
-	if (m_scene->IsSceneObjectNodeSelected(node))
+	else
+	{
+		nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
+	}
+	if (m_scene->IsSceneNodeSelected(node))
 	{
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	if (ImGui::TreeNodeEx(node->GetSceneObject().GetName().c_str(), nodeFlags))
+	if (ImGui::TreeNodeEx(node->GetName().c_str(), nodeFlags))
 	{
 		CheckNodeSelection(node);
 		CheckNodePopupMenu(node);
-		for (const std::shared_ptr<SceneObjectNode>& child : node->GetChildren())
+		for (const std::shared_ptr<SceneNode>& child : node->GetChildren())
 		{
 			DrawNode(child);
 		}
@@ -46,23 +44,29 @@ void HierarchyWindow::DrawNode(const std::shared_ptr<SceneObjectNode>& node)
 	}
 }
 
-void HierarchyWindow::CheckNodeSelection(const std::shared_ptr<SceneObjectNode>& node)
+void HierarchyWindow::CheckNodeSelection(const std::shared_ptr<SceneNode>& node)
 {
 	if (ImGui::IsItemClicked())
 	{
-		m_scene->SetSceneObjectNodeSelected(node);
+		m_scene->SetSceneNodeSelected(node);
 	}
 }
 
-void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneObjectNode>& node)
+void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node)
 {
 	if (ImGui::BeginPopupContextItem())
 	{
-		if (ImGui::MenuItem("Add"))
+		if (ImGui::BeginMenu("Add"))
 		{
-			SceneObject sceneObject = SceneObject("object 2", PrimitiveType::Triangle);
-			std::shared_ptr<SceneObjectNode> child = std::make_shared<SceneObjectNode>(sceneObject);
-			node->AddChild(child);
+			const std::vector<SceneNodeType> sceneNodeTypes = SceneNodeGenerator::GetSceneNodeTypes();
+			for (const SceneNodeType& sceneNodeType : sceneNodeTypes)
+			{
+				if (ImGui::MenuItem(SceneNodeGenerator::GetSceneNodeTypeName(sceneNodeType).c_str()))
+				{
+					SceneNodeGenerator::CreateSceneNodeAndAddAsChild(sceneNodeType, node);
+				}
+			}
+			ImGui::EndMenu();
 		}
 		if (ImGui::MenuItem("Delete"))
 		{

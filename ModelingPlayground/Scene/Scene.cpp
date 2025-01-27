@@ -1,26 +1,32 @@
 #include "Scene.h"
 
-Scene::Scene():
-    m_rootLevelSceneObjectNodes(std::vector<std::shared_ptr<SceneObjectNode>>())
+#include "Object.h"
+#include "Components/AmbientLightComponent.h"
+#include "Components/ClearColorComponent.h"
+
+Scene::Scene()
 {
+    m_rootSceneNode = std::make_shared<SceneNode>("World");
+    m_rootSceneNode->GetObject()->AddComponent<AmbientLightComponent>();
+    m_rootSceneNode->GetObject()->AddComponent<ClearColorComponent>();
 }
 
-void Scene::AddRootLevelSceneObjectNode(const std::shared_ptr<SceneObjectNode>& sceneObjectNode)
+const std::shared_ptr<SceneNode>& Scene::GetRootSceneNode() const
 {
-    m_rootLevelSceneObjectNodes.push_back(sceneObjectNode);
+    return m_rootSceneNode;
 }
 
-std::vector<std::shared_ptr<SceneObjectNode>> Scene::GetRootLevelSceneObjectNodes()
+void Scene::SetSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode)
 {
-    return m_rootLevelSceneObjectNodes;
+    m_selectedSceneNode = sceneNode;
 }
 
-void Scene::SetSceneObjectNodeSelected(const std::shared_ptr<SceneObjectNode>& sceneObjectNode)
+const std::shared_ptr<SceneNode>& Scene::GetSelectedSceneNode() const
 {
-    m_selectedSceneObjectNode = sceneObjectNode;
+    return m_selectedSceneNode;
 }
 
-bool Scene::IsSceneObjectNodeSelected(const std::shared_ptr<SceneObjectNode>& sceneObjectNode) const
+bool Scene::IsSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode) const
 {
-    return sceneObjectNode == m_selectedSceneObjectNode;
+    return sceneNode == m_selectedSceneNode;
 }
