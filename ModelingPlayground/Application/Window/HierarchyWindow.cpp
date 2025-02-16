@@ -35,7 +35,7 @@ void HierarchyWindow::DrawNode(const std::shared_ptr<SceneNode>& node)
 	if (ImGui::TreeNodeEx(node->GetName().c_str(), nodeFlags))
 	{
 		CheckNodeSelection(node);
-		CheckNodePopupMenu(node);
+		CheckNodePopupMenu(*node);
 		for (const std::shared_ptr<SceneNode>& child : node->GetChildren())
 		{
 			DrawNode(child);
@@ -52,7 +52,7 @@ void HierarchyWindow::CheckNodeSelection(const std::shared_ptr<SceneNode>& node)
 	}
 }
 
-void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node)
+void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
 {
 	if (ImGui::BeginPopupContextItem())
 	{

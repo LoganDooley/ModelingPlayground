@@ -7,8 +7,7 @@
 #include "../Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
 
-void SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType,
-    const std::shared_ptr<SceneNode>& parent)
+void SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, SceneNode& parent)
 {
     std::shared_ptr<SceneNode> sceneNode = std::make_shared<SceneNode>(GetDefaultSceneNodeName(sceneNodeType, parent));
     switch (sceneNodeType)
@@ -17,7 +16,7 @@ void SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeTyp
         InitializePrimitiveObject(sceneNode->GetObject());
         break;
     }
-    parent->AddChild(sceneNode);
+    parent.AddChild(sceneNode);
 }
 
 std::vector<SceneNodeType> SceneNodeGenerator::GetSceneNodeTypes()
@@ -37,13 +36,13 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
     return "UnknownType";
 }
 
-void SceneNodeGenerator::InitializePrimitiveObject(const std::shared_ptr<Object>& object)
+void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
-    object->AddComponent<TransformComponent>();
-    object->AddComponent<MeshComponent>();
+    object.AddComponent<TransformComponent>();
+    object.AddComponent<MeshComponent>();
 }
 
-std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent)
+std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent)
 {
     std::string baseName;
     switch (sceneNodeType)
@@ -53,7 +52,7 @@ std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeT
         break;
     }
     std::unordered_set<std::string> takenNames;
-    for (const std::shared_ptr<SceneNode>& child : parent->GetChildren())
+    for (const std::shared_ptr<SceneNode>& child : parent.GetChildren())
     {
         takenNames.insert(child->GetName());
     }

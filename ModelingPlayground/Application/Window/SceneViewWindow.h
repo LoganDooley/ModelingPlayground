@@ -3,6 +3,7 @@
 #include <memory>
 #include <glm/fwd.hpp>
 
+#include "SceneViewCamera.h"
 #include "Window.h"
 #include "glad/glad.h"
 
@@ -16,7 +17,7 @@ class Scene;
 class SceneViewWindow : public Window
 {
 public:
-	SceneViewWindow(const std::shared_ptr<Scene>& scene);
+	SceneViewWindow(const std::shared_ptr<Scene>& scene, const std::shared_ptr<InputManager>& inputManager);
 
 	void Render() override;
 
@@ -27,18 +28,17 @@ private:
 
 	void DrawScene() const;
 
-	void ProcessObject(const std::shared_ptr<Object>& object, glm::mat4& cumulativeModelMatrix) const;
-	void DrawMesh(const std::shared_ptr<MeshComponent>& meshComponent, const std::shared_ptr<TransformComponent>& transformComponent, glm::mat4& cumulativeModelMatrix) const;
+	void ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const;
+	void DrawMesh(const MeshComponent& meshComponent, const TransformComponent& transformComponent, glm::mat4& cumulativeModelMatrix) const;
 
 	GLuint m_triangleVBO;
 	GLuint m_triangleVAO;
 
-	GLuint m_framebuffer;
-	GLuint m_framebufferTexture;
-	GLuint m_framebufferRenderbuffer;
+	std::unique_ptr<SceneViewCamera> m_camera;
 	
 	GLuint m_defaultShader;
 	GLint m_modelMatrixLocation;
+	GLint m_cameraMatrixLocation;
 
 	std::shared_ptr<Scene> m_scene;
 };

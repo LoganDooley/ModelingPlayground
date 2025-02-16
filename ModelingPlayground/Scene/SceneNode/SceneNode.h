@@ -16,7 +16,7 @@ public:
     bool RemoveChild(const std::shared_ptr<SceneNode>& targetChildSceneNode);
     bool HasChildren() const;
     std::string GetName() const;
-    const std::shared_ptr<Object>& GetObject() const;
+    Object& GetObject() const;
     void RenderInspector() const;
 
 private:

@@ -1,8 +1,10 @@
 #include "GlfwWindow.h"
+
 #include "glad/glad.h"
 
 GlfwWindow::GlfwWindow() :
-	m_window(nullptr)
+	m_window(nullptr),
+	m_inputManager(std::make_shared<InputManager>())
 {
 }
 
@@ -27,10 +29,14 @@ int GlfwWindow::Initialize()
 	if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
 		return -1;
 	}
+
+	m_inputManager->Initialize(m_window);
+	
 	return 0;
 }
 
-bool GlfwWindow::ShouldClose() {
+bool GlfwWindow::ShouldClose() const
+{
 	return glfwWindowShouldClose(m_window);
 }
 
@@ -39,7 +45,8 @@ void GlfwWindow::PollEvents()
 	glfwPollEvents();
 }
 
-void GlfwWindow::SwapBuffers() {
+void GlfwWindow::SwapBuffers() const
+{
 	glfwSwapBuffers(m_window);
 }
 
@@ -49,6 +56,13 @@ void GlfwWindow::Close()
 	glfwTerminate();
 }
 
-GLFWwindow* GlfwWindow::GetWindowPointer() {
+GLFWwindow* GlfwWindow::GetWindowPointer() const
+{
 	return m_window;
 }
+
+const std::shared_ptr<InputManager>& GlfwWindow::GetInputManager() const
+{
+	return m_inputManager;
+}
+

@@ -1,6 +1,5 @@
 #include "SceneViewWindow.h"
 
-#include <iostream>
 #include <ostream>
 #include <stack>
 
@@ -13,8 +12,9 @@
 #include "../../Scene/Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
-SceneViewWindow::SceneViewWindow(const std::shared_ptr<Scene>& scene):
-	m_scene(scene)
+SceneViewWindow::SceneViewWindow(const std::shared_ptr<Scene>& scene, const std::shared_ptr<InputManager>& inputManager):
+	m_scene(scene),
+	m_camera(std::make_unique<SceneViewCamera>(inputManager, glm::uvec2(1, 1)))
 {
 	InitializeOpenGLObjects();
 }
@@ -24,10 +24,13 @@ void SceneViewWindow::Render()
 	DrawScene();
 	
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
+	ImVec2 windowSize = ImGui::GetContentRegionAvail();
+	m_camera->SetScreenSize(glm::uvec2(windowSize.x, windowSize.x / m_camera->GetAspectRatio()));
 	ImGui::Text("I'm the scene view!");
 	{
 		ImGui::BeginChild("GameRender");
-		ImGui::Image((ImTextureID)m_framebufferTexture, ImVec2(600, 600), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image(m_camera->GetFramebuffer(), ImVec2(static_cast<float>(m_camera->GetScreenSize().x), static_cast<float>(m_camera->GetScreenSize().y)),
+			ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::EndChild();
 	}
 	ImGui::End();
@@ -56,43 +59,17 @@ void SceneViewWindow::InitializeOpenGLObjects()
 	m_defaultShader = ShaderLoader::createShaderProgram("Shaders/default.vert", "Shaders/default.frag");
 
 	m_modelMatrixLocation = glGetUniformLocation(m_defaultShader, "modelMatrix");
-
-	// Create framebuffer
-	glGenFramebuffers(1, &m_framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-
-	// Create framebuffer texture for color
-	glGenTextures(1, &m_framebufferTexture);
-	glBindTexture(GL_TEXTURE_2D, m_framebufferTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 600, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// Bind color texture to framebuffer for the color attachment
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_framebufferTexture, 0);
-
-	// Create framebuffer renderbuffer for depth and stencil
-	glGenRenderbuffers(1, &m_framebufferRenderbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_framebufferRenderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 600, 600);
-
-	// Bind renderbuffer for the depth and stencil attachments
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_framebufferRenderbuffer);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << '\n';
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_cameraMatrixLocation = glGetUniformLocation(m_defaultShader, "cameraMatrix");
 }
 
 void SceneViewWindow::DrawScene() const
 {
 	// Switch to offscreen framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+	m_camera->BindFramebuffer();
 	// Adjust the viewport size
-	glViewport(0, 0, 600, 600);
+	m_camera->SetViewport();
+
+	glUniformMatrix4fv(m_cameraMatrixLocation, 1, false, &m_camera->GetCameraMatrix()[0][0]);
 
 	// DFS draw objects
 	std::stack<std::pair<std::shared_ptr<SceneNode>, glm::mat4>> traversal;
@@ -117,19 +94,19 @@ void SceneViewWindow::DrawScene() const
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void SceneViewWindow::ProcessObject(const std::shared_ptr<Object>& object, glm::mat4& cumulativeModelMatrix) const
+void SceneViewWindow::ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const
 {
-	std::vector<std::shared_ptr<MeshComponent>> meshComponents = object->GetComponents<MeshComponent>();
+	std::vector<std::shared_ptr<MeshComponent>> meshComponents = object.GetComponents<MeshComponent>();
 	if (meshComponents.size() == 1)
 	{
-		std::vector<std::shared_ptr<TransformComponent>> transformComponents = object->GetComponents<TransformComponent>();
+		std::vector<std::shared_ptr<TransformComponent>> transformComponents = object.GetComponents<TransformComponent>();
 		if (transformComponents.size() == 1)
 		{
-			DrawMesh(meshComponents[0], transformComponents[0], cumulativeModelMatrix);
+			DrawMesh(*meshComponents[0], *transformComponents[0], cumulativeModelMatrix);
 		}
 	}
 
-	std::vector<std::shared_ptr<ClearColorComponent>> clearColorComponents = object->GetComponents<ClearColorComponent>();
+	std::vector<std::shared_ptr<ClearColorComponent>> clearColorComponents = object.GetComponents<ClearColorComponent>();
 	if (clearColorComponents.size() == 1)
 	{
 		glm::vec4 clearColor = clearColorComponents[0]->GetClearColor();
@@ -138,10 +115,10 @@ void SceneViewWindow::ProcessObject(const std::shared_ptr<Object>& object, glm::
 	}
 }
 
-void SceneViewWindow::DrawMesh(const std::shared_ptr<MeshComponent>& meshComponent,
-	const std::shared_ptr<TransformComponent>& transformComponent, glm::mat4& cumulativeModelMatrix) const
+void SceneViewWindow::DrawMesh(const MeshComponent& meshComponent, const TransformComponent& transformComponent,
+	glm::mat4& cumulativeModelMatrix) const
 {
-	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent->GetModelMatrix();
+	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent.GetModelMatrix();
 	glBindVertexArray(m_triangleVAO);
 	glUseProgram(m_defaultShader);
 	glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &cumulativeModelMatrix[0][0]);

@@ -1,6 +1,9 @@
 #pragma once
 #define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
+#include <memory>
+#include <GLFW/glfw3.h>
+
+#include "InputManager.h"
 
 class GlfwWindow {
 public:
@@ -8,13 +11,16 @@ public:
 	~GlfwWindow();
 
 	int Initialize();
-	bool ShouldClose();
+	bool ShouldClose() const;
 	void PollEvents();
-	void SwapBuffers();
+	void SwapBuffers() const;
 	void Close();
 
-	GLFWwindow* GetWindowPointer();
+	GLFWwindow* GetWindowPointer() const;
+	const std::shared_ptr<InputManager>& GetInputManager() const;
 
 private:
+	
 	GLFWwindow* m_window;
+	std::shared_ptr<InputManager> m_inputManager;
 };

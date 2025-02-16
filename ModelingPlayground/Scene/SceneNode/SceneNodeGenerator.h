@@ -14,11 +14,11 @@ enum class SceneNodeType
 class SceneNodeGenerator
 {
 public:
-    static void CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
+    static void CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, SceneNode& parent);
     static std::vector<SceneNodeType> GetSceneNodeTypes();
     static std::string GetSceneNodeTypeName(SceneNodeType sceneNodeType);
 
 private:
-    static void InitializePrimitiveObject(const std::shared_ptr<Object>& object);
-    static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
+    static void InitializePrimitiveObject(Object& object);
+    static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent);
 };

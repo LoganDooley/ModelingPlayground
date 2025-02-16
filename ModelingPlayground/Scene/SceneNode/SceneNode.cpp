@@ -34,9 +34,9 @@ std::string SceneNode::GetName() const
     return m_name;
 }
 
-const std::shared_ptr<Object>& SceneNode::GetObject() const
+Object& SceneNode::GetObject() const
 {
-    return m_object;
+    return *m_object;
 }
 
 void SceneNode::RenderInspector() const

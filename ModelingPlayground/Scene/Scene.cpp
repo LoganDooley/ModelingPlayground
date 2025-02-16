@@ -7,8 +7,8 @@
 Scene::Scene()
 {
     m_rootSceneNode = std::make_shared<SceneNode>("World");
-    m_rootSceneNode->GetObject()->AddComponent<AmbientLightComponent>();
-    m_rootSceneNode->GetObject()->AddComponent<ClearColorComponent>();
+    m_rootSceneNode->GetObject().AddComponent<AmbientLightComponent>();
+    m_rootSceneNode->GetObject().AddComponent<ClearColorComponent>();
 }
 
 const std::shared_ptr<SceneNode>& Scene::GetRootSceneNode() const

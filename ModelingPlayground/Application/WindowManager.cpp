@@ -5,6 +5,8 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
 #include <iostream>
+#include <GLFW/glfw3.h>
+
 #include "Window/HierarchyWindow.h"
 #include "Window/SceneViewWindow.h"
 #include "Window/InspectorWindow.h"
@@ -41,7 +43,7 @@ void WindowManager::Initialize(std::unique_ptr<GlfwWindow>& glfwWindow)
 	ImGui_ImplOpenGL3_Init();
 
 	m_windows.push_back(std::make_shared<HierarchyWindow>(m_scene));
-	m_windows.push_back(std::make_shared<SceneViewWindow>(m_scene));
+	m_windows.push_back(std::make_shared<SceneViewWindow>(m_scene, glfwWindow->GetInputManager()));
 	m_windows.push_back(std::make_shared<InspectorWindow>(m_scene));
 }
 
