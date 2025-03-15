@@ -66,6 +66,19 @@ public:
         return m_enums.size();
     }
 
+    int GetEnumIndex(E enumValue)
+    {
+        for (int i = 0; i<m_enums.size(); i++)
+        {
+            if (m_enums.at(i) == enumValue)
+            {
+                return i;
+            }
+        }
+        std::cerr << "EnumLabel|GetEnumIndex: Enum not found!\n";
+        return 0;
+    }
+
 private:
     std::unordered_map<E, std::string> m_enumToString;
     std::unordered_map<std::string, E> m_stringToEnum;

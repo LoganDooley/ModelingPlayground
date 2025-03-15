@@ -188,6 +188,7 @@
     <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
     <ClCompile Include="Utils\OpenGLPrimitiveDrawer.cpp" />
     <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
+    <ClCompile Include="Utils\PropertyDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
@@ -228,6 +229,7 @@
     <ClInclude Include="Utils\EnumLabels\PrimitiveTypeEnumLabel.h" />
     <ClInclude Include="Utils\OpenGLPrimitiveDrawer.h" />
     <ClInclude Include="Utils\PrimitiveGenerator.h" />
+    <ClInclude Include="Utils\PropertyDrawer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter" />

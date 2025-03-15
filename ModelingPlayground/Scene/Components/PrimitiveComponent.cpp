@@ -1,6 +1,7 @@
 ﻿#include "PrimitiveComponent.h"
 
 #include "imgui.h"
+#include "../../Utils/PropertyDrawer.h"
 #include "misc/cpp/imgui_stdlib.h"
 
 PrimitiveComponent::PrimitiveComponent():
@@ -14,10 +15,7 @@ void PrimitiveComponent::RenderInspector()
     ImGuiTreeNodeFlags meshHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
     if (ImGui::CollapsingHeader("Mesh", meshHeaderFlags))
     {
-        if (ImGui::Combo("Primitive Type", &m_currentItem, PrimitiveTypeEnumLabel.GetCStrings().data(), PrimitiveTypeEnumLabel.Count()))
-        {
-            m_primitiveType = PrimitiveTypeEnumLabel.GetEnums()[m_currentItem];
-        }
+        PropertyDrawer::DrawEnumLabelCombo<PrimitiveType>("Primitive Type", PrimitiveTypeEnumLabel, m_primitiveType);
     }
 }
 

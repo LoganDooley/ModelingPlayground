@@ -5,6 +5,7 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include "imgui.h"
+#include "../../Utils/PropertyDrawer.h"
 
 TransformComponent::TransformComponent():
     m_position(glm::vec3(0)),
@@ -21,27 +22,24 @@ void TransformComponent::RenderInspector()
     if (ImGui::CollapsingHeader("Transform", transformHeaderFlags))
     {
         // Position
-        float position[3] = { m_position.x, m_position.y, m_position.z };
-				
-        if (ImGui::DragFloat3("Position", position, 0.01f))
+        glm::vec3 position = m_position;
+        if (PropertyDrawer::DrawVec3fDrag("Position", position, 0.01f))
         {
-            SetPosition(glm::vec3(position[0], position[1], position[2]));
+            SetPosition(position);
         }
 
         // Rotation
-        float rotation[3] = { m_rotation.x, m_rotation.y, m_rotation.z };
-				
-        if (ImGui::DragFloat3("Rotation", rotation, 1.0f))
+        glm::vec3 rotation = m_rotation;
+        if (PropertyDrawer::DrawVec3fDrag("Rotation", rotation, 1.0f))
         {
-            SetRotation(glm::vec3(rotation[0], rotation[1], rotation[2]));
+            SetRotation(rotation);
         }
 
         // Scale
-        float scale[3] = { m_scale.x, m_scale.y, m_scale.z };
-				
-        if (ImGui::DragFloat3("Scale", scale, 0.01f))
+        glm::vec3 scale = m_scale;
+        if (PropertyDrawer::DrawVec3fDrag("Scale", scale, 0.01f))
         {
-            SetScale(glm::vec3(scale[0], scale[1], scale[2]));
+            SetScale(scale);
         }
     }
 }
