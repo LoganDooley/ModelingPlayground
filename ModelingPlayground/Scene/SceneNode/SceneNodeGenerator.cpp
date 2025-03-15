@@ -4,7 +4,7 @@
 
 #include "../Object.h"
 #include "../Scene.h"
-#include "../Components/MeshComponent.h"
+#include "../Components/PrimitiveComponent.h"
 #include "../Components/TransformComponent.h"
 
 void SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, SceneNode& parent)
@@ -39,7 +39,7 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
 void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
     object.AddComponent<TransformComponent>();
-    object.AddComponent<MeshComponent>();
+    object.AddComponent<PrimitiveComponent>();
 }
 
 std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent)

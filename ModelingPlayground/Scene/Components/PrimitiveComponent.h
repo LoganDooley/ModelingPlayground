@@ -1,18 +1,18 @@
 ﻿#pragma once
 #include "Component.h"
 
-enum class MeshType
+enum class PrimitiveType
 {
     Triangle,
 };
 
-class MeshComponent : public Component
+class PrimitiveComponent : public Component
 {
 public:
-    MeshComponent();
+    PrimitiveComponent();
     
     void RenderInspector() override;
 
 private:
-    MeshType m_meshType;
+    PrimitiveType m_meshType;
 };

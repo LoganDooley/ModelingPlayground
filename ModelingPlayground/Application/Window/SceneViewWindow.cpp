@@ -1,5 +1,6 @@
 #include "SceneViewWindow.h"
 
+#include <iostream>
 #include <ostream>
 #include <stack>
 
@@ -8,7 +9,7 @@
 #include "../../Scene/Object.h"
 #include "../../Scene/Scene.h"
 #include "../../Scene/Components/ClearColorComponent.h"
-#include "../../Scene/Components/MeshComponent.h"
+#include "../../Scene/Components/PrimitiveComponent.h"
 #include "../../Scene/Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
@@ -34,6 +35,11 @@ void SceneViewWindow::Render()
 		ImGui::EndChild();
 	}
 	ImGui::End();
+}
+
+void SceneViewWindow::Update(double seconds)
+{
+	m_camera->Update(seconds);
 }
 
 void SceneViewWindow::InitializeOpenGLObjects()
@@ -96,13 +102,13 @@ void SceneViewWindow::DrawScene() const
 
 void SceneViewWindow::ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const
 {
-	std::vector<std::shared_ptr<MeshComponent>> meshComponents = object.GetComponents<MeshComponent>();
-	if (meshComponents.size() == 1)
+	std::vector<std::shared_ptr<PrimitiveComponent>> primitiveComponents = object.GetComponents<PrimitiveComponent>();
+	if (primitiveComponents.size() == 1)
 	{
 		std::vector<std::shared_ptr<TransformComponent>> transformComponents = object.GetComponents<TransformComponent>();
 		if (transformComponents.size() == 1)
 		{
-			DrawMesh(*meshComponents[0], *transformComponents[0], cumulativeModelMatrix);
+			DrawMesh(*primitiveComponents[0], *transformComponents[0], cumulativeModelMatrix);
 		}
 	}
 
@@ -115,7 +121,7 @@ void SceneViewWindow::ProcessObject(const Object& object, glm::mat4& cumulativeM
 	}
 }
 
-void SceneViewWindow::DrawMesh(const MeshComponent& meshComponent, const TransformComponent& transformComponent,
+void SceneViewWindow::DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent,
 	glm::mat4& cumulativeModelMatrix) const
 {
 	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent.GetModelMatrix();
@@ -124,4 +130,3 @@ void SceneViewWindow::DrawMesh(const MeshComponent& meshComponent, const Transfo
 	glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &cumulativeModelMatrix[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
-

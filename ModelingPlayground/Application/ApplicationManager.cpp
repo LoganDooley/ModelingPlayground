@@ -38,8 +38,12 @@ int ApplicationManager::Initialize()
 
 int ApplicationManager::Loop()
 {
+	double time = glfwGetTime();
 	while (!m_glfwWindow->ShouldClose()) {
 		m_glfwWindow->PollEvents();
+		double deltaTime = glfwGetTime() - time;
+		time = glfwGetTime();
+		m_windowManager->Update(deltaTime);
 		m_windowManager->Render(m_glfwWindow);
 		m_glfwWindow->SwapBuffers();
 	}

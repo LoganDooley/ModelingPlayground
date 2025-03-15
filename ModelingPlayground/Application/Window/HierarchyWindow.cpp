@@ -17,6 +17,10 @@ void HierarchyWindow::Render()
 	ImGui::End();
 }
 
+void HierarchyWindow::Update(double seconds)
+{
+}
+
 void HierarchyWindow::DrawNode(const std::shared_ptr<SceneNode>& node)
 {
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_None;

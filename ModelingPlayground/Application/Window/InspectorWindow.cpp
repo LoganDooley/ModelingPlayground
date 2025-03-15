@@ -18,3 +18,7 @@ void InspectorWindow::Render()
 	}
 	ImGui::End();
 }
+
+void InspectorWindow::Update(double seconds)
+{
+}

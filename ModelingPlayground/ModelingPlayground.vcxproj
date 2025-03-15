@@ -105,7 +105,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\Components\AmbientLightComponent.cpp" />
     <ClCompile Include="Scene\Components\ClearColorComponent.cpp" />
-    <ClCompile Include="Scene\Components\MeshComponent.cpp" />
+    <ClCompile Include="Scene\Components\PrimitiveComponent.cpp" />
     <ClCompile Include="Scene\Components\TransformComponent.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -183,6 +183,7 @@
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNode.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
+    <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
@@ -209,12 +210,14 @@
     <ClInclude Include="Scene\Components\AmbientLightComponent.h" />
     <ClInclude Include="Scene\Components\ClearColorComponent.h" />
     <ClInclude Include="Scene\Components\Component.h" />
-    <ClInclude Include="Scene\Components\MeshComponent.h" />
+    <ClInclude Include="Scene\Components\PrimitiveComponent.h" />
     <ClInclude Include="Scene\Components\TransformComponent.h" />
     <ClInclude Include="Scene\Object.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneNode\SceneNode.h" />
     <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h" />
+    <ClInclude Include="Utils\Dirtyable.h" />
+    <ClInclude Include="Utils\PrimitiveGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter" />
@@ -225,6 +228,9 @@
   <ItemGroup>
     <Content Include="Shaders\default.frag" />
     <Content Include="Shaders\default.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

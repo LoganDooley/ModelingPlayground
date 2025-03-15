@@ -8,5 +8,6 @@ public:
 	virtual ~Window() = default;
 
 	virtual void Render() = 0;
+	virtual void Update(double seconds) = 0;
 };
 

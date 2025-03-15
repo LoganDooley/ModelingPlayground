@@ -12,6 +12,7 @@ public:
 	~WindowManager();
 
 	void Initialize(std::unique_ptr<GlfwWindow>& glfwWindow);
+	void Update(double seconds) const;
 	void Render(std::unique_ptr<GlfwWindow>& glfwWindow);
 	void Close();
 

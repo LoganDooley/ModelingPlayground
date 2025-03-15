@@ -8,37 +8,52 @@
 
 #include "../InputManager.h"
 
-SceneViewCamera::SceneViewCamera(const std::shared_ptr<InputManager>& inputManager, glm::uvec2 screenSize, glm::vec3 position, glm::vec3 look, float near, float far, float fovy):
+SceneViewCamera::SceneViewCamera(const std::shared_ptr<InputManager>& inputManager, glm::uvec2 screenSize, glm::vec3 position, glm::vec3 look, float zNear, float zFar, float fovy):
     m_screenSize(screenSize),
     m_aspectRatio(static_cast<float>(screenSize.x) / static_cast<float>(screenSize.y)),
-    m_near(near),
-    m_far(far),
+    m_zNear(zNear),
+    m_zFar(zFar),
     m_fovy(fovy),
     m_position(position),
     m_look(look),
+    m_up(glm::vec3(0, 1, 0)),
     m_viewMatrix(glm::mat4(1)),
     m_projectionMatrix(glm::mat4(1)),
     m_cameraMatrix(glm::mat4(1)),
-    m_movementSpeed(1.f)
+    m_inputManager(inputManager),
+    m_movementSpeed(1.f),
+    m_movementDirection(glm::vec3(0))
 {
     UpdateViewMatrix();
     UpdateProjectionMatrix();
     UpdateFramebuffer();
     
-    inputManager->SubscribeToKeyEvents([this](const int key, const int action)
+    m_inputManager->SubscribeToKeyEvents([this](const int key, const int action)
     {
         HandleKeyEvent(key, action);
     });
     
-    inputManager->SubscribeToCursorPosEvents([this](const double xpos, const double ypos)
+    m_inputManager->SubscribeToCursorPosEvents([this](const double xpos, const double ypos)
     {
         HandleCursorPosEvent(xpos, ypos);
     });
 
-    inputManager->SubscribeToMouseButtonEvents([this](const int button, const int action)
+    m_inputManager->SubscribeToMouseButtonEvents([this](const int button, const int action)
     {
         HandleMouseButtonEvent(button, action);
     });
+}
+
+void SceneViewCamera::Update(double seconds)
+{
+    if (m_movementDirection.IsDirty())
+    {
+        UpdateMovementDirection();
+    }
+    if (m_movementDirection.GetData() != glm::vec3(0))
+    {
+        MoveCamera(seconds);
+    }
 }
 
 void SceneViewCamera::BindFramebuffer() const
@@ -77,9 +92,25 @@ float SceneViewCamera::GetAspectRatio() const
     return m_aspectRatio;
 }
 
-const glm::mat4& SceneViewCamera::GetCameraMatrix() const
+const glm::mat4& SceneViewCamera::GetCameraMatrix()
 {
-    return m_cameraMatrix;
+    if (m_cameraMatrix.IsDirty())
+    {
+        UpdateCameraMatrix();
+    }
+    return m_cameraMatrix.GetData();
+}
+
+void SceneViewCamera::PrintCameraMatrix() const
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            std::cout<<m_cameraMatrix.GetData()[i][j]<<", ";
+        }
+        std::cout<<"\n";
+    }
 }
 
 void SceneViewCamera::UpdateFramebuffer()
@@ -122,14 +153,14 @@ void SceneViewCamera::UpdateFramebuffer()
 
 void SceneViewCamera::UpdateViewMatrix()
 {
-    m_viewMatrix = glm::lookAt(m_position + m_look, m_position, glm::vec3(0, 1, 0));
-    UpdateCameraMatrix();
+    m_viewMatrix = glm::lookAt(m_position, m_position + m_look, m_up);
+    m_cameraMatrix.MarkDirty();
 }
 
 void SceneViewCamera::UpdateProjectionMatrix()
 {
-    m_projectionMatrix = glm::perspective(m_fovy, m_aspectRatio, m_near, m_far);
-    UpdateCameraMatrix();
+    m_projectionMatrix = glm::perspective(m_fovy, m_aspectRatio, m_zNear, m_zFar);
+    m_cameraMatrix.MarkDirty();
 }
 
 void SceneViewCamera::UpdateCameraMatrix()
@@ -141,18 +172,62 @@ void SceneViewCamera::HandleKeyEvent(int key, int action)
 {
     if (action == GLFW_PRESS)
     {
-        std::cout<<"Pressed Key: "<<key<<std::endl;
+        m_movementDirection.MarkDirty();
     }
     else if (action == GLFW_RELEASE)
     {
-        
+        m_movementDirection.MarkDirty();
     }
 }
 
 void SceneViewCamera::HandleCursorPosEvent(double xpos, double ypos)
 {
+    // TODO: Rotate Camera
 }
 
 void SceneViewCamera::HandleMouseButtonEvent(int button, int action)
 {
+}
+
+void SceneViewCamera::UpdateMovementDirection()
+{
+    glm::vec3 newMovementDirection = glm::vec3(0);
+    glm::vec3 rightVector = glm::normalize(glm::cross(m_look, m_up));
+    if (m_inputManager->IsKeyDown(GLFW_KEY_W))
+    {
+        newMovementDirection += m_look;
+    }
+    if (m_inputManager->IsKeyDown(GLFW_KEY_S))
+    {
+        newMovementDirection -= m_look;
+    }
+    if (m_inputManager->IsKeyDown(GLFW_KEY_A))
+    {
+        newMovementDirection -= rightVector;
+    }
+    if (m_inputManager->IsKeyDown(GLFW_KEY_D))
+    {
+        newMovementDirection += rightVector;
+    }
+    if (m_inputManager->IsKeyDown(GLFW_KEY_SPACE))
+    {
+        newMovementDirection += m_up;
+    }
+    if (m_inputManager->IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+    {
+        newMovementDirection -= m_up;
+    }
+
+    if (newMovementDirection != glm::vec3(0))
+    {
+        newMovementDirection = glm::normalize(newMovementDirection);
+    }
+    
+    m_movementDirection.SetCleanData(newMovementDirection);
+}
+
+void SceneViewCamera::MoveCamera(double seconds)
+{
+    m_position += static_cast<float>(seconds) * m_movementSpeed * m_movementDirection.GetData();
+    UpdateViewMatrix();
 }

@@ -12,6 +12,7 @@ public:
 	InspectorWindow(const std::shared_ptr<Scene>& scene);
 
 	void Render() override;
+	void Update(double seconds) override;
 
 	inline static const std::string Name = "Inspector";
 

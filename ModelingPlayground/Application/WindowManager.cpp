@@ -47,6 +47,14 @@ void WindowManager::Initialize(std::unique_ptr<GlfwWindow>& glfwWindow)
 	m_windows.push_back(std::make_shared<InspectorWindow>(m_scene));
 }
 
+void WindowManager::Update(double seconds) const
+{
+	for (const auto& window : m_windows)
+	{
+		window->Update(seconds);
+	}
+}
+
 void WindowManager::Render(std::unique_ptr<GlfwWindow>& glfwWindow)
 {
 	ImGui_ImplOpenGL3_NewFrame();

@@ -1,13 +1,13 @@
-﻿#include "MeshComponent.h"
+﻿#include "PrimitiveComponent.h"
 
 #include "imgui.h"
 
-MeshComponent::MeshComponent():
-    m_meshType(MeshType::Triangle)
+PrimitiveComponent::PrimitiveComponent():
+    m_meshType(PrimitiveType::Triangle)
 {
 }
 
-void MeshComponent::RenderInspector()
+void PrimitiveComponent::RenderInspector()
 {
     ImGuiTreeNodeFlags meshHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
     if (ImGui::CollapsingHeader("Mesh", meshHeaderFlags))
@@ -18,7 +18,7 @@ void MeshComponent::RenderInspector()
         {
             if (currentItem == 0)
             {
-                m_meshType = MeshType::Triangle;
+                m_meshType = PrimitiveType::Triangle;
             }
         }
     }
