@@ -79,6 +79,10 @@ void TransformComponent::SetRotation(glm::vec3 newRotation)
     if (m_rotation != newRotation)
     {
         m_rotation = newRotation;
+        m_rotation.x = std::fmod(m_rotation.x, 360.f);
+        m_rotation.y = std::fmod(m_rotation.y, 360.f);
+        m_rotation.z = std::fmod(m_rotation.z, 360.f);
+        
         UpdateModelMatrix();
     }
 }

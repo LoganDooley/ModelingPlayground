@@ -5,8 +5,9 @@
 
 #include "SceneViewCamera.h"
 #include "Window.h"
-#include "glad/glad.h"
+#include "../../Utils/OpenGLPrimitiveDrawer.h"
 
+class MaterialComponent;
 class TransformComponent;
 class PrimitiveComponent;
 class Object;
@@ -30,16 +31,17 @@ private:
 	void DrawScene() const;
 
 	void ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const;
-	void DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent, glm::mat4& cumulativeModelMatrix) const;
+	void DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent, const MaterialComponent& materialComponent, glm::mat4& cumulativeModelMatrix) const;
 
-	GLuint m_triangleVBO;
-	GLuint m_triangleVAO;
+	std::unique_ptr<OpenGLPrimitiveDrawer> m_openGLPrimitiveDrawer;
 
 	std::unique_ptr<SceneViewCamera> m_camera;
 	
 	GLuint m_defaultShader;
 	GLint m_modelMatrixLocation;
 	GLint m_cameraMatrixLocation;
+	GLint m_ambientColorLocation;
+	GLint m_materialColorLocation;
 
 	std::shared_ptr<Scene> m_scene;
 };

@@ -26,7 +26,7 @@ std::pair<std::vector<glm::vec3>, std::vector<int>> PrimitiveGenerator::Generate
     // First generate vertices
     for (int latitudeIndex = 0; latitudeIndex <= latitudinalResolution; latitudeIndex++)
     {
-        if (latitudeIndex == 0 || latitudeIndex == latitudinalResolution)
+        if (latitudeIndex == 0)
         {
             // Add the bottom vertex
             vertices.emplace_back(0, -0.5, 0);
@@ -140,13 +140,16 @@ glm::vec3 PrimitiveGenerator::SphericalToCartesian(float phi, float theta, float
 int PrimitiveGenerator::GetSphereVertexIndex(int latitudeIndex, int longitudeIndex, int latitudinalResolution,
     int longitudinalResolution)
 {
+    // Wrap around the sphere
+    longitudeIndex = longitudeIndex % longitudinalResolution;
+    
     if (latitudeIndex == 0)
     {
         return 0;
     }
     if (latitudeIndex == latitudinalResolution)
     {
-        return 2 + longitudinalResolution * (latitudinalResolution - 1);
+        return 1 + longitudinalResolution * (latitudinalResolution - 1);
     }
     return 1 + (latitudeIndex - 1) * longitudinalResolution + longitudeIndex;
 }

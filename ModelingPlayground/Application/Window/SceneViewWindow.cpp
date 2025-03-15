@@ -9,13 +9,15 @@
 #include "../../Scene/Object.h"
 #include "../../Scene/Scene.h"
 #include "../../Scene/Components/ClearColorComponent.h"
+#include "../../Scene/Components/MaterialComponent.h"
 #include "../../Scene/Components/PrimitiveComponent.h"
 #include "../../Scene/Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
 SceneViewWindow::SceneViewWindow(const std::shared_ptr<Scene>& scene, const std::shared_ptr<InputManager>& inputManager):
-	m_scene(scene),
-	m_camera(std::make_unique<SceneViewCamera>(inputManager, glm::uvec2(1, 1)))
+	m_openGLPrimitiveDrawer(std::make_unique<OpenGLPrimitiveDrawer>(10, 10)),
+	m_camera(std::make_unique<SceneViewCamera>(inputManager, glm::uvec2(1, 1))),
+	m_scene(scene)
 {
 	InitializeOpenGLObjects();
 }
@@ -44,28 +46,13 @@ void SceneViewWindow::Update(double seconds)
 
 void SceneViewWindow::InitializeOpenGLObjects()
 {
-	// Create triangle
-	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.0f,  0.5f, 0.0f
-	};
-
-	glGenVertexArrays(1, &m_triangleVAO);
-	glBindVertexArray(m_triangleVAO);
-
-	glGenBuffers(1, &m_triangleVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_triangleVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
 	// Create shader
 	m_defaultShader = ShaderLoader::createShaderProgram("Shaders/default.vert", "Shaders/default.frag");
 
 	m_modelMatrixLocation = glGetUniformLocation(m_defaultShader, "modelMatrix");
 	m_cameraMatrixLocation = glGetUniformLocation(m_defaultShader, "cameraMatrix");
+	m_ambientColorLocation = glGetUniformLocation(m_defaultShader, "ambientColor");
+	m_materialColorLocation = glGetUniformLocation(m_defaultShader, "materialColor");
 }
 
 void SceneViewWindow::DrawScene() const
@@ -108,7 +95,11 @@ void SceneViewWindow::ProcessObject(const Object& object, glm::mat4& cumulativeM
 		std::vector<std::shared_ptr<TransformComponent>> transformComponents = object.GetComponents<TransformComponent>();
 		if (transformComponents.size() == 1)
 		{
-			DrawMesh(*primitiveComponents[0], *transformComponents[0], cumulativeModelMatrix);
+			std::vector<std::shared_ptr<MaterialComponent>> materialComponents = object.GetComponents<MaterialComponent>();
+			if (materialComponents.size() == 1)
+			{
+				DrawMesh(*primitiveComponents[0], *transformComponents[0], *materialComponents[0], cumulativeModelMatrix);
+			}
 		}
 	}
 
@@ -122,11 +113,12 @@ void SceneViewWindow::ProcessObject(const Object& object, glm::mat4& cumulativeM
 }
 
 void SceneViewWindow::DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent,
-	glm::mat4& cumulativeModelMatrix) const
+	const MaterialComponent& materialComponent, glm::mat4& cumulativeModelMatrix) const
 {
 	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent.GetModelMatrix();
-	glBindVertexArray(m_triangleVAO);
 	glUseProgram(m_defaultShader);
 	glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &cumulativeModelMatrix[0][0]);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glm::vec3 materialColor = materialComponent.GetMaterialColor();
+	glUniform3f(m_materialColorLocation, materialColor.r, materialColor.g, materialColor.b);
+	m_openGLPrimitiveDrawer->DrawPrimitive(primitiveComponent.GetPrimitiveType());
 }

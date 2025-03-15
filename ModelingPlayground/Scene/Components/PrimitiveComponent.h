@@ -10,6 +10,7 @@ public:
     PrimitiveComponent();
     
     void RenderInspector() override;
+    PrimitiveType GetPrimitiveType() const;
 
 private:
     PrimitiveType m_primitiveType;

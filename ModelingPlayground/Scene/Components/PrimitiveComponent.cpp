@@ -20,3 +20,8 @@ void PrimitiveComponent::RenderInspector()
         }
     }
 }
+
+PrimitiveType PrimitiveComponent::GetPrimitiveType() const
+{
+    return m_primitiveType;
+}

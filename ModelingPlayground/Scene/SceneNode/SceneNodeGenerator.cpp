@@ -4,6 +4,7 @@
 
 #include "../Object.h"
 #include "../Scene.h"
+#include "../Components/MaterialComponent.h"
 #include "../Components/PrimitiveComponent.h"
 #include "../Components/TransformComponent.h"
 
@@ -40,6 +41,7 @@ void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
     object.AddComponent<TransformComponent>();
     object.AddComponent<PrimitiveComponent>();
+    object.AddComponent<MaterialComponent>();
 }
 
 std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent)

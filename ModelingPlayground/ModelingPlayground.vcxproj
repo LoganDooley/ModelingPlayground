@@ -105,6 +105,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\Components\AmbientLightComponent.cpp" />
     <ClCompile Include="Scene\Components\ClearColorComponent.cpp" />
+    <ClCompile Include="Scene\Components\MaterialComponent.cpp" />
     <ClCompile Include="Scene\Components\PrimitiveComponent.cpp" />
     <ClCompile Include="Scene\Components\TransformComponent.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -183,6 +184,7 @@
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNode.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
+    <ClCompile Include="Utils\OpenGLPrimitiveDrawer.cpp" />
     <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +212,7 @@
     <ClInclude Include="Scene\Components\AmbientLightComponent.h" />
     <ClInclude Include="Scene\Components\ClearColorComponent.h" />
     <ClInclude Include="Scene\Components\Component.h" />
+    <ClInclude Include="Scene\Components\MaterialComponent.h" />
     <ClInclude Include="Scene\Components\PrimitiveComponent.h" />
     <ClInclude Include="Scene\Components\TransformComponent.h" />
     <ClInclude Include="Scene\Object.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="Utils\Dirtyable.h" />
     <ClInclude Include="Utils\EnumLabels\EnumLabel.h" />
     <ClInclude Include="Utils\EnumLabels\PrimitiveTypeEnumLabel.h" />
+    <ClInclude Include="Utils\OpenGLPrimitiveDrawer.h" />
     <ClInclude Include="Utils\PrimitiveGenerator.h" />
   </ItemGroup>
   <ItemGroup>

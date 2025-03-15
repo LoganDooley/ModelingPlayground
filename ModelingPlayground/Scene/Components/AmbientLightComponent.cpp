@@ -9,8 +9,8 @@ AmbientLightComponent::AmbientLightComponent():
 
 void AmbientLightComponent::RenderInspector()
 {
-    ImGuiTreeNodeFlags meshHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
-    if (ImGui::CollapsingHeader("Global Lighting", meshHeaderFlags))
+    ImGuiTreeNodeFlags ambientLightHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
+    if (ImGui::CollapsingHeader("Global Lighting", ambientLightHeaderFlags))
     {
         // Ambient color
         float ambientColor[3] = { m_ambientColor.r, m_ambientColor.g, m_ambientColor.b };
