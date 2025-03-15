@@ -21,10 +21,23 @@ void OpenGLSettingsComponent::RenderInspector()
         {
             m_clearColor = glm::vec4(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
         }
+
+        // Ambient light
+        float ambientLight[3] = { m_ambientLight.r, m_ambientLight.g, m_ambientLight.b };
+				
+        if (ImGui::ColorPicker3("AmbientLight", ambientLight))
+        {
+            m_ambientLight = glm::vec3(ambientLight[0], ambientLight[1], ambientLight[2]);
+        }
     }
 }
 
 glm::vec4 OpenGLSettingsComponent::GetClearColor() const
 {
     return m_clearColor;
+}
+
+glm::vec3 OpenGLSettingsComponent::GetAmbientLight() const
+{
+    return m_ambientLight;
 }

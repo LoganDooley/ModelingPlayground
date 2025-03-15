@@ -1,6 +1,5 @@
 #include "SceneViewWindow.h"
 
-#include <iostream>
 #include <ostream>
 #include <stack>
 
