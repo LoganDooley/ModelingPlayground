@@ -1,16 +1,17 @@
 ﻿#pragma once
+
 #include <glm/vec4.hpp>
 
 #include "Component.h"
 
-class ClearColorComponent : public Component
+class OpenGLSettingsComponent : public Component
 {
 public:
-    ClearColorComponent();
+    OpenGLSettingsComponent();
 
     void RenderInspector() override;
 
-    const glm::vec4& GetClearColor() const;
+    glm::vec4 GetClearColor() const;
     
 private:
     glm::vec4 m_clearColor;

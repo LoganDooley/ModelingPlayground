@@ -1,14 +1,12 @@
 #include "Scene.h"
 
 #include "Object.h"
-#include "Components/AmbientLightComponent.h"
-#include "Components/ClearColorComponent.h"
+#include "Components/OpenGLSettingsComponent.h"
 
 Scene::Scene()
 {
     m_rootSceneNode = std::make_shared<SceneNode>("World");
-    m_rootSceneNode->GetObject().AddComponent<AmbientLightComponent>();
-    m_rootSceneNode->GetObject().AddComponent<ClearColorComponent>();
+    m_rootSceneNode->GetObject().AddComponent<OpenGLSettingsComponent>();
 }
 
 const std::shared_ptr<SceneNode>& Scene::GetRootSceneNode() const

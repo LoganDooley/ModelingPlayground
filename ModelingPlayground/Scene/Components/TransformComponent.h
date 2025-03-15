@@ -21,10 +21,12 @@ public:
     
 private:
     void UpdateModelMatrix();
+    void UpdateLocalXUnitVector();
 
     glm::vec3 m_position;
     glm::vec3 m_rotation;
     glm::vec3 m_scale;
+    glm::vec3 m_localXUnitVector;
 
     glm::mat4 m_modelMatrix;
 };

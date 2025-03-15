@@ -5,10 +5,9 @@
 #include <stack>
 
 #include "imgui.h"
-#include "../ShaderLoader.h"
 #include "../../Scene/Object.h"
 #include "../../Scene/Scene.h"
-#include "../../Scene/Components/ClearColorComponent.h"
+#include "../../Scene/Components/OpenGLSettingsComponent.h"
 #include "../../Scene/Components/MaterialComponent.h"
 #include "../../Scene/Components/PrimitiveComponent.h"
 #include "../../Scene/Components/TransformComponent.h"
@@ -47,12 +46,12 @@ void SceneViewWindow::Update(double seconds)
 void SceneViewWindow::InitializeOpenGLObjects()
 {
 	// Create shader
-	m_defaultShader = ShaderLoader::createShaderProgram("Shaders/default.vert", "Shaders/default.frag");
+	m_defaultShader = std::make_unique<OpenGLShader>("Shaders/default.vert", "Shaders/default.frag");
 
-	m_modelMatrixLocation = glGetUniformLocation(m_defaultShader, "modelMatrix");
-	m_cameraMatrixLocation = glGetUniformLocation(m_defaultShader, "cameraMatrix");
-	m_ambientColorLocation = glGetUniformLocation(m_defaultShader, "ambientColor");
-	m_materialColorLocation = glGetUniformLocation(m_defaultShader, "materialColor");
+	m_defaultShader->RegisterUniformVariable("modelMatrix");
+	m_defaultShader->RegisterUniformVariable("cameraMatrix");
+	m_defaultShader->RegisterUniformVariable("ambientColor");
+	m_defaultShader->RegisterUniformVariable("materialColor");
 }
 
 void SceneViewWindow::DrawScene() const
@@ -62,7 +61,7 @@ void SceneViewWindow::DrawScene() const
 	// Adjust the viewport size
 	m_camera->SetViewport();
 
-	glUniformMatrix4fv(m_cameraMatrixLocation, 1, false, &m_camera->GetCameraMatrix()[0][0]);
+	m_defaultShader->SetUniformMatrix4f("cameraMatrix", false, m_camera->GetCameraMatrix());
 
 	// DFS draw objects
 	std::stack<std::pair<std::shared_ptr<SceneNode>, glm::mat4>> traversal;
@@ -103,10 +102,10 @@ void SceneViewWindow::ProcessObject(const Object& object, glm::mat4& cumulativeM
 		}
 	}
 
-	std::vector<std::shared_ptr<ClearColorComponent>> clearColorComponents = object.GetComponents<ClearColorComponent>();
-	if (clearColorComponents.size() == 1)
+	std::vector<std::shared_ptr<OpenGLSettingsComponent>> openGLSettingsComponents = object.GetComponents<OpenGLSettingsComponent>();
+	if (openGLSettingsComponents.size() == 1)
 	{
-		glm::vec4 clearColor = clearColorComponents[0]->GetClearColor();
+		glm::vec4 clearColor = openGLSettingsComponents[0]->GetClearColor();
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
@@ -116,9 +115,9 @@ void SceneViewWindow::DrawMesh(const PrimitiveComponent& primitiveComponent, con
 	const MaterialComponent& materialComponent, glm::mat4& cumulativeModelMatrix) const
 {
 	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent.GetModelMatrix();
-	glUseProgram(m_defaultShader);
-	glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &cumulativeModelMatrix[0][0]);
+	m_defaultShader->BindShader();
+	m_defaultShader->SetUniformMatrix4f("modelMatrix", false, cumulativeModelMatrix);
 	glm::vec3 materialColor = materialComponent.GetMaterialColor();
-	glUniform3f(m_materialColorLocation, materialColor.r, materialColor.g, materialColor.b);
+	m_defaultShader->SetUniform3f("materialColor", materialColor);
 	m_openGLPrimitiveDrawer->DrawPrimitive(primitiveComponent.GetPrimitiveType());
 }

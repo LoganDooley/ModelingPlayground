@@ -103,8 +103,8 @@
     <ClCompile Include="Libraries\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Scene\Components\AmbientLightComponent.cpp" />
-    <ClCompile Include="Scene\Components\ClearColorComponent.cpp" />
+    <ClCompile Include="OpenGLWrappers\OpenGLShader.cpp" />
+    <ClCompile Include="Scene\Components\OpenGLSettingsComponent.cpp" />
     <ClCompile Include="Scene\Components\DirectionalLightComponent.cpp" />
     <ClCompile Include="Scene\Components\MaterialComponent.cpp" />
     <ClCompile Include="Scene\Components\PointLightComponent.cpp" />
@@ -211,8 +211,8 @@
     <ClInclude Include="Libraries\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="Scene\Components\AmbientLightComponent.h" />
-    <ClInclude Include="Scene\Components\ClearColorComponent.h" />
+    <ClInclude Include="OpenGLWrappers\OpenGLShader.h" />
+    <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h" />
     <ClInclude Include="Scene\Components\Component.h" />
     <ClInclude Include="Scene\Components\DirectionalLightComponent.h" />
     <ClInclude Include="Scene\Components\MaterialComponent.h" />

@@ -63,6 +63,7 @@ void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
 		if (ImGui::BeginMenu("Add"))
 		{
 			const std::vector<SceneNodeType> sceneNodeTypes = SceneNodeGenerator::GetSceneNodeTypes();
+			// TODO: Consider using ImGui::SeparatorText to add sections for nodes of different types
 			for (const SceneNodeType& sceneNodeType : sceneNodeTypes)
 			{
 				if (ImGui::MenuItem(SceneNodeGenerator::GetSceneNodeTypeName(sceneNodeType).c_str()))

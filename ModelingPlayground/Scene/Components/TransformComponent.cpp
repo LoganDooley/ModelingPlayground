@@ -10,6 +10,7 @@ TransformComponent::TransformComponent():
     m_position(glm::vec3(0)),
     m_rotation(glm::vec3(0)),
     m_scale(glm::vec3(1)),
+    m_localXUnitVector(glm::vec3(1, 0, 0)),
     m_modelMatrix(glm::mat4(1))
 {
 }
@@ -84,6 +85,7 @@ void TransformComponent::SetRotation(glm::vec3 newRotation)
         m_rotation.z = std::fmod(m_rotation.z, 360.f);
         
         UpdateModelMatrix();
+        UpdateLocalXUnitVector();
     }
 }
 
@@ -109,4 +111,10 @@ void TransformComponent::UpdateModelMatrix()
 
     // model matrix
     m_modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+}
+
+void TransformComponent::UpdateLocalXUnitVector()
+{
+    glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.x), glm::radians(m_rotation.y), glm::radians(m_rotation.z));
+    m_localXUnitVector = rotationMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 }

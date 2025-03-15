@@ -62,11 +62,13 @@ void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)
 {
+    object.AddComponent<TransformComponent>();
     object.AddComponent<DirectionalLightComponent>();
 }
 
 void SceneNodeGenerator::InitializePointLightObject(Object& object)
 {
+    object.AddComponent<TransformComponent>();
     object.AddComponent<PointLightComponent>();
 }
 
