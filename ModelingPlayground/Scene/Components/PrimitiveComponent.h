@@ -1,10 +1,8 @@
 ﻿#pragma once
-#include "Component.h"
 
-enum class PrimitiveType
-{
-    Triangle,
-};
+#include "Component.h"
+#include "../../Utils/EnumLabels/PrimitiveTypeEnumLabel.h"
+
 
 class PrimitiveComponent : public Component
 {
@@ -14,5 +12,6 @@ public:
     void RenderInspector() override;
 
 private:
-    PrimitiveType m_meshType;
+    PrimitiveType m_primitiveType;
+    int m_currentItem;
 };

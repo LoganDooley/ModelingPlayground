@@ -1,9 +1,11 @@
 ﻿#include "PrimitiveComponent.h"
 
 #include "imgui.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 PrimitiveComponent::PrimitiveComponent():
-    m_meshType(PrimitiveType::Triangle)
+    m_primitiveType(PrimitiveType::Triangle),
+    m_currentItem(0)
 {
 }
 
@@ -12,14 +14,9 @@ void PrimitiveComponent::RenderInspector()
     ImGuiTreeNodeFlags meshHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
     if (ImGui::CollapsingHeader("Mesh", meshHeaderFlags))
     {
-        int currentItem;
-        const char* meshTypes[1] = { "Triangle" };
-        if (ImGui::ListBox("Mesh Type", &currentItem, meshTypes, 1))
+        if (ImGui::Combo("Primitive Type", &m_currentItem, PrimitiveTypeEnumLabel.GetCStrings().data(), PrimitiveTypeEnumLabel.Count()))
         {
-            if (currentItem == 0)
-            {
-                m_meshType = PrimitiveType::Triangle;
-            }
+            m_primitiveType = PrimitiveTypeEnumLabel.GetEnums()[m_currentItem];
         }
     }
 }
