@@ -105,7 +105,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\Components\AmbientLightComponent.cpp" />
     <ClCompile Include="Scene\Components\ClearColorComponent.cpp" />
+    <ClCompile Include="Scene\Components\DirectionalLightComponent.cpp" />
     <ClCompile Include="Scene\Components\MaterialComponent.cpp" />
+    <ClCompile Include="Scene\Components\PointLightComponent.cpp" />
     <ClCompile Include="Scene\Components\PrimitiveComponent.cpp" />
     <ClCompile Include="Scene\Components\TransformComponent.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -212,7 +214,9 @@
     <ClInclude Include="Scene\Components\AmbientLightComponent.h" />
     <ClInclude Include="Scene\Components\ClearColorComponent.h" />
     <ClInclude Include="Scene\Components\Component.h" />
+    <ClInclude Include="Scene\Components\DirectionalLightComponent.h" />
     <ClInclude Include="Scene\Components\MaterialComponent.h" />
+    <ClInclude Include="Scene\Components\PointLightComponent.h" />
     <ClInclude Include="Scene\Components\PrimitiveComponent.h" />
     <ClInclude Include="Scene\Components\TransformComponent.h" />
     <ClInclude Include="Scene\Object.h" />

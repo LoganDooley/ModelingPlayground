@@ -8,7 +8,7 @@ class Object;
 
 enum class SceneNodeType
 {
-    Primitive
+    Primitive, DirectionalLight, PointLight,
 };
 
 class SceneNodeGenerator
@@ -20,5 +20,8 @@ public:
 
 private:
     static void InitializePrimitiveObject(Object& object);
+    static void InitializeDirectionalLightObject(Object& object);
+    static void InitializePointLightObject(Object& object);
+    
     static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent);
 };
