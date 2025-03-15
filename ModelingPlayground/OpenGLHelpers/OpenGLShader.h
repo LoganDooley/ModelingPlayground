@@ -15,8 +15,9 @@ public:
     
     void RegisterUniformVariable(const std::string& uniformName);
 
-    void SetUniformMatrix4f(const std::string& uniformName, bool transpose, const glm::mat4& matrix);
+    void SetUniform1ui(const std::string& uniformName, uint32_t uniformValue);
     void SetUniform3f(const std::string& uniformName, glm::vec3 vector);
+    void SetUniformMatrix4f(const std::string& uniformName, bool transpose, const glm::mat4& matrix);
 
 private:
     bool ValidateUniformName(std::string uniformName);

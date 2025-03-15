@@ -28,3 +28,13 @@ bool Scene::IsSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode) con
 {
     return sceneNode == m_selectedSceneNode;
 }
+
+void Scene::CreateLightsContainer(const std::shared_ptr<OpenGLShader>& shader)
+{
+    m_lightsContainer = std::make_shared<LightsContainer>(shader);
+}
+
+void Scene::RegisterLightWithLightsContainer(const std::shared_ptr<SceneNode>& sceneNode, LightType lightType) const
+{
+    m_lightsContainer->AddLight(sceneNode, lightType);
+}

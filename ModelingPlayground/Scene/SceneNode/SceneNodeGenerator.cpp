@@ -8,9 +8,10 @@
 #include "../Components/MaterialComponent.h"
 #include "../Components/PointLightComponent.h"
 #include "../Components/PrimitiveComponent.h"
+#include "../Components/SpotLightComponent.h"
 #include "../Components/TransformComponent.h"
 
-void SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, SceneNode& parent)
+std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, SceneNode& parent)
 {
     std::shared_ptr<SceneNode> sceneNode = std::make_shared<SceneNode>(GetDefaultSceneNodeName(sceneNodeType, parent));
     switch (sceneNodeType)
@@ -24,10 +25,14 @@ void SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeTyp
         case SceneNodeType::PointLight:
             InitializePointLightObject(sceneNode->GetObject());
             break;
+        case SceneNodeType::SpotLight:
+            InitializeSpotLightObject(sceneNode->GetObject());
+            break;
         default:
             std::cout<<"SceneNodeGenerator|CreateSceneNodeAndAddAsChild: Invalid Scene Node Type!\n";
     }
     parent.AddChild(sceneNode);
+    return sceneNode;
 }
 
 std::vector<SceneNodeType> SceneNodeGenerator::GetSceneNodeTypes()
@@ -36,6 +41,7 @@ std::vector<SceneNodeType> SceneNodeGenerator::GetSceneNodeTypes()
         SceneNodeType::Primitive,
         SceneNodeType::DirectionalLight,
         SceneNodeType::PointLight,
+        SceneNodeType::SpotLight,
         };
 }
 
@@ -49,6 +55,8 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
             return "Directional Light";
         case SceneNodeType::PointLight:
             return "Point Light";
+        case SceneNodeType::SpotLight:
+            return "Spot Light";
     }
     return "Unknown Type";
 }
@@ -72,6 +80,12 @@ void SceneNodeGenerator::InitializePointLightObject(Object& object)
     object.AddComponent<PointLightComponent>();
 }
 
+void SceneNodeGenerator::InitializeSpotLightObject(Object& object)
+{
+    object.AddComponent<TransformComponent>();
+    object.AddComponent<SpotLightComponent>();
+}
+
 std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent)
 {
     std::string baseName;
@@ -85,6 +99,9 @@ std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeT
             break;
         case SceneNodeType::PointLight:
             baseName = "PointLight";
+            break;
+        case SceneNodeType::SpotLight:
+            baseName = "SpotLight";
             break;
     }
     std::unordered_set<std::string> takenNames;

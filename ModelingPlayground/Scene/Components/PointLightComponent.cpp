@@ -6,7 +6,8 @@
 #include "../../Utils/PropertyDrawer.h"
 
 PointLightComponent::PointLightComponent():
-    m_lightColor(glm::vec3(1.0f, 1.0f, 1.0f))
+    m_lightColor(glm::vec3(1.0f, 1.0f, 1.0f)),
+    m_falloff(glm::vec3(0))
 {
 }
 
@@ -17,10 +18,18 @@ void PointLightComponent::RenderInspector()
     {
         // Color
         PropertyDrawer::DrawVec3fColor("Color", m_lightColor);
+
+        // Falloff
+        PropertyDrawer::DrawVec3fDrag("Falloff", m_falloff);
     }
 }
 
 glm::vec3 PointLightComponent::GetLightColor() const
 {
     return m_lightColor;
+}
+
+glm::vec3 PointLightComponent::GetFalloff() const
+{
+    return m_falloff;
 }

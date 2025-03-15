@@ -2,7 +2,6 @@
 #include "imgui.h"
 #include "SceneViewWindow.h"
 #include "../../Scene/Scene.h"
-#include "../../Scene/SceneNode/SceneNodeGenerator.h"
 
 HierarchyWindow::HierarchyWindow(const std::shared_ptr<Scene>& scene):
 	m_scene(scene)
@@ -68,7 +67,8 @@ void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
 			{
 				if (ImGui::MenuItem(SceneNodeGenerator::GetSceneNodeTypeName(sceneNodeType).c_str()))
 				{
-					SceneNodeGenerator::CreateSceneNodeAndAddAsChild(sceneNodeType, node);
+					std::shared_ptr<SceneNode> newChildSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(sceneNodeType, node);
+					TryRegisterSceneNodeAsLight(newChildSceneNode, sceneNodeType);
 				}
 			}
 			ImGui::EndMenu();
@@ -78,5 +78,21 @@ void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
 			
 		}
 		ImGui::EndPopup();
+	}
+}
+
+void HierarchyWindow::TryRegisterSceneNodeAsLight(const std::shared_ptr<SceneNode>& node, SceneNodeType sceneNodeType)
+{
+	switch (sceneNodeType)
+	{
+		case SceneNodeType::DirectionalLight:
+			m_scene->RegisterLightWithLightsContainer(node, LightType::Directional);
+			break;
+		case SceneNodeType::PointLight:
+			m_scene->RegisterLightWithLightsContainer(node, LightType::Point);
+			break;
+		case SceneNodeType::SpotLight:
+			m_scene->RegisterLightWithLightsContainer(node, LightType::Spot);
+			break;
 	}
 }

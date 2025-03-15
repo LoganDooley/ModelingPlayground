@@ -10,6 +10,8 @@ class PropertyDrawer
 {
 public:
     // Drag inputs
+    static bool DrawFloatDrag(const std::string& propertyName, float& floatValue, float vSpeed = 1, float vMin = 0,
+        float vMax = 0, const char* format = "%.3f");
     static bool DrawVec3fDrag(const std::string& propertyName, glm::vec3& vec3f, float vSpeed = 1, float vMin = 0,
         float vMax = 0, const char* format = "%.3f");
     static bool DrawVec4fDrag(const std::string& propertyName, glm::vec4& vec4f, float vSpeed = 1, float vMin = 0,

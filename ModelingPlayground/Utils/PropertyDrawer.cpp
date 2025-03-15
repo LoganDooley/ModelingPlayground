@@ -1,7 +1,20 @@
 ﻿#include "PropertyDrawer.h"
 
+bool PropertyDrawer::DrawFloatDrag(const std::string& propertyName, float& floatValue, float vSpeed, float vMin,
+    float vMax, const char* format)
+{
+    float newFloatValue = floatValue;
+    ImGui::DragFloat(propertyName.c_str(), &newFloatValue, vSpeed, vMin, vMax, format);
+    if (newFloatValue == floatValue)
+    {
+        return false;
+    }
+    floatValue = newFloatValue;
+    return true;
+}
+
 bool PropertyDrawer::DrawVec3fDrag(const std::string& propertyName, glm::vec3& vec3f, float vSpeed, float vMin,
-        float vMax, const char* format)
+                                   float vMax, const char* format)
 {
     float newVec3f[3] = { vec3f.x, vec3f.y, vec3f.z };
     ImGui::DragFloat3(propertyName.c_str(), newVec3f, vSpeed, vMin, vMax, format);

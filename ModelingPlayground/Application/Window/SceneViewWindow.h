@@ -5,7 +5,8 @@
 
 #include "SceneViewCamera.h"
 #include "Window.h"
-#include "../../OpenGLWrappers/OpenGLShader.h"
+#include "../../OpenGLHelpers/LightsContainer.h"
+#include "../../OpenGLHelpers/OpenGLShader.h"
 #include "../../Utils/OpenGLPrimitiveDrawer.h"
 
 class MaterialComponent;
@@ -37,8 +38,8 @@ private:
 	std::unique_ptr<OpenGLPrimitiveDrawer> m_openGLPrimitiveDrawer;
 
 	std::unique_ptr<SceneViewCamera> m_camera;
-
-	std::unique_ptr<OpenGLShader> m_defaultShader;
+	
+	std::shared_ptr<OpenGLShader> m_defaultShader;
 
 	std::shared_ptr<Scene> m_scene;
 };

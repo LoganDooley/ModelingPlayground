@@ -4,17 +4,17 @@
 
 #include "Component.h"
 
-class PointLightComponent : public Component
+class SpotLightComponent : public Component
 {
 public:
-    PointLightComponent();
+    SpotLightComponent();
 
     void RenderInspector() override;
 
     glm::vec3 GetLightColor() const;
-    glm::vec3 GetFalloff() const;
+    float GetLightFalloffAngle() const;
     
 private:
     glm::vec3 m_lightColor;
-    glm::vec3 m_falloff;
+    float m_falloffAngle;
 };

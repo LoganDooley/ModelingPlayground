@@ -103,12 +103,14 @@
     <ClCompile Include="Libraries\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="OpenGLWrappers\OpenGLShader.cpp" />
+    <ClCompile Include="OpenGLHelpers\LightsContainer.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLShader.cpp" />
     <ClCompile Include="Scene\Components\OpenGLSettingsComponent.cpp" />
     <ClCompile Include="Scene\Components\DirectionalLightComponent.cpp" />
     <ClCompile Include="Scene\Components\MaterialComponent.cpp" />
     <ClCompile Include="Scene\Components\PointLightComponent.cpp" />
     <ClCompile Include="Scene\Components\PrimitiveComponent.cpp" />
+    <ClCompile Include="Scene\Components\SpotLightComponent.cpp" />
     <ClCompile Include="Scene\Components\TransformComponent.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -212,13 +214,15 @@
     <ClInclude Include="Libraries\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="OpenGLWrappers\OpenGLShader.h" />
+    <ClInclude Include="OpenGLHelpers\LightsContainer.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLShader.h" />
     <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h" />
     <ClInclude Include="Scene\Components\Component.h" />
     <ClInclude Include="Scene\Components\DirectionalLightComponent.h" />
     <ClInclude Include="Scene\Components\MaterialComponent.h" />
     <ClInclude Include="Scene\Components\PointLightComponent.h" />
     <ClInclude Include="Scene\Components\PrimitiveComponent.h" />
+    <ClInclude Include="Scene\Components\SpotLightComponent.h" />
     <ClInclude Include="Scene\Components\TransformComponent.h" />
     <ClInclude Include="Scene\Object.h" />
     <ClInclude Include="Scene\Scene.h" />

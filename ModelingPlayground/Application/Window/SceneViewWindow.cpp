@@ -45,12 +45,14 @@ void SceneViewWindow::Update(double seconds)
 void SceneViewWindow::InitializeOpenGLObjects()
 {
 	// Create shader
-	m_defaultShader = std::make_unique<OpenGLShader>("Shaders/default.vert", "Shaders/default.frag");
+	m_defaultShader = std::make_shared<OpenGLShader>("Shaders/default.vert", "Shaders/default.frag");
 
 	m_defaultShader->RegisterUniformVariable("modelMatrix");
 	m_defaultShader->RegisterUniformVariable("cameraMatrix");
 	m_defaultShader->RegisterUniformVariable("ambientColor");
 	m_defaultShader->RegisterUniformVariable("materialColor");
+
+	m_scene->CreateLightsContainer(m_defaultShader);
 }
 
 void SceneViewWindow::DrawScene() const

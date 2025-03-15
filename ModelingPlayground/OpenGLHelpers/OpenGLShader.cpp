@@ -31,6 +31,15 @@ void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
     m_uniformLocationCache[uniformName] = glGetUniformLocation(m_shaderID, uniformName.c_str());
 }
 
+void OpenGLShader::SetUniform1ui(const std::string& uniformName, uint32_t uniformValue)
+{
+    if (!ValidateUniformName(uniformName))
+    {
+        return;
+    }
+    glUniform1ui(m_uniformLocationCache[uniformName], uniformValue);
+}
+
 void OpenGLShader::SetUniformMatrix4f(const std::string& uniformName, bool transpose, const glm::mat4& matrix)
 {
     if (!ValidateUniformName(uniformName))

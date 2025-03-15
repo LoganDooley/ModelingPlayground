@@ -64,6 +64,11 @@ const glm::vec3& TransformComponent::GetScale() const
     return m_scale;
 }
 
+const glm::vec3& TransformComponent::GetLocalXUnitVector() const
+{
+    return m_localXUnitVector;
+}
+
 void TransformComponent::SetPosition(glm::vec3 newPosition)
 {
     if (m_position != newPosition)

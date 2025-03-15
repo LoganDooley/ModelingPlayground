@@ -15,6 +15,7 @@ public:
     const glm::vec3& GetPosition() const;
     const glm::vec3& GetRotation() const;
     const glm::vec3& GetScale() const;
+    const glm::vec3& GetLocalXUnitVector() const;
     void SetPosition(glm::vec3 newPosition);
     void SetRotation(glm::vec3 newRotation);
     void SetScale(glm::vec3 newScale);
