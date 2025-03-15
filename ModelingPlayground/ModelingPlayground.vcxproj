@@ -185,7 +185,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Scene\Object.cpp" />
-    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\SceneHierarchy.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNode.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
     <ClCompile Include="Utils\OpenGLPrimitiveDrawer.cpp" />
@@ -225,7 +225,7 @@
     <ClInclude Include="Scene\Components\SpotLightComponent.h" />
     <ClInclude Include="Scene\Components\TransformComponent.h" />
     <ClInclude Include="Scene\Object.h" />
-    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\SceneHierarchy.h" />
     <ClInclude Include="Scene\SceneNode\SceneNode.h" />
     <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h" />
     <ClInclude Include="Utils\Dirtyable.h" />

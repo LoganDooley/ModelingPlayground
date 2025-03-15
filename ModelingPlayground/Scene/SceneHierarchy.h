@@ -2,9 +2,9 @@
 #include "../OpenGLHelpers/LightsContainer.h"
 #include "SceneNode/SceneNode.h"
 
-class Scene {
+class SceneHierarchy {
 public:
-    Scene();
+    SceneHierarchy();
 
     const std::shared_ptr<SceneNode>& GetRootSceneNode() const;
     void SetSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode);

@@ -4,12 +4,12 @@
 
 #include "Window.h"
 
-class Scene;
+class SceneHierarchy;
 
 class InspectorWindow : public Window
 {
 public:
-	InspectorWindow(const std::shared_ptr<Scene>& scene);
+	InspectorWindow(const std::shared_ptr<SceneHierarchy>& scene);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -17,6 +17,6 @@ public:
 	inline static const std::string Name = "Inspector";
 
 private:
-	std::shared_ptr<Scene> m_scene;
+	std::shared_ptr<SceneHierarchy> m_scene;
 };
 

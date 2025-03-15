@@ -1,9 +1,9 @@
 #include "InspectorWindow.h"
 
 #include "imgui.h"
-#include "../../Scene/Scene.h"
+#include "../../Scene/SceneHierarchy.h"
 
-InspectorWindow::InspectorWindow(const std::shared_ptr<Scene>& scene):
+InspectorWindow::InspectorWindow(const std::shared_ptr<SceneHierarchy>& scene):
 	m_scene(scene)
 {
 }

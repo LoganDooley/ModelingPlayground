@@ -40,6 +40,15 @@ void OpenGLShader::SetUniform1ui(const std::string& uniformName, uint32_t unifor
     glUniform1ui(m_uniformLocationCache[uniformName], uniformValue);
 }
 
+void OpenGLShader::SetUniformMatrix3f(const std::string& uniformName, bool transpose, const glm::mat3& matrix)
+{
+    if (!ValidateUniformName(uniformName))
+    {
+        return;
+    }
+    glUniformMatrix3fv(m_uniformLocationCache[uniformName], 1, transpose, &matrix[0][0]);
+}
+
 void OpenGLShader::SetUniformMatrix4f(const std::string& uniformName, bool transpose, const glm::mat4& matrix)
 {
     if (!ValidateUniformName(uniformName))

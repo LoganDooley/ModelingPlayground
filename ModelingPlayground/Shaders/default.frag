@@ -21,9 +21,11 @@ uniform uint lightCount;
 uniform vec3 ambientColor;
 uniform vec3 materialColor;
 
+in vec3 vertexNormal;
+
 out vec4 FragColor;
 
 void main()
 {
-    FragColor = vec4(materialColor, 1);
+    FragColor = vec4(abs(vertexNormal), 1);
 }

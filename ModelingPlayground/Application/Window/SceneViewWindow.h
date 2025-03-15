@@ -15,12 +15,12 @@ class PrimitiveComponent;
 class Object;
 class SceneNode;
 class ObjectData;
-class Scene;
+class SceneHierarchy;
 
 class SceneViewWindow : public Window
 {
 public:
-	SceneViewWindow(const std::shared_ptr<Scene>& scene, const std::shared_ptr<InputManager>& inputManager);
+	SceneViewWindow(const std::shared_ptr<SceneHierarchy>& scene, const std::shared_ptr<InputManager>& inputManager);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -41,6 +41,6 @@ private:
 	
 	std::shared_ptr<OpenGLShader> m_defaultShader;
 
-	std::shared_ptr<Scene> m_scene;
+	std::shared_ptr<SceneHierarchy> m_scene;
 };
 

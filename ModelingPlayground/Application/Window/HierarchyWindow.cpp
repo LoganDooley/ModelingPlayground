@@ -1,9 +1,9 @@
 #include "HierarchyWindow.h"
 #include "imgui.h"
 #include "SceneViewWindow.h"
-#include "../../Scene/Scene.h"
+#include "../../Scene/SceneHierarchy.h"
 
-HierarchyWindow::HierarchyWindow(const std::shared_ptr<Scene>& scene):
+HierarchyWindow::HierarchyWindow(const std::shared_ptr<SceneHierarchy>& scene):
 	m_scene(scene)
 {
 }

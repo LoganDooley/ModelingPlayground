@@ -7,12 +7,12 @@
 
 class SceneNode;
 class ObjectSceneNode;
-class Scene;
+class SceneHierarchy;
 
 class HierarchyWindow : public Window
 {
 public:
-	HierarchyWindow(const std::shared_ptr<Scene>& scene);
+	HierarchyWindow(const std::shared_ptr<SceneHierarchy>& scene);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -25,6 +25,6 @@ private:
 	void CheckNodePopupMenu(SceneNode& node);
 	void TryRegisterSceneNodeAsLight(const std::shared_ptr<SceneNode>& node, SceneNodeType sceneNodeType);
 	
-	std::shared_ptr<Scene> m_scene;
+	std::shared_ptr<SceneHierarchy> m_scene;
 };
 

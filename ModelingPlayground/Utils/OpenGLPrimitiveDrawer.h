@@ -24,5 +24,5 @@ private:
     GLuint m_cubeVBO;
     GLuint m_cubeVAO;
     GLuint m_cubeEBO;
-    GLuint m_cubeIndexCount;
+    GLuint m_cubeVertexCount;
 };

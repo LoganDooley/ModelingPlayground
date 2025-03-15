@@ -12,7 +12,7 @@
 #include "Window/InspectorWindow.h"
 #include "Window/Window.h"
 
-WindowManager::WindowManager(const std::shared_ptr<Scene>& scene):
+WindowManager::WindowManager(const std::shared_ptr<SceneHierarchy>& scene):
 	m_scene(scene)
 {
 }

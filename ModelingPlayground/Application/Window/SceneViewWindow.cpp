@@ -5,14 +5,14 @@
 
 #include "imgui.h"
 #include "../../Scene/Object.h"
-#include "../../Scene/Scene.h"
+#include "../../Scene/SceneHierarchy.h"
 #include "../../Scene/Components/OpenGLSettingsComponent.h"
 #include "../../Scene/Components/MaterialComponent.h"
 #include "../../Scene/Components/PrimitiveComponent.h"
 #include "../../Scene/Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
-SceneViewWindow::SceneViewWindow(const std::shared_ptr<Scene>& scene, const std::shared_ptr<InputManager>& inputManager):
+SceneViewWindow::SceneViewWindow(const std::shared_ptr<SceneHierarchy>& scene, const std::shared_ptr<InputManager>& inputManager):
 	m_openGLPrimitiveDrawer(std::make_unique<OpenGLPrimitiveDrawer>(10, 10)),
 	m_camera(std::make_unique<SceneViewCamera>(inputManager, glm::uvec2(1, 1))),
 	m_scene(scene)
@@ -48,11 +48,15 @@ void SceneViewWindow::InitializeOpenGLObjects()
 	m_defaultShader = std::make_shared<OpenGLShader>("Shaders/default.vert", "Shaders/default.frag");
 
 	m_defaultShader->RegisterUniformVariable("modelMatrix");
+	m_defaultShader->RegisterUniformVariable("inverseTransposeModelMatrix");
 	m_defaultShader->RegisterUniformVariable("cameraMatrix");
 	m_defaultShader->RegisterUniformVariable("ambientColor");
 	m_defaultShader->RegisterUniformVariable("materialColor");
 
 	m_scene->CreateLightsContainer(m_defaultShader);
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void SceneViewWindow::DrawScene() const
@@ -118,6 +122,8 @@ void SceneViewWindow::DrawMesh(const PrimitiveComponent& primitiveComponent, con
 	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent.GetModelMatrix();
 	m_defaultShader->BindShader();
 	m_defaultShader->SetUniformMatrix4f("modelMatrix", false, cumulativeModelMatrix);
+	glm::mat3 inverseTransposeModelMatrix = glm::transpose(glm::inverse(glm::mat3(cumulativeModelMatrix)));
+	m_defaultShader->SetUniformMatrix3f("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
 	glm::vec3 materialColor = materialComponent.GetMaterialColor();
 	m_defaultShader->SetUniform3f("materialColor", materialColor);
 	m_openGLPrimitiveDrawer->DrawPrimitive(primitiveComponent.GetPrimitiveType());
