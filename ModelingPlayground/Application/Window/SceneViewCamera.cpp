@@ -101,6 +101,11 @@ const glm::mat4& SceneViewCamera::GetCameraMatrix()
     return m_cameraMatrix.GetData();
 }
 
+const glm::vec3& SceneViewCamera::GetCameraPosition() const
+{
+    return m_position;
+}
+
 void SceneViewCamera::PrintCameraMatrix() const
 {
     for (int i = 0; i < 4; i++)

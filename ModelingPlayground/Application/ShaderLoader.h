@@ -29,6 +29,7 @@ public:
             glGetProgramInfoLog(programID, length, nullptr, &log[0]);
 
             glDeleteProgram(programID);
+            std::cerr<<log<<std::endl;
             throw std::runtime_error(log);
         }
 
@@ -61,6 +62,7 @@ public:
             glGetProgramInfoLog(programID, length, nullptr, &log[0]);
 
             glDeleteProgram(programID);
+            std::cerr<<log<<std::endl;
             throw std::runtime_error(log);
         }
 
@@ -103,6 +105,8 @@ private:
             glGetShaderInfoLog(shaderID, length, nullptr, &log[0]);
 
             glDeleteShader(shaderID);
+            glDeleteShader(shaderID);
+            std::cerr<<log<<std::endl;
             throw std::runtime_error(log);
         }
 

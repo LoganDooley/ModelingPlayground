@@ -31,14 +31,14 @@ bool LightsContainer::AddLight(const std::shared_ptr<SceneNode>& light, LightTyp
 
     m_lights.push_back({light, type});
     SetLightUniforms(m_lights.size() - 1);
-    m_shader->SetUniform1ui("lightCount", m_lights.size());
+    m_shader->SetUniform1i("lightCount", m_lights.size());
     return true;
 }
 
 void LightsContainer::ClearLights()
 {
     m_lights.clear();
-    m_shader->SetUniform1ui("lightCount", 0);
+    m_shader->SetUniform1i("lightCount", 0);
 }
 
 std::string LightsContainer::GetLightTypeUniformName(uint32_t lightIndex)
@@ -129,7 +129,7 @@ void LightsContainer::SetSpotLightUniforms(uint32_t lightIndex,
 
 void LightsContainer::SetLightTypeUniform(uint32_t lightIndex, LightType type) const
 {
-    m_shader->SetUniform1ui(GetLightTypeUniformName(lightIndex), type);
+    m_shader->SetUniform1i(GetLightTypeUniformName(lightIndex), type);
 }
 
 void LightsContainer::SetLightPositionUniform(uint32_t lightIndex, const glm::vec3& position) const

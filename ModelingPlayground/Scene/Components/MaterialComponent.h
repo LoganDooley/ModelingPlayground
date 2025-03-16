@@ -12,7 +12,11 @@ public:
     void RenderInspector() override;
 
     glm::vec3 GetMaterialColor() const;
+    float GetMetallic() const;
+    float GetRoughness() const;
 
 private:
     glm::vec3 m_materialColor;
+    float m_metallic;
+    float m_roughness;
 };

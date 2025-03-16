@@ -10,7 +10,7 @@
 #include "../Scene/Components/SpotLightComponent.h"
 #include "../Scene/SceneNode/SceneNode.h"
 
-enum LightType
+enum LightType : int
 {
     Directional = 0, Point = 1, Spot = 2
 };

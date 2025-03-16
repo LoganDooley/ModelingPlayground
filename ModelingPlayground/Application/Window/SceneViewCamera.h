@@ -21,6 +21,8 @@ public:
     glm::uvec2 GetScreenSize() const;
     float GetAspectRatio() const;
     const glm::mat4& GetCameraMatrix();
+    const glm::vec3& GetCameraPosition() const;
+    
     void PrintCameraMatrix() const;
 
 private:

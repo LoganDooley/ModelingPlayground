@@ -6,7 +6,8 @@
 #include "../../Utils/PropertyDrawer.h"
 
 OpenGLSettingsComponent::OpenGLSettingsComponent():
-    m_clearColor(glm::vec4(glm::vec3(0.0f), 1.0f))
+    m_clearColor(glm::vec4(glm::vec3(0.0f), 1.0f)),
+    m_ambientLight(glm::vec3(0.03f))
 {
 }
 

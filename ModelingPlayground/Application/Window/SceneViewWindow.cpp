@@ -50,8 +50,11 @@ void SceneViewWindow::InitializeOpenGLObjects()
 	m_defaultShader->RegisterUniformVariable("modelMatrix");
 	m_defaultShader->RegisterUniformVariable("inverseTransposeModelMatrix");
 	m_defaultShader->RegisterUniformVariable("cameraMatrix");
+	m_defaultShader->RegisterUniformVariable("cameraPosition");
 	m_defaultShader->RegisterUniformVariable("ambientColor");
 	m_defaultShader->RegisterUniformVariable("materialColor");
+	m_defaultShader->RegisterUniformVariable("roughness");
+	m_defaultShader->RegisterUniformVariable("metallic");
 
 	m_scene->CreateLightsContainer(m_defaultShader);
 
@@ -67,6 +70,7 @@ void SceneViewWindow::DrawScene() const
 	m_camera->SetViewport();
 
 	m_defaultShader->SetUniformMatrix4f("cameraMatrix", false, m_camera->GetCameraMatrix());
+	m_defaultShader->SetUniform3f("cameraPosition", m_camera->GetCameraPosition());
 
 	// DFS draw objects
 	std::stack<std::pair<std::shared_ptr<SceneNode>, glm::mat4>> traversal;
@@ -113,6 +117,8 @@ void SceneViewWindow::ProcessObject(const Object& object, glm::mat4& cumulativeM
 		glm::vec4 clearColor = openGLSettingsComponents[0]->GetClearColor();
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		m_defaultShader->SetUniform3f("ambientColor", openGLSettingsComponents[0]->GetAmbientLight());
 	}
 }
 
@@ -124,7 +130,9 @@ void SceneViewWindow::DrawMesh(const PrimitiveComponent& primitiveComponent, con
 	m_defaultShader->SetUniformMatrix4f("modelMatrix", false, cumulativeModelMatrix);
 	glm::mat3 inverseTransposeModelMatrix = glm::transpose(glm::inverse(glm::mat3(cumulativeModelMatrix)));
 	m_defaultShader->SetUniformMatrix3f("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
-	glm::vec3 materialColor = materialComponent.GetMaterialColor();
-	m_defaultShader->SetUniform3f("materialColor", materialColor);
+	m_defaultShader->SetUniform3f("materialColor", materialComponent.GetMaterialColor());
+	m_defaultShader->SetUniform1f("roughness", materialComponent.GetRoughness());
+	m_defaultShader->SetUniform1f("metallic", materialComponent.GetRoughness());
+	
 	m_openGLPrimitiveDrawer->DrawPrimitive(primitiveComponent.GetPrimitiveType());
 }

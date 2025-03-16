@@ -25,10 +25,23 @@ void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
 {
     if (m_uniformLocationCache.contains(uniformName))
     {
-        std::cout << "Unifom variable " << uniformName << " is already registered!" << std::endl;
+        std::cout << "OpenGLShader|RegisterUniformVariable: Unifom variable " << uniformName << " is already registered!\n";
         return;
     }
     m_uniformLocationCache[uniformName] = glGetUniformLocation(m_shaderID, uniformName.c_str());
+    if (m_uniformLocationCache[uniformName] == -1)
+    {
+        std::cout << "OpenGLShader|RegisterUniformVariable: Unifom variable " << uniformName << " does not exist in shader! Please check if this uniform exists and is used within the shader program.\n";
+    }
+}
+
+void OpenGLShader::SetUniform1i(const std::string& uniformName, int uniformValue)
+{
+    if (!ValidateUniformName(uniformName))
+    {
+        return;
+    }
+    glUniform1i(m_uniformLocationCache[uniformName], uniformValue);
 }
 
 void OpenGLShader::SetUniform1ui(const std::string& uniformName, uint32_t uniformValue)
@@ -38,6 +51,24 @@ void OpenGLShader::SetUniform1ui(const std::string& uniformName, uint32_t unifor
         return;
     }
     glUniform1ui(m_uniformLocationCache[uniformName], uniformValue);
+}
+
+void OpenGLShader::SetUniform1f(const std::string& uniformName, float uniformValue)
+{
+    if (!ValidateUniformName(uniformName))
+    {
+        return;
+    }
+    glUniform1f(m_uniformLocationCache[uniformName], uniformValue);
+}
+
+void OpenGLShader::SetUniform3f(const std::string& uniformName, glm::vec3 vector)
+{
+    if (!ValidateUniformName(uniformName))
+    {
+        return;
+    }
+    glUniform3f(m_uniformLocationCache[uniformName], vector.x, vector.y, vector.z);
 }
 
 void OpenGLShader::SetUniformMatrix3f(const std::string& uniformName, bool transpose, const glm::mat3& matrix)
@@ -56,15 +87,6 @@ void OpenGLShader::SetUniformMatrix4f(const std::string& uniformName, bool trans
         return;
     }
     glUniformMatrix4fv(m_uniformLocationCache[uniformName], 1, transpose, &matrix[0][0]);
-}
-
-void OpenGLShader::SetUniform3f(const std::string& uniformName, glm::vec3 vector)
-{
-    if (!ValidateUniformName(uniformName))
-    {
-        return;
-    }
-    glUniform3f(m_uniformLocationCache[uniformName], vector.x, vector.y, vector.z);
 }
 
 bool OpenGLShader::ValidateUniformName(std::string uniformName)

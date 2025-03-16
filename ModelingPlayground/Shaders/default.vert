@@ -6,10 +6,15 @@ uniform mat4 modelMatrix;
 uniform mat3 inverseTransposeModelMatrix;
 uniform mat4 cameraMatrix;
 
+out vec3 vertexWorldPosition;
 out vec3 vertexNormal;
 
 void main()
 {
-    gl_Position = cameraMatrix * modelMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    vec4 vertexWorldPosition4;
+    vertexWorldPosition4 = modelMatrix * vec4(aPos, 1.0);
+    
+    vertexWorldPosition = vec3(vertexWorldPosition4);
     vertexNormal = normalize(inverseTransposeModelMatrix * aNormal);
+    gl_Position = cameraMatrix * vertexWorldPosition4;
 }  
