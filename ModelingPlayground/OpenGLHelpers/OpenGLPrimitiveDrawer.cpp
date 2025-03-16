@@ -42,7 +42,7 @@ OpenGLPrimitiveDrawer::OpenGLPrimitiveDrawer(int sphereLatitudinalResolution, in
 		sphereVBOData.push_back(sphereNormals[i]);
 	}
 	
-	m_sphereIndexCount = sphereIndices.size();
+	m_sphereIndexCount = static_cast<GLuint>(sphereIndices.size());
 	
     glGenVertexArrays(1, &m_sphereVAO);
     glBindVertexArray(m_sphereVAO);
@@ -74,7 +74,7 @@ OpenGLPrimitiveDrawer::OpenGLPrimitiveDrawer(int sphereLatitudinalResolution, in
 		cubeVBOData.push_back(cubeNormals[i]);
 	}
 	
-	m_cubeVertexCount = cubeVertices.size();
+	m_cubeVertexCount = static_cast<GLuint>(cubeVertices.size());
 	
     glGenVertexArrays(1, &m_cubeVAO);
     glBindVertexArray(m_cubeVAO);

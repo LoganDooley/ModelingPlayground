@@ -73,7 +73,7 @@ void OpenGLRenderer::RenderSceneHierarchy() const
 
         // Add children to stack in reverse order
         const std::vector<std::shared_ptr<SceneNode>>& children = sceneNode->GetChildren();
-        for (int i = children.size() - 1; i >= 0; i--)
+        for (int i = static_cast<int>(children.size()) - 1; i >= 0; i--)
         {
             traversal.push({children[i], cumulativeModelMatrix});
         }

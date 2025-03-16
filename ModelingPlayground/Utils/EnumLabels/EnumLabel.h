@@ -61,7 +61,7 @@ public:
         return m_cStrings;
     }
 
-    int Count()
+    size_t Count()
     {
         return m_enums.size();
     }

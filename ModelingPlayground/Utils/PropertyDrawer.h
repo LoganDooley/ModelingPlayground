@@ -40,7 +40,7 @@ public:
     static bool DrawEnumLabelCombo(const char* propertyName, EnumLabel<E> enumLabel, E& enumValue)
     {
         int newEnumIndex = enumLabel.GetEnumIndex(enumValue);
-        ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(), enumLabel.Count());
+        ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(), static_cast<int>(enumLabel.Count()));
         if (enumLabel.GetEnums()[newEnumIndex] == enumValue)
         {
             return false;
