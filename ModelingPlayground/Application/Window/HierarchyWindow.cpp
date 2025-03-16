@@ -38,10 +38,12 @@ void HierarchyWindow::DrawNode(const std::shared_ptr<SceneNode>& node)
 	if (ImGui::TreeNodeEx(node->GetName().c_str(), nodeFlags))
 	{
 		CheckNodeSelection(node);
-		CheckNodePopupMenu(*node);
-		for (const std::shared_ptr<SceneNode>& child : node->GetChildren())
+		CheckNodePopupMenu(node);
+		const std::vector<std::shared_ptr<SceneNode>>& children = node->GetChildren();
+		// DrawNode may change the number of children if the selection menu deletes one
+		for (int i = 0; i<children.size(); i++)
 		{
-			DrawNode(child);
+			DrawNode(children[i]);
 		}
 		ImGui::TreePop();
 	}
@@ -55,7 +57,7 @@ void HierarchyWindow::CheckNodeSelection(const std::shared_ptr<SceneNode>& node)
 	}
 }
 
-void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
+void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node)
 {
 	if (ImGui::BeginPopupContextItem())
 	{
@@ -75,7 +77,10 @@ void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
 		}
 		if (ImGui::MenuItem("Delete"))
 		{
-			
+			if (node->HasParent())
+			{
+				node->GetParent()->RemoveChild(node);
+			}
 		}
 		ImGui::EndPopup();
 	}

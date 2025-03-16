@@ -11,7 +11,7 @@
 #include "../Components/SpotLightComponent.h"
 #include "../Components/TransformComponent.h"
 
-std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, SceneNode& parent)
+std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent)
 {
     std::shared_ptr<SceneNode> sceneNode = std::make_shared<SceneNode>(GetDefaultSceneNodeName(sceneNodeType, parent));
     switch (sceneNodeType)
@@ -31,7 +31,11 @@ std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(Scen
         default:
             std::cout<<"SceneNodeGenerator|CreateSceneNodeAndAddAsChild: Invalid Scene Node Type!\n";
     }
-    parent.AddChild(sceneNode);
+
+    // Set parent child relationship
+    parent->AddChild(sceneNode);
+    sceneNode->SetParent(parent);
+    
     return sceneNode;
 }
 
@@ -86,7 +90,7 @@ void SceneNodeGenerator::InitializeSpotLightObject(Object& object)
     object.AddComponent<SpotLightComponent>();
 }
 
-std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent)
+std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent)
 {
     std::string baseName;
     switch (sceneNodeType)
@@ -105,7 +109,7 @@ std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeT
             break;
     }
     std::unordered_set<std::string> takenNames;
-    for (const std::shared_ptr<SceneNode>& child : parent.GetChildren())
+    for (const std::shared_ptr<SceneNode>& child : parent->GetChildren())
     {
         takenNames.insert(child->GetName());
     }

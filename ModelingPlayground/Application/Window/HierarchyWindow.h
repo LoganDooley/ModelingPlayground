@@ -22,7 +22,7 @@ public:
 private:
 	void DrawNode(const std::shared_ptr<SceneNode>& node);
 	void CheckNodeSelection(const std::shared_ptr<SceneNode>& node);
-	void CheckNodePopupMenu(SceneNode& node);
+	void CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node);
 
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 };

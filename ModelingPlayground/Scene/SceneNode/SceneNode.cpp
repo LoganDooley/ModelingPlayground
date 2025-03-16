@@ -9,6 +9,14 @@ SceneNode::SceneNode(std::string name, const std::vector<std::shared_ptr<SceneNo
 {
 }
 
+SceneNode::~SceneNode()
+{
+    for (const auto& subscriber : m_onDestroyedSubscribers)
+    {
+        subscriber();
+    }
+}
+
 const std::vector<std::shared_ptr<SceneNode>>& SceneNode::GetChildren() const
 {
     return m_childSceneNodes;
@@ -29,6 +37,21 @@ bool SceneNode::HasChildren() const
     return !m_childSceneNodes.empty();
 }
 
+std::shared_ptr<SceneNode> SceneNode::GetParent() const
+{
+    return m_parentSceneNode.lock();
+}
+
+void SceneNode::SetParent(const std::shared_ptr<SceneNode>& parentSceneNode)
+{
+    m_parentSceneNode = parentSceneNode;
+}
+
+bool SceneNode::HasParent() const
+{
+    return GetParent() != nullptr;
+}
+
 std::string SceneNode::GetName() const
 {
     return m_name;
@@ -42,4 +65,9 @@ Object& SceneNode::GetObject() const
 void SceneNode::RenderInspector() const
 {
     m_object->RenderInspector();
+}
+
+void SceneNode::SubscribeToOnDestroyed(const std::function<void()>& callback)
+{
+    m_onDestroyedSubscribers.push_back(callback);
 }

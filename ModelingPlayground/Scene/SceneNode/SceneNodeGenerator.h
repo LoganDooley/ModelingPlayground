@@ -14,7 +14,7 @@ enum class SceneNodeType
 class SceneNodeGenerator
 {
 public:
-    static std::shared_ptr<SceneNode> CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, SceneNode& parent);
+    static std::shared_ptr<SceneNode> CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
     static std::vector<SceneNodeType> GetSceneNodeTypes();
     static std::string GetSceneNodeTypeName(SceneNodeType sceneNodeType);
 
@@ -24,5 +24,5 @@ private:
     static void InitializePointLightObject(Object& object);
     static void InitializeSpotLightObject(Object& object);
     
-    static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, SceneNode& parent);
+    static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
 };
