@@ -305,7 +305,7 @@
     <ClInclude Include="Scene\SceneHierarchy.h" />
     <ClInclude Include="Scene\SceneNode\SceneNode.h" />
     <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h" />
-    <ClInclude Include="Utils\Dirtyable.h" />
+    <ClInclude Include="Utils\LazyValue.h" />
     <ClInclude Include="Utils\EnumLabels\EnumLabel.h" />
     <ClInclude Include="Utils\EnumLabels\PrimitiveTypeEnumLabel.h" />
     <ClInclude Include="Utils\PrimitiveGenerator.h" />

@@ -2,7 +2,7 @@
 #include <memory>
 #include <glm/mat4x4.hpp>
 
-#include "../../Utils/Dirtyable.h"
+#include "../../Utils/LazyValue.h"
 #include "glad/glad.h"
 
 class InputManager;
@@ -23,19 +23,20 @@ public:
     const glm::mat4& GetCameraMatrix();
     const glm::vec3& GetCameraPosition() const;
     
-    void PrintCameraMatrix() const;
+    void PrintCameraMatrix();
 
 private:
     void UpdateFramebuffer();
     void UpdateViewMatrix();
     void UpdateProjectionMatrix();
-    void UpdateCameraMatrix();
+
+    glm::mat4 ComputeCameraMatrix() const;
+    glm::vec3 ComputeMovementDirection();
 
     void HandleKeyEvent(int key, int action);
     void HandleCursorPosEvent(double xpos, double ypos);
     void HandleMouseButtonEvent(int button, int action);
-
-    void UpdateMovementDirection();
+    
     void MoveCamera(double seconds);
 
     glm::uvec2 m_screenSize;
@@ -50,7 +51,7 @@ private:
     
     glm::mat4 m_projectionMatrix;
     glm::mat4 m_viewMatrix;
-    Dirtyable<glm::mat4> m_cameraMatrix;
+    LazyValue<glm::mat4> m_cameraMatrix;
 
     GLuint m_framebuffer;
     GLuint m_framebufferTexture;
@@ -59,5 +60,5 @@ private:
     std::shared_ptr<InputManager> m_inputManager;
     float m_movementSpeed;
 
-    Dirtyable<glm::vec3> m_movementDirection;
+    LazyValue<glm::vec3> m_movementDirection;
 };

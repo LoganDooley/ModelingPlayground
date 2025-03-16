@@ -19,10 +19,10 @@ SceneViewCamera::SceneViewCamera(const std::shared_ptr<InputManager>& inputManag
     m_up(glm::vec3(0, 1, 0)),
     m_viewMatrix(glm::mat4(1)),
     m_projectionMatrix(glm::mat4(1)),
-    m_cameraMatrix(glm::mat4(1)),
+    m_cameraMatrix(glm::mat4(1), [this]{return ComputeCameraMatrix();}),
     m_inputManager(inputManager),
     m_movementSpeed(1.f),
-    m_movementDirection(glm::vec3(0))
+    m_movementDirection(glm::vec3(0), [this]{return ComputeMovementDirection();})
 {
     UpdateViewMatrix();
     UpdateProjectionMatrix();
@@ -46,11 +46,7 @@ SceneViewCamera::SceneViewCamera(const std::shared_ptr<InputManager>& inputManag
 
 void SceneViewCamera::Update(double seconds)
 {
-    if (m_movementDirection.IsDirty())
-    {
-        UpdateMovementDirection();
-    }
-    if (m_movementDirection.GetData() != glm::vec3(0))
+    if (m_movementDirection.GetValue() != glm::vec3(0))
     {
         MoveCamera(seconds);
     }
@@ -94,11 +90,7 @@ float SceneViewCamera::GetAspectRatio() const
 
 const glm::mat4& SceneViewCamera::GetCameraMatrix()
 {
-    if (m_cameraMatrix.IsDirty())
-    {
-        UpdateCameraMatrix();
-    }
-    return m_cameraMatrix.GetData();
+    return m_cameraMatrix.GetValue();
 }
 
 const glm::vec3& SceneViewCamera::GetCameraPosition() const
@@ -106,13 +98,13 @@ const glm::vec3& SceneViewCamera::GetCameraPosition() const
     return m_position;
 }
 
-void SceneViewCamera::PrintCameraMatrix() const
+void SceneViewCamera::PrintCameraMatrix()
 {
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            std::cout<<m_cameraMatrix.GetData()[i][j]<<", ";
+            std::cout<<m_cameraMatrix.GetValue()[i][j]<<", ";
         }
         std::cout<<"\n";
     }
@@ -168,9 +160,9 @@ void SceneViewCamera::UpdateProjectionMatrix()
     m_cameraMatrix.MarkDirty();
 }
 
-void SceneViewCamera::UpdateCameraMatrix()
+glm::mat4 SceneViewCamera::ComputeCameraMatrix() const
 {
-    m_cameraMatrix = m_projectionMatrix * m_viewMatrix;
+    return m_projectionMatrix * m_viewMatrix;
 }
 
 void SceneViewCamera::HandleKeyEvent(int key, int action)
@@ -194,7 +186,7 @@ void SceneViewCamera::HandleMouseButtonEvent(int button, int action)
 {
 }
 
-void SceneViewCamera::UpdateMovementDirection()
+glm::vec3 SceneViewCamera::ComputeMovementDirection()
 {
     glm::vec3 newMovementDirection = glm::vec3(0);
     glm::vec3 rightVector = glm::normalize(glm::cross(m_look, m_up));
@@ -228,11 +220,11 @@ void SceneViewCamera::UpdateMovementDirection()
         newMovementDirection = glm::normalize(newMovementDirection);
     }
     
-    m_movementDirection.SetCleanData(newMovementDirection);
+    return newMovementDirection;
 }
 
 void SceneViewCamera::MoveCamera(double seconds)
 {
-    m_position += static_cast<float>(seconds) * m_movementSpeed * m_movementDirection.GetData();
+    m_position += static_cast<float>(seconds) * m_movementSpeed * m_movementDirection.GetValue();
     UpdateViewMatrix();
 }
