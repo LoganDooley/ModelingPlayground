@@ -22,24 +22,28 @@ void TransformComponent::RenderInspector()
     if (ImGui::CollapsingHeader("Transform", transformHeaderFlags))
     {
         // Position
-        glm::vec3 position = m_position.GetData();
-        if (PropertyDrawer::DrawVec3fDrag("Position", position, 0.01f))
+        if (PropertyDrawer::DrawVec3fDrag("Position", m_position, 0.01f))
         {
-            SetPosition(position);
+            UpdateModelMatrix();
         }
 
         // Rotation
-        glm::vec3 rotation = m_rotation;
-        if (PropertyDrawer::DrawVec3fDrag("Rotation", rotation, 1.0f))
+        if (PropertyDrawer::DrawVec3fDrag("Rotation", m_rotation, 1.0f))
         {
-            SetRotation(rotation);
+            glm::vec3 rotationModulus = m_rotation.GetData();
+            rotationModulus.x = std::fmodf(rotationModulus.x, 360.0f);
+            rotationModulus.y = std::fmodf(rotationModulus.y, 360.0f);
+            rotationModulus.z = std::fmodf(rotationModulus.z, 360.0f);
+            m_rotation.SetAndNotify(rotationModulus);
+            
+            UpdateModelMatrix();
+            UpdateLocalXUnitVector();
         }
 
         // Scale
-        glm::vec3 scale = m_scale;
-        if (PropertyDrawer::DrawVec3fDrag("Scale", scale, 0.01f))
+        if (PropertyDrawer::DrawVec3fDrag("Scale", m_scale, 0.01f))
         {
-            SetScale(scale);
+            UpdateModelMatrix();
         }
     }
 }
@@ -61,12 +65,12 @@ DataBinding<glm::vec3>& TransformComponent::GetPositionDataBinding()
 
 const glm::vec3& TransformComponent::GetRotation() const
 {
-    return m_rotation;
+    return m_rotation.GetData();
 }
 
 const glm::vec3& TransformComponent::GetScale() const
 {
-    return m_scale;
+    return m_scale.GetData();
 }
 
 const glm::vec3& TransformComponent::GetLocalXUnitVector() const
@@ -79,44 +83,13 @@ DataBinding<glm::vec3>& TransformComponent::GetLocalXUnitVectorDataBinding()
     return m_localXUnitVector;
 }
 
-void TransformComponent::SetPosition(glm::vec3 newPosition)
-{
-    if (m_position.SetAndNotify(newPosition))
-    {
-        UpdateModelMatrix();
-    }
-}
-
-void TransformComponent::SetRotation(glm::vec3 newRotation)
-{
-    if (m_rotation != newRotation)
-    {
-        m_rotation = newRotation;
-        m_rotation.x = std::fmod(m_rotation.x, 360.f);
-        m_rotation.y = std::fmod(m_rotation.y, 360.f);
-        m_rotation.z = std::fmod(m_rotation.z, 360.f);
-        
-        UpdateModelMatrix();
-        UpdateLocalXUnitVector();
-    }
-}
-
-void TransformComponent::SetScale(glm::vec3 newScale)
-{
-    if (m_scale != newScale)
-    {
-        m_scale = newScale;
-        UpdateModelMatrix();
-    }
-}
-
 void TransformComponent::UpdateModelMatrix()
 {
     // scale
-    glm::mat4 scaleMatrix = glm::scale(glm::mat4(1), m_scale);
+    glm::mat4 scaleMatrix = glm::scale(glm::mat4(1), m_scale.GetData());
 
     // rotation
-    glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.x), glm::radians(m_rotation.y), glm::radians(m_rotation.z));
+    glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.GetData().x), glm::radians(m_rotation.GetData().y), glm::radians(m_rotation.GetData().z));
 
     // translation
     glm::mat4 translationMatrix = glm::translate(glm::mat4(1), m_position.GetData());
@@ -127,6 +100,6 @@ void TransformComponent::UpdateModelMatrix()
 
 void TransformComponent::UpdateLocalXUnitVector()
 {
-    glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.x), glm::radians(m_rotation.y), glm::radians(m_rotation.z));
+    glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.GetData().x), glm::radians(m_rotation.GetData().y), glm::radians(m_rotation.GetData().z));
     m_localXUnitVector.SetAndNotify(rotationMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
 }
