@@ -48,11 +48,27 @@ LightData getDirectionalLightData(int lightIndex, vec3 N, vec3 V){
 
 LightData getPointLightData(int lightIndex, vec3 N, vec3 V){
     LightData lightData;
+    vec3 toLight = lights[lightIndex].position - vertexWorldPosition;
+    float d = max(length(toLight), 0.0001);
+    lightData.L = toLight/d;
+    lightData.H = normalize(V + lightData.L);
+    vec3 falloff = lights[lightIndex].falloff;
+    float attenuation = clamp(1.0/(falloff.x + d * falloff.y + d * d * falloff.z), 0.0, 1.0);
+    lightData.radiance = lights[lightIndex].color * attenuation;
     return lightData;
 }
 
 LightData getSpotLightData(int lightIndex, vec3 N, vec3 V){
     LightData lightData;
+    vec3 toLight = lights[lightIndex].position - vertexWorldPosition;
+    float d = max(length(toLight), 0.0001);
+    lightData.L = toLight/d;
+    lightData.H = normalize(V + lightData.L);
+    float theta = acos(dot(-lightData.L, lights[lightIndex].direction));
+    float innerAngle = radians(lights[lightIndex].falloff.x);
+    float outerAngle = radians(lights[lightIndex].falloff.y);
+    float attenuation = clamp((theta - outerAngle)/(innerAngle - outerAngle), 0.0, 1.0);
+    lightData.radiance = lights[lightIndex].color * attenuation;
     return lightData;
 }
 

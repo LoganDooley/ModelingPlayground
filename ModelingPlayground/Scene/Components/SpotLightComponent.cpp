@@ -5,7 +5,7 @@
 
 SpotLightComponent::SpotLightComponent():
     m_lightColor(glm::vec3(1.0f)),
-    m_falloffAngle(45.f)
+    m_falloffAngles(glm::vec2(25.f, 50.f))
 {
 }
 
@@ -18,7 +18,7 @@ void SpotLightComponent::RenderInspector()
         PropertyDrawer::DrawVec3fColor("Color", m_lightColor);
 
         // Falloff angle
-        PropertyDrawer::DrawFloatDrag("Falloff Angle", m_falloffAngle, 1.f, 0.f, 180.f);
+        PropertyDrawer::DrawVec2fDrag("Falloff Angle", m_falloffAngles, 1.f, 0.f, 180.f);
     }
 }
 
@@ -32,12 +32,12 @@ DataBinding<glm::vec3>& SpotLightComponent::GetLightColorDataBinding()
     return m_lightColor;
 }
 
-const float& SpotLightComponent::GetLightFalloffAngle() const
+const glm::vec2& SpotLightComponent::GetLightFalloffAngles() const
 {
-    return m_falloffAngle.GetData();
+    return m_falloffAngles.GetData();
 }
 
-DataBinding<float>& SpotLightComponent::GetLightFalloffAngleDataBinding()
+DataBinding<glm::vec2>& SpotLightComponent::GetLightFalloffAnglesDataBinding()
 {
-    return m_falloffAngle;
+    return m_falloffAngles;
 }

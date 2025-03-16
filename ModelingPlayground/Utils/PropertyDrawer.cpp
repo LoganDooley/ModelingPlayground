@@ -21,6 +21,27 @@ bool PropertyDrawer::DrawFloatDrag(const std::string& propertyName, DataBinding<
     return floatValue.SetAndNotify(newFloatValue);
 }
 
+bool PropertyDrawer::DrawVec2fDrag(const std::string& propertyName, glm::vec2& vec2f, float vSpeed, float vMin,
+    float vMax, const char* format)
+{
+    float newVec2f[2] = { vec2f.x, vec2f.y };
+    ImGui::DragFloat2(propertyName.c_str(), newVec2f, vSpeed, vMin, vMax, format);
+    if (vec2f == glm::vec2(newVec2f[0], newVec2f[1]))
+    {
+        return false;
+    }
+    vec2f = glm::vec2(newVec2f[0], newVec2f[1]);
+    return true;
+}
+
+bool PropertyDrawer::DrawVec2fDrag(const std::string& propertyName, DataBinding<glm::vec2>& vec2f, float vSpeed,
+    float vMin, float vMax, const char* format)
+{
+    float newVec2f[2] = { vec2f.GetData().x, vec2f.GetData().y };
+    ImGui::DragFloat2(propertyName.c_str(), newVec2f, vSpeed, vMin, vMax, format);
+    return vec2f.SetAndNotify(glm::vec2(newVec2f[0], newVec2f[1]));
+}
+
 bool PropertyDrawer::DrawVec3fDrag(const std::string& propertyName, glm::vec3& vec3f, float vSpeed, float vMin,
                                    float vMax, const char* format)
 {

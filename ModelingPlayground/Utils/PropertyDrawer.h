@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
@@ -14,6 +15,10 @@ public:
     static bool DrawFloatDrag(const std::string& propertyName, float& floatValue, float vSpeed = 1, float vMin = 0,
         float vMax = 0, const char* format = "%.3f");
     static bool DrawFloatDrag(const std::string& propertyName, DataBinding<float>& floatValue, float vSpeed = 1, float vMin = 0,
+        float vMax = 0, const char* format = "%.3f");
+    static bool DrawVec2fDrag(const std::string& propertyName, glm::vec2& vec2f, float vSpeed = 1, float vMin = 0,
+        float vMax = 0, const char* format = "%.3f");
+    static bool DrawVec2fDrag(const std::string& propertyName, DataBinding<glm::vec2>& vec2f, float vSpeed = 1, float vMin = 0,
         float vMax = 0, const char* format = "%.3f");
     static bool DrawVec3fDrag(const std::string& propertyName, glm::vec3& vec3f, float vSpeed = 1, float vMin = 0,
         float vMax = 0, const char* format = "%.3f");

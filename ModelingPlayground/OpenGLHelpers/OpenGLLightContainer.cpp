@@ -128,7 +128,7 @@ void OpenGLLightContainer::InitializeSpotLight(uint32_t lightIndex,
     SetLightColorUniform(lightIndex, spotLightComponent->GetLightColor());
     SetLightPositionUniform(lightIndex, transformComponent->GetPosition());
     SetLightDirectionUniform(lightIndex, transformComponent->GetLocalXUnitVector());
-    SetLightFalloffUniform(lightIndex, glm::vec3(spotLightComponent->GetLightFalloffAngle()));
+    SetLightFalloffUniform(lightIndex, glm::vec3(spotLightComponent->GetLightFalloffAngles(), 0.f));
 
     SubscribeToSpotLight(lightIndex, transformComponent, spotLightComponent);
 }
@@ -187,9 +187,9 @@ void OpenGLLightContainer::SubscribeToSpotLight(uint32_t lightIndex,
         SetLightDirectionUniform(lightIndex, localXUnitVector);
     });
 
-    spotLightComponent->GetLightFalloffAngleDataBinding().Subscribe([this, lightIndex](const float& falloffAngle, float)
+    spotLightComponent->GetLightFalloffAnglesDataBinding().Subscribe([this, lightIndex](const glm::vec2& falloffAngle, glm::vec2)
     {
-        SetLightFalloffUniform(lightIndex, glm::vec3(falloffAngle));
+        SetLightFalloffUniform(lightIndex, glm::vec3(falloffAngle, 0.f));
     });
 }
 
