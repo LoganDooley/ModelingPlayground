@@ -1,4 +1,5 @@
 ﻿#include "Object.h"
+#include "../nlohmann/json.hpp"
 
 Object::Object(std::string name):
     m_name(name)

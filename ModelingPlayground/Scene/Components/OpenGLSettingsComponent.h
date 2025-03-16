@@ -4,6 +4,7 @@
 #include <glm/vec4.hpp>
 
 #include "Component.h"
+#include "../../nlohmann/json_fwd.hpp"
 
 class OpenGLSettingsComponent : public Component
 {
@@ -14,6 +15,9 @@ public:
 
     glm::vec4 GetClearColor() const;
     glm::vec3 GetAmbientLight() const;
+
+    friend void to_json(nlohmann::json& json, const std::shared_ptr<OpenGLSettingsComponent>& openGLSettingsComponent);
+    friend void from_json(const nlohmann::json& json, std::shared_ptr<OpenGLSettingsComponent>& openGLSettingsComponent);
     
 private:
     glm::vec4 m_clearColor;

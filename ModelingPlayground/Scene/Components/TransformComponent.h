@@ -4,6 +4,7 @@
 
 #include "Component.h"
 #include "../../Utils/DataBinding.h"
+#include "../../nlohmann/json_fwd.hpp"
 
 class TransformComponent : public Component
 {
@@ -19,6 +20,9 @@ public:
     const glm::vec3& GetScale() const;
     const glm::vec3& GetLocalXUnitVector() const;
     DataBinding<glm::vec3>& GetLocalXUnitVectorDataBinding();
+    
+    friend void to_json(nlohmann::json& json, const std::shared_ptr<TransformComponent>& transformComponent);
+    friend void from_json(const nlohmann::json& json, std::shared_ptr<TransformComponent>& transformComponent);
     
 private:
     void UpdateModelMatrix();

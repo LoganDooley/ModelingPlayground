@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Components/Component.h"
+#include "../../nlohmann/json_fwd.hpp"
 
 class Object
 {
@@ -46,6 +47,9 @@ public:
     }
 
     void RenderInspector() const;
+
+    friend void to_json(nlohmann::json& json, const Object& object);
+    friend void from_json(const nlohmann::json& json, Object& object);
 
 private:
     std::string m_name;

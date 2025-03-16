@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "../../nlohmann/json_fwd.hpp"
+
 class Object;
 
 class SceneNode
@@ -24,6 +26,9 @@ public:
     Object& GetObject() const;
     void RenderInspector() const;
     void SubscribeToOnDestroyed(const std::function<void()>& callback);
+
+    friend void to_json(nlohmann::json& json, const std::shared_ptr<SceneNode>& sceneNode);
+    friend void from_json(const nlohmann::json& json, std::shared_ptr<SceneNode>& sceneNode);
 
 private:
     std::string m_name;
