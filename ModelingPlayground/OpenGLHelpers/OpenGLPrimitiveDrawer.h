@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "EnumLabels/PrimitiveTypeEnumLabel.h"
+#include "../../Utils/EnumLabels/PrimitiveTypeEnumLabel.h"
 #include "glad/glad.h"
 
 class OpenGLPrimitiveDrawer

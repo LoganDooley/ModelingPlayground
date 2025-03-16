@@ -32,6 +32,19 @@ public:
         return componentsOfType;
     }
 
+    template <class T>
+    std::shared_ptr<T> GetFirstComponentOfType() const
+    {
+        for (const auto& component : m_components)
+        {
+            if (std::shared_ptr<T> componentAsType = std::dynamic_pointer_cast<T>(component))
+            {
+                return componentAsType;
+            }
+        }
+        return nullptr;
+    }
+
     void RenderInspector() const;
 
 private:

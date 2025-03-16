@@ -29,12 +29,15 @@ bool SceneHierarchy::IsSceneNodeSelected(const std::shared_ptr<SceneNode>& scene
     return sceneNode == m_selectedSceneNode;
 }
 
-void SceneHierarchy::CreateLightsContainer(const std::shared_ptr<OpenGLShader>& shader)
+void SceneHierarchy::SubscribeToSceneNodeAdded(std::function<void(const std::shared_ptr<SceneNode>&)> callback)
 {
-    m_lightsContainer = std::make_shared<LightsContainer>(shader);
+    m_sceneNodeAddedSubscribers.push_back(callback);
 }
 
-void SceneHierarchy::RegisterLightWithLightsContainer(const std::shared_ptr<SceneNode>& sceneNode, LightType lightType) const
+void SceneHierarchy::OnSceneNodeAdded(const std::shared_ptr<SceneNode>& sceneNode) const
 {
-    m_lightsContainer->AddLight(sceneNode, lightType);
+    for (const auto& subscriber : m_sceneNodeAddedSubscribers)
+    {
+        subscriber(sceneNode);
+    }
 }

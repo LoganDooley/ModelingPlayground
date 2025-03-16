@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 
 #include "Component.h"
+#include "../../Utils/DataBinding.h"
 
 class SpotLightComponent : public Component
 {
@@ -11,10 +12,13 @@ public:
 
     void RenderInspector() override;
 
-    glm::vec3 GetLightColor() const;
-    float GetLightFalloffAngle() const;
+    const glm::vec3& GetLightColor() const;
+    DataBinding<glm::vec3>& GetLightColorDataBinding();
+    
+    const float& GetLightFalloffAngle() const;
+    DataBinding<float>& GetLightFalloffAngleDataBinding();
     
 private:
-    glm::vec3 m_lightColor;
-    float m_falloffAngle;
+    DataBinding<glm::vec3> m_lightColor;
+    DataBinding<float> m_falloffAngle;
 };

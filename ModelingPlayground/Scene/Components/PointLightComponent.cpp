@@ -24,12 +24,22 @@ void PointLightComponent::RenderInspector()
     }
 }
 
-glm::vec3 PointLightComponent::GetLightColor() const
+const glm::vec3& PointLightComponent::GetLightColor() const
+{
+    return m_lightColor.GetData();
+}
+
+DataBinding<glm::vec3>& PointLightComponent::GetLightColorDataBinding()
 {
     return m_lightColor;
 }
 
-glm::vec3 PointLightComponent::GetFalloff() const
+const glm::vec3& PointLightComponent::GetFalloff() const
+{
+    return m_falloff.GetData();
+}
+
+DataBinding<glm::vec3>& PointLightComponent::GetFalloffDataBinding()
 {
     return m_falloff;
 }

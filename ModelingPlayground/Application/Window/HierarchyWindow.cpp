@@ -4,7 +4,7 @@
 #include "../../Scene/SceneHierarchy.h"
 
 HierarchyWindow::HierarchyWindow(const std::shared_ptr<SceneHierarchy>& scene):
-	m_scene(scene)
+	m_sceneHierarchy(scene)
 {
 }
 
@@ -12,7 +12,7 @@ void HierarchyWindow::Render()
 {
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
 	ImGui::Text("I'm the hierarchy window!");
-	DrawNode(m_scene->GetRootSceneNode());
+	DrawNode(m_sceneHierarchy->GetRootSceneNode());
 	ImGui::End();
 }
 
@@ -31,7 +31,7 @@ void HierarchyWindow::DrawNode(const std::shared_ptr<SceneNode>& node)
 	{
 		nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
 	}
-	if (m_scene->IsSceneNodeSelected(node))
+	if (m_sceneHierarchy->IsSceneNodeSelected(node))
 	{
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
@@ -51,7 +51,7 @@ void HierarchyWindow::CheckNodeSelection(const std::shared_ptr<SceneNode>& node)
 {
 	if (ImGui::IsItemClicked())
 	{
-		m_scene->SetSceneNodeSelected(node);
+		m_sceneHierarchy->SetSceneNodeSelected(node);
 	}
 }
 
@@ -68,7 +68,7 @@ void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
 				if (ImGui::MenuItem(SceneNodeGenerator::GetSceneNodeTypeName(sceneNodeType).c_str()))
 				{
 					std::shared_ptr<SceneNode> newChildSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(sceneNodeType, node);
-					TryRegisterSceneNodeAsLight(newChildSceneNode, sceneNodeType);
+					m_sceneHierarchy->OnSceneNodeAdded(newChildSceneNode);
 				}
 			}
 			ImGui::EndMenu();
@@ -78,21 +78,5 @@ void HierarchyWindow::CheckNodePopupMenu(SceneNode& node)
 			
 		}
 		ImGui::EndPopup();
-	}
-}
-
-void HierarchyWindow::TryRegisterSceneNodeAsLight(const std::shared_ptr<SceneNode>& node, SceneNodeType sceneNodeType)
-{
-	switch (sceneNodeType)
-	{
-		case SceneNodeType::DirectionalLight:
-			m_scene->RegisterLightWithLightsContainer(node, LightType::Directional);
-			break;
-		case SceneNodeType::PointLight:
-			m_scene->RegisterLightWithLightsContainer(node, LightType::Point);
-			break;
-		case SceneNodeType::SpotLight:
-			m_scene->RegisterLightWithLightsContainer(node, LightType::Spot);
-			break;
 	}
 }

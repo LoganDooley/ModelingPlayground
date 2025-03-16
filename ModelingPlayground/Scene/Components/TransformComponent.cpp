@@ -22,7 +22,7 @@ void TransformComponent::RenderInspector()
     if (ImGui::CollapsingHeader("Transform", transformHeaderFlags))
     {
         // Position
-        glm::vec3 position = m_position;
+        glm::vec3 position = m_position.GetData();
         if (PropertyDrawer::DrawVec3fDrag("Position", position, 0.01f))
         {
             SetPosition(position);
@@ -51,6 +51,11 @@ const glm::mat4& TransformComponent::GetModelMatrix() const
 
 const glm::vec3& TransformComponent::GetPosition() const
 {
+    return m_position.GetData();
+}
+
+DataBinding<glm::vec3>& TransformComponent::GetPositionDataBinding()
+{
     return m_position;
 }
 
@@ -66,14 +71,18 @@ const glm::vec3& TransformComponent::GetScale() const
 
 const glm::vec3& TransformComponent::GetLocalXUnitVector() const
 {
+    return m_localXUnitVector.GetData();
+}
+
+DataBinding<glm::vec3>& TransformComponent::GetLocalXUnitVectorDataBinding()
+{
     return m_localXUnitVector;
 }
 
 void TransformComponent::SetPosition(glm::vec3 newPosition)
 {
-    if (m_position != newPosition)
+    if (m_position.SetAndNotify(newPosition))
     {
-        m_position = newPosition;
         UpdateModelMatrix();
     }
 }
@@ -110,7 +119,7 @@ void TransformComponent::UpdateModelMatrix()
     glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.x), glm::radians(m_rotation.y), glm::radians(m_rotation.z));
 
     // translation
-    glm::mat4 translationMatrix = glm::translate(glm::mat4(1), m_position);
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1), m_position.GetData());
 
     // model matrix
     m_modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
@@ -119,5 +128,5 @@ void TransformComponent::UpdateModelMatrix()
 void TransformComponent::UpdateLocalXUnitVector()
 {
     glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.x), glm::radians(m_rotation.y), glm::radians(m_rotation.z));
-    m_localXUnitVector = rotationMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    m_localXUnitVector.SetAndNotify(rotationMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
 }

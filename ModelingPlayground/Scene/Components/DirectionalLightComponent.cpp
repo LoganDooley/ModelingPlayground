@@ -20,7 +20,12 @@ void DirectionalLightComponent::RenderInspector()
     }
 }
 
-glm::vec3 DirectionalLightComponent::GetLightColor() const
+const glm::vec3& DirectionalLightComponent::GetLightColor() const
+{
+    return m_lightColor.GetData();
+}
+
+DataBinding<glm::vec3>& DirectionalLightComponent::GetLightColorDataBinding()
 {
     return m_lightColor;
 }

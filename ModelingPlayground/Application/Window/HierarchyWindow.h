@@ -23,8 +23,7 @@ private:
 	void DrawNode(const std::shared_ptr<SceneNode>& node);
 	void CheckNodeSelection(const std::shared_ptr<SceneNode>& node);
 	void CheckNodePopupMenu(SceneNode& node);
-	void TryRegisterSceneNodeAsLight(const std::shared_ptr<SceneNode>& node, SceneNodeType sceneNodeType);
-	
-	std::shared_ptr<SceneHierarchy> m_scene;
+
+	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 };
 

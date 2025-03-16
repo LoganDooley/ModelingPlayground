@@ -5,9 +5,7 @@
 
 #include "SceneViewCamera.h"
 #include "Window.h"
-#include "../../OpenGLHelpers/LightsContainer.h"
-#include "../../OpenGLHelpers/OpenGLShader.h"
-#include "../../Utils/OpenGLPrimitiveDrawer.h"
+#include "../../OpenGLHelpers/OpenGLRenderer.h"
 
 class MaterialComponent;
 class TransformComponent;
@@ -20,7 +18,7 @@ class SceneHierarchy;
 class SceneViewWindow : public Window
 {
 public:
-	SceneViewWindow(const std::shared_ptr<SceneHierarchy>& scene, const std::shared_ptr<InputManager>& inputManager);
+	SceneViewWindow(const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<InputManager>& inputManager);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -28,19 +26,7 @@ public:
 	inline static const std::string Name = "Scene View";
 
 private:
-	void InitializeOpenGLObjects();
-
-	void DrawScene() const;
-
-	void ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const;
-	void DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent, const MaterialComponent& materialComponent, glm::mat4& cumulativeModelMatrix) const;
-
-	std::unique_ptr<OpenGLPrimitiveDrawer> m_openGLPrimitiveDrawer;
-
-	std::unique_ptr<SceneViewCamera> m_camera;
-	
-	std::shared_ptr<OpenGLShader> m_defaultShader;
-
-	std::shared_ptr<SceneHierarchy> m_scene;
+	std::shared_ptr<SceneViewCamera> m_camera;
+	std::unique_ptr<OpenGLRenderer> m_openGLRenderer;
 };
 

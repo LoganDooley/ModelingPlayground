@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 
 #include "Component.h"
+#include "../../Utils/DataBinding.h"
 
 class DirectionalLightComponent : public Component
 {
@@ -11,8 +12,9 @@ public:
 
     void RenderInspector() override;
 
-    glm::vec3 GetLightColor() const;
+    const glm::vec3& GetLightColor() const;
+    DataBinding<glm::vec3>& GetLightColorDataBinding();
     
 private:
-    glm::vec3 m_lightColor;
+    DataBinding<glm::vec3> m_lightColor;
 };

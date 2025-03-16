@@ -4,7 +4,7 @@
 #include <vector>
 #include <glm/vec3.hpp>
 
-#include "PrimitiveGenerator.h"
+#include "../../Utils/PrimitiveGenerator.h"
 
 OpenGLPrimitiveDrawer::OpenGLPrimitiveDrawer(int sphereLatitudinalResolution, int sphereLongitudinalResolution)
 {

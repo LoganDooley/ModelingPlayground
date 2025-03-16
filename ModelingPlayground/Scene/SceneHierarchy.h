@@ -1,5 +1,5 @@
 #pragma once
-#include "../OpenGLHelpers/LightsContainer.h"
+#include "../OpenGLHelpers/OpenGLLightContainer.h"
 #include "SceneNode/SceneNode.h"
 
 class SceneHierarchy {
@@ -11,11 +11,11 @@ public:
     const std::shared_ptr<SceneNode>& GetSelectedSceneNode() const;
     bool IsSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode) const;
 
-    void CreateLightsContainer(const std::shared_ptr<OpenGLShader>& shader);
-    void RegisterLightWithLightsContainer(const std::shared_ptr<SceneNode>& sceneNode, LightType lightType) const;
-
+    void SubscribeToSceneNodeAdded(std::function<void(const std::shared_ptr<SceneNode>&)> callback);
+    void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& sceneNode) const;
+    
 private:
     std::shared_ptr<SceneNode> m_selectedSceneNode;
     std::shared_ptr<SceneNode> m_rootSceneNode;
-    std::shared_ptr<LightsContainer> m_lightsContainer;
+    std::vector<std::function<void(const std::shared_ptr<SceneNode>&)>> m_sceneNodeAddedSubscribers;
 };

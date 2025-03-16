@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 
 #include "Component.h"
+#include "../../Utils/DataBinding.h"
 
 class PointLightComponent : public Component
 {
@@ -11,10 +12,13 @@ public:
 
     void RenderInspector() override;
 
-    glm::vec3 GetLightColor() const;
-    glm::vec3 GetFalloff() const;
+    const glm::vec3& GetLightColor() const;
+    DataBinding<glm::vec3>& GetLightColorDataBinding();
+    
+    const glm::vec3& GetFalloff() const;
+    DataBinding<glm::vec3>& GetFalloffDataBinding();
     
 private:
-    glm::vec3 m_lightColor;
-    glm::vec3 m_falloff;
+    DataBinding<glm::vec3> m_lightColor;
+    DataBinding<glm::vec3> m_falloff;
 };

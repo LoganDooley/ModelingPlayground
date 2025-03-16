@@ -22,12 +22,22 @@ void SpotLightComponent::RenderInspector()
     }
 }
 
-glm::vec3 SpotLightComponent::GetLightColor() const
+const glm::vec3& SpotLightComponent::GetLightColor() const
+{
+    return m_lightColor.GetData();
+}
+
+DataBinding<glm::vec3>& SpotLightComponent::GetLightColorDataBinding()
 {
     return m_lightColor;
 }
 
-float SpotLightComponent::GetLightFalloffAngle() const
+const float& SpotLightComponent::GetLightFalloffAngle() const
+{
+    return m_falloffAngle.GetData();
+}
+
+DataBinding<float>& SpotLightComponent::GetLightFalloffAngleDataBinding()
 {
     return m_falloffAngle;
 }
