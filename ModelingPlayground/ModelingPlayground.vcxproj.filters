@@ -70,6 +70,8 @@
     <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
     <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
     <ClCompile Include="Utils\PropertyDrawer.cpp" />
+    <ClCompile Include="UnitTests\Serialization\SerializationTests.cpp" />
+    <ClCompile Include="Utils\Serializers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Libraries">
@@ -195,6 +197,7 @@
     <ClInclude Include="Utils\EnumLabels\PrimitiveTypeEnumLabel.h" />
     <ClInclude Include="Utils\PrimitiveGenerator.h" />
     <ClInclude Include="Utils\PropertyDrawer.h" />
+    <ClInclude Include="Scene\Components\ComponentIncludes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter">

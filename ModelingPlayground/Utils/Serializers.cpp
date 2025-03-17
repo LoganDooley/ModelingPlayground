@@ -1,13 +1,7 @@
 ﻿#include "../nlohmann/json.hpp"
 #include "../Scene/Object.h"
 #include "../Scene/SceneHierarchy.h"
-#include "../Scene/Components/DirectionalLightComponent.h"
-#include "../Scene/Components/MaterialComponent.h"
-#include "../Scene/Components/OpenGLSettingsComponent.h"
-#include "../Scene/Components/PointLightComponent.h"
-#include "../Scene/Components/PrimitiveComponent.h"
-#include "../Scene/Components/SpotLightComponent.h"
-#include "../Scene/Components/TransformComponent.h"
+#include "../Scene/Components/ComponentIncludes.h"
 
 // DirectionalLightComponent
 void to_json(nlohmann::json& json, const std::shared_ptr<DirectionalLightComponent>& directionalLightComponent)

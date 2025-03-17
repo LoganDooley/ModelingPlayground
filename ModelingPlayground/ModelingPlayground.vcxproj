@@ -158,8 +158,13 @@
     <ClCompile Include="Scene\SceneHierarchy.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNode.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
+    <ClCompile Include="UnitTests\Serialization\SerializationTests.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
     <ClCompile Include="Utils\PropertyDrawer.cpp" />
+    <ClCompile Include="Utils\Serializers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
@@ -188,6 +193,7 @@
     <ClInclude Include="OpenGLHelpers\OpenGLPrimitiveDrawer.h" />
     <ClInclude Include="OpenGLHelpers\OpenGLRenderer.h" />
     <ClInclude Include="OpenGLHelpers\OpenGLShader.h" />
+    <ClInclude Include="Scene\Components\ComponentIncludes.h" />
     <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h" />
     <ClInclude Include="Scene\Components\Component.h" />
     <ClInclude Include="Scene\Components\DirectionalLightComponent.h" />
