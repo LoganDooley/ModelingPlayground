@@ -52,6 +52,11 @@ bool SceneNode::HasParent() const
     return GetParent() != nullptr;
 }
 
+void SceneNode::SetName(std::string name)
+{
+    m_name = name;
+}
+
 std::string SceneNode::GetName() const
 {
     return m_name;

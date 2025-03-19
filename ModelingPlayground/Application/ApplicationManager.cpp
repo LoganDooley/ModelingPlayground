@@ -1,7 +1,7 @@
 #include "ApplicationManager.h"
 
 ApplicationManager::ApplicationManager():
-	m_scene(std::make_shared<SceneHierarchy>()),
+	m_scene(std::make_shared<SceneHierarchy>(false)),
 	m_glfwWindow(std::make_unique<GlfwWindow>()),
 	m_windowManager(std::make_unique<WindowManager>(m_scene))
 {

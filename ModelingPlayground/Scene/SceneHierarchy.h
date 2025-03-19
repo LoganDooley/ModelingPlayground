@@ -5,7 +5,7 @@
 
 class SceneHierarchy {
 public:
-    SceneHierarchy();
+    SceneHierarchy(bool fromSerialization = true);
 
     const std::shared_ptr<SceneNode>& GetRootSceneNode() const;
     void SetSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode);

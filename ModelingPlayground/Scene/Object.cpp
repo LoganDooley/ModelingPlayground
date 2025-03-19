@@ -1,7 +1,7 @@
 ﻿#include "Object.h"
 #include "../nlohmann/json.hpp"
 
-Object::Object(std::string name):
+Object::Object(const std::string& name):
     m_name(name)
 {
     

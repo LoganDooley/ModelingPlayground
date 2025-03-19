@@ -12,6 +12,7 @@ class Object;
 class SceneNode
 {
 public:
+    SceneNode() = default;
     SceneNode(std::string name, const std::vector<std::shared_ptr<SceneNode>>& childSceneNodes = std::vector<std::shared_ptr<SceneNode>>());
     ~SceneNode();
     
@@ -22,6 +23,7 @@ public:
     std::shared_ptr<SceneNode> GetParent() const;
     void SetParent(const std::shared_ptr<SceneNode>& parentSceneNode);
     bool HasParent() const;
+    void SetName(std::string name);
     std::string GetName() const;
     Object& GetObject() const;
     void RenderInspector() const;
