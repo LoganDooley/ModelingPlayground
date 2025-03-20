@@ -8,6 +8,7 @@
 #include "../Scene/Components/DirectionalLightComponent.h"
 #include "../Scene/Components/PointLightComponent.h"
 #include "../Scene/Components/SpotLightComponent.h"
+#include "../Scene/SceneHierarchy.h"
 #include "../Scene/SceneNode/SceneNode.h"
 
 enum LightType : int
@@ -18,14 +19,16 @@ enum LightType : int
 class OpenGLLightContainer
 {
 public:
-    OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& shader, uint32_t maxLights = 8);
+    OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& shader, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, uint32_t maxLights = 8);
     ~OpenGLLightContainer() = default;
 
-    bool AddLight(const std::shared_ptr<SceneNode>& light, LightType lightType);
+    bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);
     void RemoveLight(uint32_t lightIndex);
     void ClearLights();
 
 private:
+    bool AddLightInternal(const std::shared_ptr<SceneNode>& lightSceneNode, LightType lightType);
+    static LightType GetLightType(const std::shared_ptr<SceneNode>& lightSceneNode);
     uint32_t GetLightIndex(const std::shared_ptr<SceneNode>& lightSceneNode) const;
     
     // Uniform names

@@ -2,10 +2,11 @@
 
 #include <iostream>
 #include <ostream>
+#include <queue>
 
 #include "../Scene/Object.h"
 
-OpenGLLightContainer::OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& shader, uint32_t maxLights):
+OpenGLLightContainer::OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& shader, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, uint32_t maxLights):
     m_shader(shader),
     m_maxLights(maxLights)
 {
@@ -19,20 +20,33 @@ OpenGLLightContainer::OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& 
         m_shader->RegisterUniformVariable(GetLightFalloffUniformName(i));
     }
     m_shader->RegisterUniformVariable("lightCount");
+
+    // bfs through hierarchy and add nodes that are lights
+    std::queue<std::shared_ptr<SceneNode>> bfs;
+    bfs.push(sceneHierarchy->GetRootSceneNode());
+    while (!bfs.empty())
+    {
+        const std::shared_ptr<SceneNode> node = bfs.front();
+        bfs.pop();
+        
+        TryAddLight(node);
+
+        std::vector<std::shared_ptr<SceneNode>> childNodes = node->GetChildren();
+        for (const auto& childNode : childNodes)
+        {
+            bfs.push(childNode);
+        }
+    }
 }
 
-bool OpenGLLightContainer::AddLight(const std::shared_ptr<SceneNode>& light, LightType type)
+bool OpenGLLightContainer::TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode)
 {
-    if (m_lights.size() == m_maxLights)
+    LightType lightType = GetLightType(lightSceneNode);
+    if (lightType != LightType::None)
     {
-        std::cout << "LightsContainer|AddLight: Could not add light due to exceeding maxLights!\n";
-        return false;
+        return AddLightInternal(lightSceneNode, lightType);
     }
-
-    m_lights.push_back({light, type});
-    InitializeLight(m_lights.size() - 1);
-    m_shader->SetUniform1i("lightCount", m_lights.size());
-    return true;
+    return false;
 }
 
 void OpenGLLightContainer::RemoveLight(uint32_t lightIndex)
@@ -50,6 +64,37 @@ void OpenGLLightContainer::ClearLights()
 {
     m_lights.clear();
     m_shader->SetUniform1i("lightCount", 0);
+}
+
+bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& light, LightType type)
+{
+    if (m_lights.size() == m_maxLights)
+    {
+        std::cout << "LightsContainer|AddLight: Could not add light due to exceeding maxLights!\n";
+        return false;
+    }
+
+    m_lights.push_back({light, type});
+    InitializeLight(m_lights.size() - 1);
+    m_shader->SetUniform1i("lightCount", m_lights.size());
+    return true;
+}
+
+LightType OpenGLLightContainer::GetLightType(const std::shared_ptr<SceneNode>& lightSceneNode)
+{
+    if (lightSceneNode->GetObject().GetFirstComponentOfType<DirectionalLightComponent>())
+    {
+        return LightType::Directional;
+    }
+    if (lightSceneNode->GetObject().GetFirstComponentOfType<PointLightComponent>())
+    {
+        return LightType::Point;
+    }
+    if (lightSceneNode->GetObject().GetFirstComponentOfType<SpotLightComponent>())
+    {
+        return LightType::Spot;
+    }
+    return LightType::None;
 }
 
 uint32_t OpenGLLightContainer::GetLightIndex(const std::shared_ptr<SceneNode>& lightSceneNode) const

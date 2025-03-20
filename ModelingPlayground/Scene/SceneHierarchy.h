@@ -1,12 +1,15 @@
 #pragma once
-#include "../OpenGLHelpers/OpenGLLightContainer.h"
-#include "SceneNode/SceneNode.h"
+
+#include <functional>
 #include "../../nlohmann/json_fwd.hpp"
+
+class SceneNode;
 
 class SceneHierarchy {
 public:
-    SceneHierarchy(bool fromSerialization = true);
+    SceneHierarchy();
 
+    void SetRootSceneNode(const std::shared_ptr<SceneNode>& rootSceneNode);
     const std::shared_ptr<SceneNode>& GetRootSceneNode() const;
     void SetSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode);
     const std::shared_ptr<SceneNode>& GetSelectedSceneNode() const;

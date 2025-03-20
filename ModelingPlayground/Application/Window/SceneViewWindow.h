@@ -18,7 +18,7 @@ class SceneHierarchy;
 class SceneViewWindow : public Window
 {
 public:
-	SceneViewWindow(const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<InputManager>& inputManager);
+	SceneViewWindow(const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const std::shared_ptr<InputManager>& inputManager);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -27,6 +27,6 @@ public:
 
 private:
 	std::shared_ptr<SceneViewCamera> m_camera;
-	std::unique_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
 };
 

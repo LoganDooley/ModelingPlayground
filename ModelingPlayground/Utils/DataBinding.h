@@ -4,6 +4,8 @@ template <typename T>
 class DataBinding
 {
 public:
+    DataBinding() = default;
+    
     DataBinding(T data)
     {
         m_data = data;
@@ -26,6 +28,16 @@ public:
         for(const auto& subscriber : m_subscribers){
             subscriber(m_data, oldData);
         }
+        return true;
+    }
+
+    bool SetWithoutNotify(T newData)
+    {
+        if (newData == m_data)
+        {
+            return false;
+        }
+        m_data = newData;
         return true;
     }
     

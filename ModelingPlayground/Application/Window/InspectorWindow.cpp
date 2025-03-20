@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 #include "../../Scene/SceneHierarchy.h"
+#include "../../Scene/SceneNode/SceneNode.h"
 
 InspectorWindow::InspectorWindow(const std::shared_ptr<SceneHierarchy>& scene):
 	m_scene(scene)

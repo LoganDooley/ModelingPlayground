@@ -3,7 +3,7 @@
 #include <unordered_set>
 
 #include "../Object.h"
-#include "../SceneHierarchy.h"
+#include "../SceneNode/SceneNode.h"
 #include "../Components/DirectionalLightComponent.h"
 #include "../Components/MaterialComponent.h"
 #include "../Components/PointLightComponent.h"

@@ -3,7 +3,8 @@
 class Component
 {
 public:
+    Component() = default;
     virtual ~Component() = default;
     
-    virtual void RenderInspector() = 0;
+    virtual void RenderInspector(){};
 };

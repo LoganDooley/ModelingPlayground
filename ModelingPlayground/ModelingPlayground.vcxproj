@@ -239,6 +239,7 @@
     </ClCompile>
     <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
     <ClCompile Include="Utils\PropertyDrawer.cpp" />
+    <ClCompile Include="Utils\SceneLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h" />
@@ -280,11 +281,13 @@
     <ClInclude Include="Scene\SceneHierarchy.h" />
     <ClInclude Include="Scene\SceneNode\SceneNode.h" />
     <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h" />
+    <ClInclude Include="Serialization\GLMSerializers.h" />
     <ClInclude Include="Utils\LazyValue.h" />
     <ClInclude Include="Utils\EnumLabels\EnumLabel.h" />
     <ClInclude Include="Utils\EnumLabels\PrimitiveTypeEnumLabel.h" />
     <ClInclude Include="Utils\PrimitiveGenerator.h" />
     <ClInclude Include="Utils\PropertyDrawer.h" />
+    <ClInclude Include="Utils\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter" />

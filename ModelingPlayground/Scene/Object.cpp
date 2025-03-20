@@ -1,5 +1,6 @@
 ﻿#include "Object.h"
-#include "../nlohmann/json.hpp"
+
+#include "Components/Component.h"
 
 Object::Object(const std::string& name):
     m_name(name)

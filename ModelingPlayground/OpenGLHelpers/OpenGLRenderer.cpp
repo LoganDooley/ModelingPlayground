@@ -24,8 +24,6 @@ OpenGLRenderer::OpenGLRenderer():
     m_defaultShader->RegisterUniformVariable("roughness");
     m_defaultShader->RegisterUniformVariable("metallic");
 
-    m_openGLLightContainer = std::make_unique<OpenGLLightContainer>(m_defaultShader);
-
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 }
@@ -38,6 +36,8 @@ void OpenGLRenderer::SetCamera(const std::shared_ptr<SceneViewCamera>& camera)
 void OpenGLRenderer::SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
 {
     m_sceneHierarchy = sceneHierarchy;
+
+    m_openGLLightContainer = std::make_unique<OpenGLLightContainer>(m_defaultShader, m_sceneHierarchy);
     
     m_sceneHierarchy->SubscribeToSceneNodeAdded([this](const std::shared_ptr<SceneNode>& newSceneNode)
     {
@@ -124,16 +124,5 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 
 void OpenGLRenderer::OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const
 {
-    if (newSceneNode->GetObject().GetFirstComponentOfType<DirectionalLightComponent>())
-    {
-        m_openGLLightContainer->AddLight(newSceneNode, LightType::Directional);
-    }
-    else if (newSceneNode->GetObject().GetFirstComponentOfType<PointLightComponent>())
-    {
-        m_openGLLightContainer->AddLight(newSceneNode, LightType::Point);
-    }
-    else if (newSceneNode->GetObject().GetFirstComponentOfType<SpotLightComponent>())
-    {
-        m_openGLLightContainer->AddLight(newSceneNode, LightType::Spot);
-    }
+    m_openGLLightContainer->TryAddLight(newSceneNode);
 }

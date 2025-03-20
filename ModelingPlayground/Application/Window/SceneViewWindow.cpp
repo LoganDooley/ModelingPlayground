@@ -12,12 +12,11 @@
 #include "../../Scene/Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
-SceneViewWindow::SceneViewWindow(const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<InputManager>& inputManager):
+SceneViewWindow::SceneViewWindow(const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const std::shared_ptr<InputManager>& inputManager):
 	m_camera(std::make_shared<SceneViewCamera>(inputManager, glm::uvec2(1, 1))),
-	m_openGLRenderer(std::make_unique<OpenGLRenderer>())
+	m_openGLRenderer(openGLRenderer)
 {
 	m_openGLRenderer->SetCamera(m_camera);
-	m_openGLRenderer->SetSceneHierarchy(sceneHierarchy);
 }
 
 void SceneViewWindow::Render()

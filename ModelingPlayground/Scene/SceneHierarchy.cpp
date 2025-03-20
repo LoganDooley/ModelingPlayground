@@ -1,15 +1,13 @@
 #include "SceneHierarchy.h"
 
-#include "Object.h"
-#include "Components/OpenGLSettingsComponent.h"
-
-SceneHierarchy::SceneHierarchy(bool fromSerialization)
+SceneHierarchy::SceneHierarchy()
 {
-    if (!fromSerialization)
-    {
-        m_rootSceneNode = std::make_shared<SceneNode>("World");
-        m_rootSceneNode->GetObject().AddComponent<OpenGLSettingsComponent>();
-    }
+
+}
+
+void SceneHierarchy::SetRootSceneNode(const std::shared_ptr<SceneNode>& rootSceneNode)
+{
+    m_rootSceneNode = rootSceneNode;
 }
 
 const std::shared_ptr<SceneNode>& SceneHierarchy::GetRootSceneNode() const

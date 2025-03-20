@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "Components/Component.h"
 #include "../../nlohmann/json_fwd.hpp"
+
+class Component;
 
 class Object
 {
