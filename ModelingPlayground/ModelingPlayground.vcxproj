@@ -158,7 +158,7 @@
     <ClCompile Include="Scene\SceneHierarchy.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNode.cpp" />
     <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
-    <ClCompile Include="Serialization\Serializers.cpp">
+    <ClCompile Include="Serialization\Serializers.h">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>

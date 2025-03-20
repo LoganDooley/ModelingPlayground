@@ -13,8 +13,8 @@ public:
     void RenderInspector() override;
     PrimitiveType GetPrimitiveType() const;
 
-    friend void to_json(nlohmann::json& json, const std::shared_ptr<PrimitiveComponent>& primitiveComponent);
-    friend void from_json(const nlohmann::json& json, std::shared_ptr<PrimitiveComponent>& primitiveComponent);
+    friend void to_json(nlohmann::json& json, const PrimitiveComponent& primitiveComponent);
+    friend void from_json(const nlohmann::json& json, PrimitiveComponent& primitiveComponent);
 
 private:
     PrimitiveType m_primitiveType;

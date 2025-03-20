@@ -17,8 +17,8 @@ public:
     const glm::vec3& GetLightColor() const;
     DataBinding<glm::vec3>& GetLightColorDataBinding();
 
-    friend void to_json(nlohmann::json& json, const std::shared_ptr<DirectionalLightComponent>& directionalLightComponent);
-    friend void from_json(const nlohmann::json& json, std::shared_ptr<DirectionalLightComponent>& directionalLightComponent);
+    friend void to_json(nlohmann::json& json, const DirectionalLightComponent& directionalLightComponent);
+    friend void from_json(const nlohmann::json& json, DirectionalLightComponent& directionalLightComponent);
     
 private:
     DataBinding<glm::vec3> m_lightColor;

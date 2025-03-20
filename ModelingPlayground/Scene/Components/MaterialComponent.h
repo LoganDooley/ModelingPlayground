@@ -17,8 +17,8 @@ public:
     float GetMetallic() const;
     float GetRoughness() const;
 
-    friend void to_json(nlohmann::json& json, const std::shared_ptr<MaterialComponent>& materialComponent);
-    friend void from_json(const nlohmann::json& json, std::shared_ptr<MaterialComponent>& materialComponent);
+    friend void to_json(nlohmann::json& json, const MaterialComponent& materialComponent);
+    friend void from_json(const nlohmann::json& json, MaterialComponent& materialComponent);
 
 private:
     glm::vec3 m_materialColor;

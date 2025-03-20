@@ -1,9 +1,5 @@
 ﻿#include "../../Libraries/catch/catch_amalgamated.hpp"
-
-#include "../../Libraries/nlohmann/json.hpp"
-#include "../../Scene/Object.h"
-#include "../../Scene/Components/ComponentIncludes.h"
-#include "../../Scene/SceneNode/SceneNode.h"
+#include "../../Serialization/Serializers.h"
 
 TEST_CASE("Object Serialization")
 {

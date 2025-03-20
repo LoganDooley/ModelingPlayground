@@ -21,8 +21,8 @@ public:
     const glm::vec3& GetLocalXUnitVector() const;
     DataBinding<glm::vec3>& GetLocalXUnitVectorDataBinding();
     
-    friend void to_json(nlohmann::json& json, const std::shared_ptr<TransformComponent>& transformComponent);
-    friend void from_json(const nlohmann::json& json, std::shared_ptr<TransformComponent>& transformComponent);
+    friend void to_json(nlohmann::json& json, const TransformComponent& transformComponent);
+    friend void from_json(const nlohmann::json& json, TransformComponent& transformComponent);
     
 private:
     void UpdateModelMatrix();

@@ -54,8 +54,8 @@ public:
 
     void RenderInspector() const;
 
-    friend void to_json(nlohmann::json& json, const std::shared_ptr<Object>& object);
-    friend void from_json(const nlohmann::json& json, std::shared_ptr<Object>& object);
+    friend void to_json(nlohmann::json& json, const Object& object);
+    friend void from_json(const nlohmann::json& json, Object& object);
 
 private:
     std::string m_name;

@@ -29,8 +29,8 @@ public:
     void RenderInspector() const;
     void SubscribeToOnDestroyed(const std::function<void()>& callback);
 
-    friend void to_json(nlohmann::json& json, const std::shared_ptr<SceneNode>& sceneNode);
-    friend void from_json(const nlohmann::json& json, std::shared_ptr<SceneNode>& sceneNode);
+    friend void to_json(nlohmann::json& json, const SceneNode& sceneNode);
+    friend void from_json(const nlohmann::json& json, SceneNode& sceneNode);
 
 private:
     std::string m_name;
