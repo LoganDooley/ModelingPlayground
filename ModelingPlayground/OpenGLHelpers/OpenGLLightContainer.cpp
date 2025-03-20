@@ -38,12 +38,12 @@ bool OpenGLLightContainer::AddLight(const std::shared_ptr<SceneNode>& light, Lig
 void OpenGLLightContainer::RemoveLight(uint32_t lightIndex)
 {
     m_lights.erase(m_lights.begin() + lightIndex);
-    for (int i = lightIndex; i < m_lights.size(); i++)
+    for (uint32_t i = lightIndex; i < m_lights.size(); i++)
     {
         // Reset this light's uniforms
         SetLightUniforms(lightIndex);
     }
-    m_shader->SetUniform1i("lightCount", m_lights.size());
+    m_shader->SetUniform1i("lightCount", static_cast<int>(m_lights.size()));
 }
 
 void OpenGLLightContainer::ClearLights()
