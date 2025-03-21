@@ -2,7 +2,7 @@
 
 #include "../Object.h"
 
-SceneNode::SceneNode(std::string name, const std::vector<std::shared_ptr<SceneNode>>& childSceneNodes):
+SceneNode::SceneNode(std::string name, std::vector<std::shared_ptr<SceneNode>> childSceneNodes):
     m_name(name),
     m_object(std::make_shared<Object>(name)),
     m_childSceneNodes(childSceneNodes)

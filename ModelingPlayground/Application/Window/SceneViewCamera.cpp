@@ -8,7 +8,7 @@
 
 #include "../InputManager.h"
 
-SceneViewCamera::SceneViewCamera(const std::shared_ptr<InputManager>& inputManager, glm::uvec2 screenSize, glm::vec3 position, glm::vec3 look, float zNear, float zFar, float fovy):
+SceneViewCamera::SceneViewCamera(std::shared_ptr<InputManager> inputManager, glm::uvec2 screenSize, glm::vec3 position, glm::vec3 look, float zNear, float zFar, float fovy):
     m_screenSize(screenSize),
     m_aspectRatio(static_cast<float>(screenSize.x) / static_cast<float>(screenSize.y)),
     m_zNear(zNear),

@@ -22,7 +22,7 @@ public:
     OpenGLLightContainer();
     ~OpenGLLightContainer() = default;
 
-    void Initialize(const std::shared_ptr<OpenGLShader>& shader, uint32_t maxLights = 8);
+    void Initialize(std::shared_ptr<OpenGLShader> shader, uint32_t maxLights = 8);
     void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
     
     bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);

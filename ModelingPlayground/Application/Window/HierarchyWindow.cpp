@@ -3,7 +3,7 @@
 #include "SceneViewWindow.h"
 #include "../../Scene/SceneHierarchy.h"
 
-HierarchyWindow::HierarchyWindow(const std::shared_ptr<SceneHierarchy>& scene):
+HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene):
 	m_sceneHierarchy(scene)
 {
 }

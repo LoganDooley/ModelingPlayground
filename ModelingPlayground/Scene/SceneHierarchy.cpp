@@ -35,7 +35,7 @@ SceneHierarchy& SceneHierarchy::operator=(SceneHierarchy&& other) noexcept
     return *this;
 }
 
-void SceneHierarchy::SetRootSceneNode(const std::shared_ptr<SceneNode>& rootSceneNode)
+void SceneHierarchy::SetRootSceneNode(std::shared_ptr<SceneNode> rootSceneNode)
 {
     m_rootSceneNode = rootSceneNode;
 }
@@ -45,7 +45,7 @@ const std::shared_ptr<SceneNode>& SceneHierarchy::GetRootSceneNode() const
     return m_rootSceneNode;
 }
 
-void SceneHierarchy::SetSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode)
+void SceneHierarchy::SetSceneNodeSelected(std::shared_ptr<SceneNode> sceneNode)
 {
     m_selectedSceneNode = sceneNode;
 }

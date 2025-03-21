@@ -29,6 +29,7 @@ uniform vec3 cameraPosition;
 
 in vec3 vertexWorldPosition;
 in vec3 vertexNormal;
+in vec2 vertexTexCoord;
 
 out vec4 FragColor;
 
@@ -92,7 +93,7 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity){
     return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - HdotV, 5.0);
 }
 
-vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity){
+vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity, vec3 objectColor){
     LightData lightData;
     if(lights[lightIndex].type == DIRECTIONAL_LIGHT){
         lightData = getDirectionalLightData(lightIndex, N, V);
@@ -121,7 +122,12 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity)
     
     kD *= 1.0 - metallic;
     
-    return (kD * materialColor / PI + specular) * lightData.radiance * NdotL;
+    return (kD * objectColor / PI + specular) * lightData.radiance * NdotL;
+}
+
+vec3 GetObjectColor(){
+    return vec3(vertexTexCoord.x, vertexTexCoord.y, 1);
+    //return materialColor;
 }
 
 void main()
@@ -129,16 +135,18 @@ void main()
     vec3 normal = normalize(vertexNormal);
     vec3 toCamera = normalize(cameraPosition - vertexWorldPosition);
     
-    vec3 baseReflectivity = mix(vec3(0.04), materialColor, metallic);
+    vec3 objectColor = GetObjectColor();
+    
+    vec3 baseReflectivity = mix(vec3(0.04), objectColor, metallic);
     
     vec3 Lo = vec3(0.0);
     
     for(int i = 0; i<lightCount; i++){
-        Lo += getLightContribution(i, normal, toCamera, baseReflectivity);
+        Lo += getLightContribution(i, normal, toCamera, baseReflectivity, objectColor);
     }
 
     // Add ambient light
-    vec3 ambient = ambientColor * materialColor;
+    vec3 ambient = ambientColor * objectColor;
     
     vec3 color = ambient + Lo;
     

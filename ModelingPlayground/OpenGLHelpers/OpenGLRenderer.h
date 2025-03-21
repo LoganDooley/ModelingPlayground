@@ -17,8 +17,8 @@ public:
 
     void Initialize();
 
-    void SetCamera(const std::shared_ptr<SceneViewCamera>& camera);
-    void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
+    void SetCamera(std::shared_ptr<SceneViewCamera> camera);
+    void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
     
     void RenderSceneHierarchy() const;
 

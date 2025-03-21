@@ -13,7 +13,7 @@ class SceneNode
 {
 public:
     SceneNode() = default;
-    SceneNode(std::string name, const std::vector<std::shared_ptr<SceneNode>>& childSceneNodes = std::vector<std::shared_ptr<SceneNode>>());
+    SceneNode(std::string name, std::vector<std::shared_ptr<SceneNode>> childSceneNodes = std::vector<std::shared_ptr<SceneNode>>());
     ~SceneNode();
     
     const std::vector<std::shared_ptr<SceneNode>>& GetChildren() const;

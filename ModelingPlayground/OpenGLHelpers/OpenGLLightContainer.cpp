@@ -14,9 +14,9 @@ OpenGLLightContainer::OpenGLLightContainer():
 
 }
 
-void OpenGLLightContainer::Initialize(const std::shared_ptr<OpenGLShader>& shader, uint32_t maxLights)
+void OpenGLLightContainer::Initialize(std::shared_ptr<OpenGLShader> shader, uint32_t maxLights)
 {
-    m_shader.reset(shader.get());
+    m_shader = shader;
     m_maxLights = maxLights;
     
     // Register uniforms

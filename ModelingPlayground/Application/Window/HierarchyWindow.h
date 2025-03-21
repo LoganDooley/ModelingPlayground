@@ -12,7 +12,7 @@ class SceneHierarchy;
 class HierarchyWindow : public Window
 {
 public:
-	HierarchyWindow(const std::shared_ptr<SceneHierarchy>& scene);
+	HierarchyWindow(std::shared_ptr<SceneHierarchy> scene);
 
 	void Render() override;
 	void Update(double seconds) override;

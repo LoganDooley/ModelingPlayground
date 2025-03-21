@@ -12,7 +12,7 @@
 #include "../../Scene/Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
-SceneViewWindow::SceneViewWindow(const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const std::shared_ptr<InputManager>& inputManager):
+SceneViewWindow::SceneViewWindow(std::shared_ptr<OpenGLRenderer> openGLRenderer, std::shared_ptr<InputManager> inputManager):
 	m_camera(std::make_shared<SceneViewCamera>(inputManager, glm::uvec2(1, 1))),
 	m_openGLRenderer(openGLRenderer)
 {

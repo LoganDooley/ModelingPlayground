@@ -16,9 +16,9 @@ public:
     SceneHierarchy& operator=(const SceneHierarchy& other) noexcept;
     SceneHierarchy& operator=(SceneHierarchy&& other) noexcept;
 
-    void SetRootSceneNode(const std::shared_ptr<SceneNode>& rootSceneNode);
+    void SetRootSceneNode(std::shared_ptr<SceneNode> rootSceneNode);
     const std::shared_ptr<SceneNode>& GetRootSceneNode() const;
-    void SetSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode);
+    void SetSceneNodeSelected(std::shared_ptr<SceneNode> sceneNode);
     const std::shared_ptr<SceneNode>& GetSelectedSceneNode() const;
     bool IsSceneNodeSelected(const std::shared_ptr<SceneNode>& sceneNode) const;
 

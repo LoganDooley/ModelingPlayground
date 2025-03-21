@@ -9,7 +9,7 @@ class SceneHierarchy;
 class InspectorWindow : public Window
 {
 public:
-	InspectorWindow(const std::shared_ptr<SceneHierarchy>& scene);
+	InspectorWindow(std::shared_ptr<SceneHierarchy> scene);
 
 	void Render() override;
 	void Update(double seconds) override;

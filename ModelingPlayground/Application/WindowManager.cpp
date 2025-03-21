@@ -22,7 +22,7 @@ WindowManager::~WindowManager()
 {
 }
 
-void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<OpenGLRenderer>& openGLRenderer)
+void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow, std::shared_ptr<SceneHierarchy> sceneHierarchy, std::shared_ptr<OpenGLRenderer> openGLRenderer)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

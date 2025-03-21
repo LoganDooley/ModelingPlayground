@@ -10,7 +10,7 @@ class InputManager;
 class SceneViewCamera
 {
 public:
-    SceneViewCamera(const std::shared_ptr<InputManager>& inputManager, glm::uvec2 screenSize, glm::vec3 position = glm::vec3(0), glm::vec3 look = glm::vec3(0, 0, -1), float zNear = 0.1f, float zFar = 100.f, float fovy = 1.f);
+    SceneViewCamera(std::shared_ptr<InputManager> inputManager, glm::uvec2 screenSize, glm::vec3 position = glm::vec3(0), glm::vec3 look = glm::vec3(0, 0, -1), float zNear = 0.1f, float zFar = 100.f, float fovy = 1.f);
 
     void Update(double seconds);
     

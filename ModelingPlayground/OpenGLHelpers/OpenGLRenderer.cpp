@@ -38,12 +38,12 @@ void OpenGLRenderer::Initialize()
     glEnable(GL_DEPTH_TEST);
 }
 
-void OpenGLRenderer::SetCamera(const std::shared_ptr<SceneViewCamera>& camera)
+void OpenGLRenderer::SetCamera(std::shared_ptr<SceneViewCamera> camera)
 {
     m_camera = camera;
 }
 
-void OpenGLRenderer::SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
+void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy)
 {
     m_sceneHierarchy = sceneHierarchy;
 

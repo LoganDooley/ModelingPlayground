@@ -4,7 +4,7 @@
 #include <glm/geometric.hpp>
 #include <glm/ext/scalar_constants.hpp>
 
-std::tuple<std::vector<glm::vec3>, std::vector<glm::vec3>, std::vector<int>> PrimitiveGenerator::GenerateSphere(int latitudinalResolution,
+std::tuple<std::vector<glm::vec3>, std::vector<glm::vec3>, std::vector<glm::vec2>, std::vector<int>> PrimitiveGenerator::GenerateSphere(int latitudinalResolution,
                                                                                        int longitudinalResolution)
 {
     if (latitudinalResolution < 3)
@@ -23,34 +23,23 @@ std::tuple<std::vector<glm::vec3>, std::vector<glm::vec3>, std::vector<int>> Pri
     
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texCoords;
     std::vector<int> indices;
 
     // First generate vertices
     for (int latitudeIndex = 0; latitudeIndex <= latitudinalResolution; latitudeIndex++)
     {
-        if (latitudeIndex == 0)
-        {
-            // Add the bottom vertex
-            vertices.emplace_back(0, -0.5, 0);
-            normals.emplace_back(0, -1, 0);
-        }
-        else if (latitudeIndex == latitudinalResolution)
-        {
-            // Add the top vertex
-            vertices.emplace_back(0, 0.5, 0);
-            normals.emplace_back(0, 1, 0);
-        }
-        else
-        {
-            // Generate a ring of points at this latitude
-            float phi = glm::pi<float>() * (1 - static_cast<float>(latitudeIndex)/static_cast<float>(latitudinalResolution));
+        // Generate a ring of points at this latitude
+        float phi = glm::pi<float>() * (1 - static_cast<float>(latitudeIndex)/static_cast<float>(latitudinalResolution));
             
-            for (int longitudeIndex = 0; longitudeIndex < longitudinalResolution; longitudeIndex++)
-            {
-                float theta = 2 * glm::pi<float>() * (static_cast<float>(longitudeIndex)/static_cast<float>(longitudinalResolution));
-                vertices.emplace_back(SphericalToCartesian(phi, theta, 0.5f));
-                normals.emplace_back(glm::normalize(vertices[vertices.size() - 1]));
-            }
+        for (int longitudeIndex = 0; longitudeIndex <= longitudinalResolution; longitudeIndex++)
+        {
+            float theta = 2 * glm::pi<float>() * (static_cast<float>(longitudeIndex)/static_cast<float>(longitudinalResolution));
+            vertices.emplace_back(SphericalToCartesian(phi, theta, 0.5f));
+            normals.emplace_back(glm::normalize(vertices[vertices.size() - 1]));
+            float u = static_cast<float>(latitudeIndex)/static_cast<float>(latitudinalResolution);
+            float v = static_cast<float>(longitudeIndex)/static_cast<float>(longitudinalResolution);
+            texCoords.emplace_back(u, v);
         }
     }
 
@@ -62,58 +51,59 @@ std::tuple<std::vector<glm::vec3>, std::vector<glm::vec3>, std::vector<int>> Pri
             {
                 // Generate one triangle
                 indices.emplace_back(GetSphereVertexIndex(0, longitudeIndex,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(1, longitudeIndex + 1,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(1, longitudeIndex,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
             }
             else if (latitudeIndex == latitudinalResolution - 1)
             {
                 // Generate one triangle
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex, longitudeIndex,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex, longitudeIndex+1,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex+1, longitudeIndex,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
             }
             else
             {
                 // Generate two triangles
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex, longitudeIndex,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex, longitudeIndex+1,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex+1, longitudeIndex,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
 
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex+1, longitudeIndex,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex, longitudeIndex+1,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
                 indices.emplace_back(GetSphereVertexIndex(latitudeIndex+1, longitudeIndex+1,
-                    latitudinalResolution, longitudinalResolution));
+                    latitudinalResolution));
             }
         }
     }
 
-    return {vertices, normals, indices};
+    return {vertices, normals, texCoords, indices};
 }
 
-std::tuple<std::vector<glm::vec3>, std::vector<glm::vec3>> PrimitiveGenerator::GenerateCube()
+std::tuple<std::vector<glm::vec3>, std::vector<glm::vec3>, std::vector<glm::vec2>> PrimitiveGenerator::GenerateCube()
 {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texCoords;
 
-    GenerateCubeFace(vertices, normals, glm::vec3(1, 0, 0));
-    GenerateCubeFace(vertices, normals, glm::vec3(-1, 0, 0));
-    GenerateCubeFace(vertices, normals, glm::vec3(0, 1, 0));
-    GenerateCubeFace(vertices, normals, glm::vec3(0, -1, 0));
-    GenerateCubeFace(vertices, normals, glm::vec3(0, 0, 1));
-    GenerateCubeFace(vertices, normals, glm::vec3(0, 0, -1));
+    GenerateCubeFace(vertices, normals, texCoords, glm::vec3(1, 0, 0));
+    GenerateCubeFace(vertices, normals, texCoords,glm::vec3(-1, 0, 0));
+    GenerateCubeFace(vertices, normals, texCoords,glm::vec3(0, 1, 0));
+    GenerateCubeFace(vertices, normals, texCoords,glm::vec3(0, -1, 0));
+    GenerateCubeFace(vertices, normals, texCoords,glm::vec3(0, 0, 1));
+    GenerateCubeFace(vertices, normals, texCoords,glm::vec3(0, 0, -1));
 
-    return {vertices, normals};
+    return {vertices, normals, texCoords};
 }
 
 glm::vec3 PrimitiveGenerator::SphericalToCartesian(float phi, float theta, float r)
@@ -126,25 +116,13 @@ glm::vec3 PrimitiveGenerator::SphericalToCartesian(float phi, float theta, float
     return glm::vec3(x, y, z);
 }
 
-int PrimitiveGenerator::GetSphereVertexIndex(int latitudeIndex, int longitudeIndex, int latitudinalResolution,
-    int longitudinalResolution)
+int PrimitiveGenerator::GetSphereVertexIndex(int latitudeIndex, int longitudeIndex, int latitudinalResolution)
 {
-    // Wrap around the sphere
-    longitudeIndex = longitudeIndex % longitudinalResolution;
-    
-    if (latitudeIndex == 0)
-    {
-        return 0;
-    }
-    if (latitudeIndex == latitudinalResolution)
-    {
-        return 1 + longitudinalResolution * (latitudinalResolution - 1);
-    }
-    return 1 + (latitudeIndex - 1) * longitudinalResolution + longitudeIndex;
+    return longitudeIndex + latitudeIndex * (latitudinalResolution + 1);
 }
 
 void PrimitiveGenerator::GenerateCubeFace(std::vector<glm::vec3>& vertices, std::vector<glm::vec3>& normals,
-    glm::vec3 faceNormal)
+    std::vector<glm::vec2>& texCoords, glm::vec3 faceNormal)
 {
     for (int i = 0; i<6; i++)
     {
@@ -208,4 +186,12 @@ void PrimitiveGenerator::GenerateCubeFace(std::vector<glm::vec3>& vertices, std:
     vertices.emplace_back(v1);
     vertices.emplace_back(v3);
     vertices.emplace_back(v2);
+
+    texCoords.emplace_back(glm::vec2(1, 1));
+    texCoords.emplace_back(glm::vec2(1, 0));
+    texCoords.emplace_back(glm::vec2(0, 1));
+    
+    texCoords.emplace_back(glm::vec2(0, 1));
+    texCoords.emplace_back(glm::vec2(1, 0));
+    texCoords.emplace_back(glm::vec2(0, 0));
 }
