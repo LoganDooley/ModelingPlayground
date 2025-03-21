@@ -5,6 +5,36 @@ SceneHierarchy::SceneHierarchy()
 
 }
 
+SceneHierarchy::SceneHierarchy(const SceneHierarchy& other) noexcept
+{
+    m_selectedSceneNode = other.m_selectedSceneNode;
+    m_rootSceneNode = other.m_rootSceneNode;
+    m_sceneNodeAddedSubscribers = other.m_sceneNodeAddedSubscribers;
+}
+
+SceneHierarchy::SceneHierarchy(SceneHierarchy&& other) noexcept
+{
+    m_selectedSceneNode = std::move(other.m_selectedSceneNode);
+    m_rootSceneNode = std::move(other.m_rootSceneNode);
+    m_sceneNodeAddedSubscribers = std::move(other.m_sceneNodeAddedSubscribers);
+}
+
+SceneHierarchy& SceneHierarchy::operator=(const SceneHierarchy& other) noexcept
+{
+    m_selectedSceneNode = other.m_selectedSceneNode;
+    m_rootSceneNode = other.m_rootSceneNode;
+    m_sceneNodeAddedSubscribers = other.m_sceneNodeAddedSubscribers;
+    return *this;
+}
+
+SceneHierarchy& SceneHierarchy::operator=(SceneHierarchy&& other) noexcept
+{
+    m_selectedSceneNode = std::move(other.m_selectedSceneNode);
+    m_rootSceneNode = std::move(other.m_rootSceneNode);
+    m_sceneNodeAddedSubscribers = std::move(other.m_sceneNodeAddedSubscribers);
+    return *this;
+}
+
 void SceneHierarchy::SetRootSceneNode(const std::shared_ptr<SceneNode>& rootSceneNode)
 {
     m_rootSceneNode = rootSceneNode;

@@ -8,6 +8,13 @@ class SceneNode;
 class SceneHierarchy {
 public:
     SceneHierarchy();
+    ~SceneHierarchy() = default;
+
+    SceneHierarchy(const SceneHierarchy& other) noexcept;
+    SceneHierarchy(SceneHierarchy&& other) noexcept;
+    
+    SceneHierarchy& operator=(const SceneHierarchy& other) noexcept;
+    SceneHierarchy& operator=(SceneHierarchy&& other) noexcept;
 
     void SetRootSceneNode(const std::shared_ptr<SceneNode>& rootSceneNode);
     const std::shared_ptr<SceneNode>& GetRootSceneNode() const;

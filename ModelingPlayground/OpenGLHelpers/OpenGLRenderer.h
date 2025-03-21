@@ -15,6 +15,8 @@ public:
     OpenGLRenderer();
     ~OpenGLRenderer() = default;
 
+    void Initialize();
+
     void SetCamera(const std::shared_ptr<SceneViewCamera>& camera);
     void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
     

@@ -10,11 +10,21 @@
 #include "../../Scene/Object.h"
 
 OpenGLRenderer::OpenGLRenderer():
-    m_openGLPrimitiveDrawer(std::make_unique<OpenGLPrimitiveDrawer>(10, 10))
+    m_defaultShader(std::make_shared<OpenGLShader>()),
+    m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
+    m_openGLPrimitiveDrawer(std::make_unique<OpenGLPrimitiveDrawer>()),
+    m_openGLLightContainer(std::make_unique<OpenGLLightContainer>())
 {
-    // Create shader
-    m_defaultShader = std::make_shared<OpenGLShader>("Shaders/default.vert", "Shaders/default.frag");
 
+}
+
+void OpenGLRenderer::Initialize()
+{
+    m_defaultShader->LoadShader("Shaders/default.vert", "Shaders/default.frag");
+    m_openGLPrimitiveDrawer->GeneratePrimitives(10, 10);
+    m_openGLLightContainer->Initialize(m_defaultShader, 8);
+
+    // Initialize shader
     m_defaultShader->RegisterUniformVariable("modelMatrix");
     m_defaultShader->RegisterUniformVariable("inverseTransposeModelMatrix");
     m_defaultShader->RegisterUniformVariable("cameraMatrix");
@@ -37,7 +47,7 @@ void OpenGLRenderer::SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sc
 {
     m_sceneHierarchy = sceneHierarchy;
 
-    m_openGLLightContainer = std::make_unique<OpenGLLightContainer>(m_defaultShader, m_sceneHierarchy);
+    m_openGLLightContainer->SetSceneHierarchy(m_sceneHierarchy);
     
     m_sceneHierarchy->SubscribeToSceneNodeAdded([this](const std::shared_ptr<SceneNode>& newSceneNode)
     {

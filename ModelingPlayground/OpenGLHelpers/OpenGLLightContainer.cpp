@@ -6,10 +6,19 @@
 
 #include "../Scene/Object.h"
 
-OpenGLLightContainer::OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& shader, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, uint32_t maxLights):
-    m_shader(shader),
-    m_maxLights(maxLights)
+OpenGLLightContainer::OpenGLLightContainer():
+    m_shader(std::make_shared<OpenGLShader>()),
+    m_maxLights(0),
+    m_lights({})
 {
+
+}
+
+void OpenGLLightContainer::Initialize(const std::shared_ptr<OpenGLShader>& shader, uint32_t maxLights)
+{
+    m_shader.reset(shader.get());
+    m_maxLights = maxLights;
+    
     // Register uniforms
     for (uint32_t i = 0; i<maxLights; i++)
     {
@@ -20,7 +29,14 @@ OpenGLLightContainer::OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& 
         m_shader->RegisterUniformVariable(GetLightFalloffUniformName(i));
     }
     m_shader->RegisterUniformVariable("lightCount");
+    m_shader->SetUniform1i("lightCount", 0);
+}
 
+void OpenGLLightContainer::SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
+{
+    m_lights.clear();
+    m_shader->SetUniform1i("lightCount", 0);
+    
     // bfs through hierarchy and add nodes that are lights
     std::queue<std::shared_ptr<SceneNode>> bfs;
     bfs.push(sceneHierarchy->GetRootSceneNode());

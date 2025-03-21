@@ -7,6 +7,8 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
+#include "../../../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/tinyfiledialogs/tinyfiledialogs.h"
+#include "../Utils/SceneLoader.h"
 #include "Window/HierarchyWindow.h"
 #include "Window/SceneViewWindow.h"
 #include "Window/InspectorWindow.h"
@@ -20,7 +22,7 @@ WindowManager::~WindowManager()
 {
 }
 
-void WindowManager::Initialize(std::unique_ptr<GlfwWindow>& glfwWindow, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<OpenGLRenderer>& openGLRenderer)
+void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<OpenGLRenderer>& openGLRenderer)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -44,6 +46,9 @@ void WindowManager::Initialize(std::unique_ptr<GlfwWindow>& glfwWindow, const st
 	m_windows.push_back(std::make_shared<HierarchyWindow>(sceneHierarchy));
 	m_windows.push_back(std::make_shared<SceneViewWindow>(openGLRenderer, glfwWindow->GetInputManager()));
 	m_windows.push_back(std::make_shared<InspectorWindow>(sceneHierarchy));
+
+	m_sceneHierarchy = sceneHierarchy;
+	m_openGLRenderer = openGLRenderer;
 }
 
 void WindowManager::Update(double seconds) const
@@ -54,7 +59,7 @@ void WindowManager::Update(double seconds) const
 	}
 }
 
-void WindowManager::Render(std::unique_ptr<GlfwWindow>& glfwWindow)
+void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -114,14 +119,41 @@ void WindowManager::Render(std::unique_ptr<GlfwWindow>& glfwWindow)
 		{
 			if (ImGui::BeginMenuBar()) {
 				if (ImGui::BeginMenu("File")) {
+					char const * lFilterPatterns[1] = { "*.json" };
+					if (ImGui::MenuItem("New")) {
+						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer);
+					}
 					if (ImGui::MenuItem("Open")) {
-
+						char const * lFilterPatterns[1] = { "*.json" };
+						const char* filePath = tinyfd_openFileDialog(
+							"Select a scene to open",
+							"",
+							1,
+							lFilterPatterns,
+							"json files",
+							0
+							);
+						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer, filePath);
 					}
 					if (ImGui::MenuItem("Save")) {
-
+						const char* filePath = tinyfd_saveFileDialog(
+							"Save scene as",
+							"",
+							1,
+							lFilterPatterns,
+							"json files"
+							);
+						SceneLoader::SaveScene(m_sceneHierarchy, filePath);
 					}
 					if (ImGui::MenuItem("Save as...")) {
-
+						const char* filePath = tinyfd_saveFileDialog(
+							"Save scene as",
+							"",
+							1,
+							lFilterPatterns,
+							"json files"
+							);
+						SceneLoader::SaveScene(m_sceneHierarchy, filePath);
 					}
 					ImGui::EndMenu();
 				}

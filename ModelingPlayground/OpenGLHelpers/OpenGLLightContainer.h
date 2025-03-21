@@ -19,9 +19,12 @@ enum LightType : int
 class OpenGLLightContainer
 {
 public:
-    OpenGLLightContainer(const std::shared_ptr<OpenGLShader>& shader, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, uint32_t maxLights = 8);
+    OpenGLLightContainer();
     ~OpenGLLightContainer() = default;
 
+    void Initialize(const std::shared_ptr<OpenGLShader>& shader, uint32_t maxLights = 8);
+    void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
+    
     bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);
     void RemoveLight(uint32_t lightIndex);
     void ClearLights();

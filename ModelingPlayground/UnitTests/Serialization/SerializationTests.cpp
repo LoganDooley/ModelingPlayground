@@ -38,4 +38,8 @@ TEST_CASE("SceneNode Serialization")
     std::shared_ptr<SceneNode> mySceneNodePostJson = mySceneNodeJson.get<std::shared_ptr<SceneNode>>();
     REQUIRE(mySceneNodePostJson->GetName() == "sceneNodeName");
     REQUIRE(mySceneNodePostJson->GetChildren().size() == 2);
+
+    // pointers
+    std::shared_ptr<SceneNode> temp = nullptr;
+    temp = std::make_shared<SceneNode>("hi");
 }

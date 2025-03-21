@@ -4,13 +4,27 @@
 
 #include "../Serialization/Serializers.h"
 
-bool SceneLoader::LoadScene(std::shared_ptr<SceneHierarchy>& sceneHierarchy,
-    const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const char* sceneFilePath)
+void SceneLoader::Initialize()
 {
+    PolymorphicSerializer<Component>::RegisterTypes<DirectionalLightComponent,
+    MaterialComponent,
+    OpenGLSettingsComponent,
+    PointLightComponent,
+    PrimitiveComponent,
+    SpotLightComponent,
+    TransformComponent
+    >();
+}
+
+bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
+                            const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const char* sceneFilePath)
+{
+    Initialize();
+    
     if (sceneFilePath == "")
     {
         // Create new scene
-        sceneHierarchy = std::make_shared<SceneHierarchy>();
+        *sceneHierarchy = SceneHierarchy();
         std::shared_ptr<SceneNode> rootSceneNode = std::make_shared<SceneNode>("World");
         rootSceneNode->GetObject().AddComponent<OpenGLSettingsComponent>();
         sceneHierarchy->SetRootSceneNode(rootSceneNode);
@@ -25,39 +39,23 @@ bool SceneLoader::LoadScene(std::shared_ptr<SceneHierarchy>& sceneHierarchy,
         std::cerr << "Error opening file " << sceneFilePath << "\n";
         return false;
     }
-    nlohmann::json sceneJson;
-    std::shared_ptr<SceneHierarchy> newSceneHierarchy;
-    try
-    {
-        sceneJson = nlohmann::json::parse(file);
-        newSceneHierarchy = sceneJson;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr<<e.what()<<std::endl;
-        return false;
-    }
-    sceneHierarchy = std::move(newSceneHierarchy);
+
+    nlohmann::json sceneJson = nlohmann::json::parse(file);
+    SceneHierarchy newSceneHierarchy = sceneJson;
+    *sceneHierarchy = std::move(newSceneHierarchy);
     openGLRenderer->SetSceneHierarchy(sceneHierarchy);
     return true;
 }
 
 bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const char* sceneFilePath)
 {
-    nlohmann::json sceneJson;
-    try
-    {
-        sceneJson = sceneHierarchy;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr<<e.what()<<std::endl;
-        return false;
-    }
+    Initialize();
+    
+    nlohmann::json sceneJson = sceneHierarchy;
     std::ofstream sceneFile(sceneFilePath);
     if (sceneFile.fail())
     {
-        std::cerr << "Error opening file " << sceneFilePath << std::endl;
+        std::cerr << "Error opening file " << sceneFilePath <<"\n";
     }
     sceneFile << sceneJson;
     return true;

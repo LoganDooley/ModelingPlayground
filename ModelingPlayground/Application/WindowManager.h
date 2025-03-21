@@ -12,11 +12,13 @@ public:
 	WindowManager();
 	~WindowManager();
 
-	void Initialize(std::unique_ptr<GlfwWindow>& glfwWindow, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<OpenGLRenderer>& openGLRenderer);
+	void Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow, const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const std::shared_ptr<OpenGLRenderer>& openGLRenderer);
 	void Update(double seconds) const;
-	void Render(std::unique_ptr<GlfwWindow>& glfwWindow);
+	void Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const;
 	void Close();
 
 private:
 	std::vector<std::shared_ptr<Window>> m_windows;
+	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
+	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
 };

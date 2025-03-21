@@ -17,18 +17,20 @@ namespace PolymorphicSerializer_Impl
         return{
             [](nlohmann::json& json, const Base& base)
             {
-                return to_json(json, static_cast<const Derived&>(base));
+                const Derived& derived = static_cast<const Derived&>(base);
+                return to_json(json, derived);
             },
             [](const nlohmann::json& json, Base& base)
             {
-                return from_json(json, static_cast<Derived&>(base));    
+                Derived& derived = static_cast<Derived&>(base);
+                return from_json(json, derived);    
             }
         };
     }
 }
 
 template <class Base>
-struct PolymorphicSharedPointerSerializer
+struct PolymorphicSerializer
 {
     static inline std::unordered_map<char const*, PolymorphicSerializer_Impl::Serializer<Base>> m_serializers;
 

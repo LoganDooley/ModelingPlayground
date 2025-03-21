@@ -59,7 +59,7 @@ struct adl_serializer<DataBinding<T>>
 
 // Component Polymorphism
 template<>
-struct adl_serializer<Component> : PolymorphicSharedPointerSerializer<Component> {};
+struct adl_serializer<Component> : PolymorphicSerializer<Component> {};
 NLOHMANN_JSON_NAMESPACE_END
 
 // Primitive Type

@@ -6,9 +6,10 @@
 class OpenGLPrimitiveDrawer
 {
 public:
-    OpenGLPrimitiveDrawer(int sphereLatitudinalResolution, int sphereLongitudinalResolution);
-
+    OpenGLPrimitiveDrawer();
     ~OpenGLPrimitiveDrawer() = default;
+
+    void GeneratePrimitives(int sphereLatitudinalResolution, int sphereLongitudinalResolution);
 
     void DrawPrimitive(PrimitiveType primitiveType);
 

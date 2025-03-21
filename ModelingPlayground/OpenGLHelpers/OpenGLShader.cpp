@@ -6,7 +6,12 @@
 #include "glm/glm.hpp"
 #include "../Application/ShaderLoader.h"
 
-OpenGLShader::OpenGLShader(const char* vertexFilePath, const char* fragmentFilePath)
+OpenGLShader::OpenGLShader()
+{
+
+}
+
+void OpenGLShader::LoadShader(const char* vertexFilePath, const char* fragmentFilePath)
 {
     m_shaderID = ShaderLoader::createShaderProgram(vertexFilePath, fragmentFilePath);
 }

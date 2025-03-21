@@ -6,9 +6,24 @@
 
 #include "../../Utils/PrimitiveGenerator.h"
 
-OpenGLPrimitiveDrawer::OpenGLPrimitiveDrawer(int sphereLatitudinalResolution, int sphereLongitudinalResolution)
+OpenGLPrimitiveDrawer::OpenGLPrimitiveDrawer():
+	m_triangleVBO(-1),
+	m_triangleVAO(-1),
+	m_sphereVBO(-1),
+	m_sphereVAO(-1),
+	m_sphereEBO(-1),
+	m_sphereIndexCount(-1),
+	m_cubeVBO(-1),
+	m_cubeVAO(-1),
+	m_cubeEBO(-1),
+	m_cubeVertexCount(-1)
 {
-    // Initialize Triangle
+    
+}
+
+void OpenGLPrimitiveDrawer::GeneratePrimitives(int sphereLatitudinalResolution, int sphereLongitudinalResolution)
+{
+	// Initialize Triangle
     float triangleData[] = {
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
          0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,

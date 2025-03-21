@@ -8,8 +8,9 @@
 class OpenGLShader
 {
 public:
-    OpenGLShader(const char * vertexFilePath, const char * fragmentFilePath);
+    OpenGLShader();
 
+    void LoadShader(const char * vertexFilePath, const char * fragmentFilePath);
     void BindShader() const;
     void UnbindShader() const;
     
