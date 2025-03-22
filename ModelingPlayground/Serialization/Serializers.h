@@ -138,6 +138,7 @@ inline void from_json(const nlohmann::json& json, PointLightComponent& pointLigh
 inline void to_json(nlohmann::json& json, const PrimitiveComponent& primitiveComponent)
 {
     json = {
+        {"m_customPrimitiveFilePath", primitiveComponent.m_customPrimitiveFilePath},
         {"m_primitiveType", primitiveComponent.m_primitiveType},
         {"m_currentItem", primitiveComponent.m_currentItem}
     };
@@ -147,6 +148,7 @@ inline void from_json(const nlohmann::json& json, PrimitiveComponent& primitiveC
 {
     json.at("m_primitiveType").get_to(primitiveComponent.m_primitiveType);
     json.at("m_currentItem").get_to(primitiveComponent.m_currentItem);
+    json.at("m_customPrimitiveFilePath").get_to(primitiveComponent.m_customPrimitiveFilePath);
 }
 
 // SpotLightComponent

@@ -30,13 +30,13 @@ void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
 {
     if (m_uniformLocationCache.contains(uniformName))
     {
-        std::cout << "OpenGLShader|RegisterUniformVariable: Unifom variable " << uniformName << " is already registered!\n";
+        std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName << " is already registered!\n";
         return;
     }
     m_uniformLocationCache[uniformName] = glGetUniformLocation(m_shaderID, uniformName.c_str());
     if (m_uniformLocationCache[uniformName] == -1)
     {
-        std::cout << "OpenGLShader|RegisterUniformVariable: Unifom variable " << uniformName << " does not exist in shader! Please check if this uniform exists and is used within the shader program.\n";
+        std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName << " does not exist in shader! Please check if this uniform exists and is used within the shader program.\n";
     }
 }
 
