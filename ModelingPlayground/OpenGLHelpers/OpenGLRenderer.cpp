@@ -12,7 +12,7 @@
 OpenGLRenderer::OpenGLRenderer():
     m_defaultShader(std::make_shared<OpenGLShader>()),
     m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
-    m_openGLPrimitiveDrawer(std::make_unique<OpenGLPrimitiveDrawer>()),
+    m_openGLPrimitiveManager(std::make_shared<OpenGLPrimitiveManager>()),
     m_openGLLightContainer(std::make_unique<OpenGLLightContainer>())
 {
 
@@ -21,7 +21,7 @@ OpenGLRenderer::OpenGLRenderer():
 void OpenGLRenderer::Initialize()
 {
     m_defaultShader->LoadShader("Shaders/default.vert", "Shaders/default.frag");
-    m_openGLPrimitiveDrawer->GeneratePrimitives(10, 10);
+    m_openGLPrimitiveManager->GeneratePrimitives(10, 10);
     m_openGLLightContainer->Initialize(m_defaultShader, 8);
 
     // Initialize shader
@@ -93,6 +93,11 @@ void OpenGLRenderer::RenderSceneHierarchy() const
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+std::shared_ptr<OpenGLPrimitiveManager> OpenGLRenderer::GetOpenGLPrimitiveManager() const
+{
+    return m_openGLPrimitiveManager;
+}
+
 void OpenGLRenderer::ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const
 {
     if (std::shared_ptr<PrimitiveComponent> primitiveComponent = object.GetFirstComponentOfType<PrimitiveComponent>())
@@ -128,8 +133,16 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
     m_defaultShader->SetUniform3f("materialColor", materialComponent.GetMaterialColor());
     m_defaultShader->SetUniform1f("roughness", materialComponent.GetRoughness());
     m_defaultShader->SetUniform1f("metallic", materialComponent.GetRoughness());
-	
-    m_openGLPrimitiveDrawer->DrawPrimitive(primitiveComponent.GetPrimitiveType());
+
+    std::string customPrimitiveFilePath = primitiveComponent.GetCustomPrimitiveFilePath();
+    if (!customPrimitiveFilePath.empty())
+    {
+        m_openGLPrimitiveManager->DrawPrimitive(customPrimitiveFilePath);
+    }
+    else
+    {
+        m_openGLPrimitiveManager->DrawPrimitive(primitiveComponent.GetPrimitiveType());
+    }
 }
 
 void OpenGLRenderer::OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const

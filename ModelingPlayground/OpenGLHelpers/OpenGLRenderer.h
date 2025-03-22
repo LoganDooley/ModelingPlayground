@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "OpenGLLightContainer.h"
-#include "OpenGLPrimitiveDrawer.h"
+#include "OpenGLPrimitiveManager.h"
 #include "../Scene/SceneHierarchy.h"
 
 class MaterialComponent;
@@ -21,6 +21,7 @@ public:
     void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
     
     void RenderSceneHierarchy() const;
+    std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
 
 private:
     void ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const;
@@ -33,6 +34,6 @@ private:
     std::shared_ptr<OpenGLShader> m_defaultShader;
     std::shared_ptr<SceneViewCamera> m_camera;
     std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
-    std::unique_ptr<OpenGLPrimitiveDrawer> m_openGLPrimitiveDrawer;
+    std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
     std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
 };

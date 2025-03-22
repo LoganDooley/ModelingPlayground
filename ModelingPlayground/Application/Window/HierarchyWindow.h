@@ -12,7 +12,7 @@ class SceneHierarchy;
 class HierarchyWindow : public Window
 {
 public:
-	HierarchyWindow(std::shared_ptr<SceneHierarchy> scene);
+	HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -25,5 +25,6 @@ private:
 	void CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node);
 
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
+	std::shared_ptr<SceneNodeGenerator> m_sceneNodeGenerator;
 };
 

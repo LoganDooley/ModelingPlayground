@@ -13,10 +13,10 @@ public:
     Object() = default;
     Object(const std::string& name);
 
-    template <class T> 
-    void AddComponent()
+    template <class T, typename...Args> 
+    void AddComponent(Args...args)
     {
-        m_components.push_back(std::make_shared<T>());
+        m_components.push_back(std::make_shared<T>(args...));
     }
 
     void RemoveComponent(const std::shared_ptr<Component>& component);

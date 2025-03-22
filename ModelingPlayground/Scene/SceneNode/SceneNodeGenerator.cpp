@@ -11,6 +11,15 @@
 #include "../Components/SpotLightComponent.h"
 #include "../Components/TransformComponent.h"
 
+SceneNodeGenerator::SceneNodeGenerator()
+{
+}
+
+void SceneNodeGenerator::SetOpenGLPrimitiveManager(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager)
+{
+    m_openGLPrimitiveManager = openGLPrimitiveManager;
+}
+
 std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent)
 {
     std::shared_ptr<SceneNode> sceneNode = std::make_shared<SceneNode>(GetDefaultSceneNodeName(sceneNodeType, parent));
@@ -68,7 +77,7 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
 void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
     object.AddComponent<TransformComponent>();
-    object.AddComponent<PrimitiveComponent>();
+    object.AddComponent<PrimitiveComponent>(m_openGLPrimitiveManager);
     object.AddComponent<MaterialComponent>();
 }
 
