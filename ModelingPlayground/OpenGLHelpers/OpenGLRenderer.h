@@ -26,9 +26,9 @@ public:
 	std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
 
 private:
-	void ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const;
+	void ProcessObject(const Object& object) const;
 	void DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent,
-	              const MaterialComponent& materialComponent, glm::mat4& cumulativeModelMatrix) const;
+	              const MaterialComponent& materialComponent) const;
 
 	void CacheSceneHierarchyLights() const;
 	void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const;

@@ -36,7 +36,12 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 		if (std::shared_ptr<TransformComponent> transformComponent = node->GetObject().GetFirstComponentOfType<
 			TransformComponent>())
 		{
-			transformComponent->SetOpenGLRenderer(openGLRenderer);
+			node->RegisterTransformModelMatrix();
+		}
+		if (std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
+			PrimitiveComponent>())
+		{
+			primitiveComponent->SetPrimitiveManager(openGLRenderer->GetOpenGLPrimitiveManager());
 		}
 	});
 	sceneHierarchy->SetFilePath(sceneFilePath);

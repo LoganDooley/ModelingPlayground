@@ -118,7 +118,7 @@ inline void from_json(const nlohmann::json& json, TransformComponent& transformC
 	json.at("m_position").get_to(transformComponent.m_position);
 	json.at("m_rotation").get_to(transformComponent.m_rotation);
 	json.at("m_scale").get_to(transformComponent.m_scale);
-	transformComponent.UpdateModelMatrix();
+	transformComponent.UpdateLocalModelMatrix();
 	transformComponent.UpdateLocalXUnitVector();
 }
 

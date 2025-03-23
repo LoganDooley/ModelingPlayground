@@ -54,35 +54,6 @@ void OpenGLLightContainer::SetSceneHierarchy(const std::shared_ptr<SceneHierarch
 	}
 }
 
-void OpenGLLightContainer::ResetAllLightTransforms() const
-{
-	for (int i = 0; i < m_lights.size(); i++)
-	{
-		std::shared_ptr<SceneNode> lightSceneNode = m_lights[i].first.lock();
-		if (lightSceneNode == nullptr)
-		{
-			continue;
-		}
-		std::shared_ptr<TransformComponent> lightTransform = lightSceneNode->GetObject().GetFirstComponentOfType<
-			TransformComponent>();
-		switch (m_lights[i].second)
-		{
-		case Directional:
-			SetLightDirectionUniform(i, lightTransform->GetLocalXUnitVector());
-			break;
-		case Point:
-			SetLightPositionUniform(i, lightTransform->GetPosition());
-			break;
-		case Spot:
-			SetLightPositionUniform(i, lightTransform->GetPosition());
-			SetLightDirectionUniform(i, lightTransform->GetLocalXUnitVector());
-			break;
-		case None:
-			break;
-		}
-	}
-}
-
 bool OpenGLLightContainer::TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode)
 {
 	LightType lightType = GetLightType(lightSceneNode);
@@ -279,22 +250,32 @@ void OpenGLLightContainer::SubscribeToLight(uint32_t lightIndex)
 		std::cerr << "OpenGLLightContainer|SubscribeToLight: lightIndex: " << lightIndex << " has been deleted!\n";
 		return;
 	}
+
 	Object& lightObject = lightSceneNode->GetObject();
+
+	std::shared_ptr<TransformComponent> lightTransformComponent = lightObject.GetFirstComponentOfType<
+		TransformComponent>();
+	if (lightTransformComponent == nullptr)
+	{
+		std::cerr << "OpenGLLightContainer|SubscribeToLight: lightIndex: " << lightIndex <<
+			" has no transform component!\n";
+	}
+
 	switch (m_lights[lightIndex].second)
 	{
 	case Directional:
 		SubscribeToDirectionalLight(lightIndex,
-		                            lightObject.GetFirstComponentOfType<TransformComponent>(),
+		                            lightTransformComponent,
 		                            lightObject.GetFirstComponentOfType<DirectionalLightComponent>());
 		break;
 	case Point:
 		SubscribeToPointLight(lightIndex,
-		                      lightObject.GetFirstComponentOfType<TransformComponent>(),
+		                      lightTransformComponent,
 		                      lightObject.GetFirstComponentOfType<PointLightComponent>());
 		break;
 	case Spot:
 		SubscribeToSpotLight(lightIndex,
-		                     lightObject.GetFirstComponentOfType<TransformComponent>(),
+		                     lightTransformComponent,
 		                     lightObject.GetFirstComponentOfType<SpotLightComponent>());
 		break;
 	}
@@ -311,6 +292,8 @@ void OpenGLLightContainer::SubscribeToDirectionalLight(uint32_t lightIndex,
                                                        directionalLightComponent) const
 {
 	const std::shared_ptr<SceneNode>& lightSceneNode = m_lights[lightIndex].first.lock();
+
+	// Light Color
 	directionalLightComponent->GetLightColorDataBinding().Subscribe(
 		[this, lightSceneNode](const glm::vec3& lightColor, glm::vec3)
 		{
@@ -318,11 +301,23 @@ void OpenGLLightContainer::SubscribeToDirectionalLight(uint32_t lightIndex,
 			SetLightColorUniform(lightIndex, lightColor);
 		});
 
+	// Light Direction
 	transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(
-		[this, lightSceneNode](const glm::vec3& localXUnitVector, glm::vec3)
+		[this, lightSceneNode, transformComponent](const glm::vec3& localXUnitVector, glm::vec3)
 		{
 			uint32_t lightIndex = GetLightIndex(lightSceneNode);
-			SetLightDirectionUniform(lightIndex, localXUnitVector);
+			SetLightDirectionUniform(lightIndex, glm::vec3(
+				                         transformComponent->GetParentCumulativeModelMatrix() * glm::vec4(
+					                         localXUnitVector, 0.0f)));
+		});
+
+	transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
+		[this, lightSceneNode, transformComponent](const glm::mat4& parentCumulativeModelMatrix, glm::mat4)
+		{
+			uint32_t lightIndex = GetLightIndex(lightSceneNode);
+			SetLightDirectionUniform(lightIndex, glm::vec3(
+				                         parentCumulativeModelMatrix * glm::vec4(
+					                         transformComponent->GetLocalXUnitVector(), 0.0f)));
 		});
 }
 
@@ -331,6 +326,8 @@ void OpenGLLightContainer::SubscribeToPointLight(uint32_t lightIndex,
                                                  const std::shared_ptr<PointLightComponent>& pointLightComponent) const
 {
 	const std::shared_ptr<SceneNode>& lightSceneNode = m_lights[lightIndex].first.lock();
+
+	// Light Color
 	pointLightComponent->GetLightColorDataBinding().Subscribe(
 		[this, lightSceneNode](const glm::vec3& lightColor, glm::vec3)
 		{
@@ -338,12 +335,24 @@ void OpenGLLightContainer::SubscribeToPointLight(uint32_t lightIndex,
 			SetLightColorUniform(lightIndex, lightColor);
 		});
 
-	transformComponent->GetPositionDataBinding().Subscribe([this, lightSceneNode](const glm::vec3& position, glm::vec3)
-	{
-		uint32_t lightIndex = GetLightIndex(lightSceneNode);
-		SetLightPositionUniform(lightIndex, position);
-	});
+	// Light Position
+	transformComponent->GetPositionDataBinding().Subscribe(
+		[this, lightSceneNode, transformComponent](const glm::vec3& position, glm::vec3)
+		{
+			uint32_t lightIndex = GetLightIndex(lightSceneNode);
+			SetLightPositionUniform(
+				lightIndex, glm::vec3(transformComponent->GetParentCumulativeModelMatrix() * glm::vec4(position, 1.f)));
+		});
 
+	transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
+		[this, lightSceneNode, transformComponent](const glm::mat4& parentCumulativeModelMatrix, glm::mat4)
+		{
+			uint32_t lightIndex = GetLightIndex(lightSceneNode);
+			SetLightPositionUniform(
+				lightIndex, glm::vec3(parentCumulativeModelMatrix * glm::vec4(transformComponent->GetPosition(), 1.f)));
+		});
+
+	// Distance Falloff
 	pointLightComponent->GetFalloffDataBinding().Subscribe([this, lightSceneNode](const glm::vec3& falloff, glm::vec3)
 	{
 		uint32_t lightIndex = GetLightIndex(lightSceneNode);
@@ -356,6 +365,8 @@ void OpenGLLightContainer::SubscribeToSpotLight(uint32_t lightIndex,
                                                 const std::shared_ptr<SpotLightComponent>& spotLightComponent) const
 {
 	const std::shared_ptr<SceneNode>& lightSceneNode = m_lights[lightIndex].first.lock();
+
+	// Light Color
 	spotLightComponent->GetLightColorDataBinding().Subscribe(
 		[this, lightSceneNode](const glm::vec3& lightColor, glm::vec3)
 		{
@@ -363,19 +374,43 @@ void OpenGLLightContainer::SubscribeToSpotLight(uint32_t lightIndex,
 			SetLightColorUniform(lightIndex, lightColor);
 		});
 
-	transformComponent->GetPositionDataBinding().Subscribe([this, lightSceneNode](const glm::vec3& position, glm::vec3)
-	{
-		uint32_t lightIndex = GetLightIndex(lightSceneNode);
-		SetLightPositionUniform(lightIndex, position);
-	});
-
-	transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(
-		[this, lightSceneNode](const glm::vec3& localXUnitVector, glm::vec3)
+	// Light Position
+	transformComponent->GetPositionDataBinding().Subscribe(
+		[this, lightSceneNode, transformComponent](const glm::vec3& position, glm::vec3)
 		{
 			uint32_t lightIndex = GetLightIndex(lightSceneNode);
-			SetLightDirectionUniform(lightIndex, localXUnitVector);
+			SetLightPositionUniform(
+				lightIndex, glm::vec3(transformComponent->GetParentCumulativeModelMatrix() * glm::vec4(position, 1.f)));
 		});
 
+	transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
+		[this, lightSceneNode, transformComponent](const glm::mat4& parentCumulativeModelMatrix, glm::mat4)
+		{
+			uint32_t lightIndex = GetLightIndex(lightSceneNode);
+			SetLightPositionUniform(
+				lightIndex, glm::vec3(parentCumulativeModelMatrix * glm::vec4(transformComponent->GetPosition(), 1.f)));
+		});
+
+	// Light Direction
+	transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(
+		[this, lightSceneNode, transformComponent](const glm::vec3& localXUnitVector, glm::vec3)
+		{
+			uint32_t lightIndex = GetLightIndex(lightSceneNode);
+			SetLightDirectionUniform(lightIndex, glm::vec3(
+				                         transformComponent->GetParentCumulativeModelMatrix() * glm::vec4(
+					                         localXUnitVector, 0.0f)));
+		});
+
+	transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
+		[this, lightSceneNode, transformComponent](const glm::mat4& parentCumulativeModelMatrix, glm::mat4)
+		{
+			uint32_t lightIndex = GetLightIndex(lightSceneNode);
+			SetLightDirectionUniform(lightIndex, glm::vec3(
+				                         parentCumulativeModelMatrix * glm::vec4(
+					                         transformComponent->GetLocalXUnitVector(), 0.0f)));
+		});
+
+	// Angular falloff
 	spotLightComponent->GetLightFalloffAnglesDataBinding().Subscribe(
 		[this, lightSceneNode](const glm::vec2& falloffAngle, glm::vec2)
 		{
@@ -391,24 +426,12 @@ void OpenGLLightContainer::SetLightTypeUniform(uint32_t lightIndex, LightType ty
 
 void OpenGLLightContainer::SetLightPositionUniform(uint32_t lightIndex, const glm::vec3& position) const
 {
-	std::shared_ptr<SceneNode> lightSceneNode = m_lights[lightIndex].first.lock();
-	if (lightSceneNode)
-	{
-		glm::mat4 parentTransform = lightSceneNode->GetParentTransform();
-		m_shader->SetUniform3f(GetLightPositionUniformName(lightIndex),
-		                       glm::vec3(parentTransform * glm::vec4(position, 1)));
-	}
+	m_shader->SetUniform3f(GetLightPositionUniformName(lightIndex), position);
 }
 
 void OpenGLLightContainer::SetLightDirectionUniform(uint32_t lightIndex, const glm::vec3& direction) const
 {
-	std::shared_ptr<SceneNode> lightSceneNode = m_lights[lightIndex].first.lock();
-	if (lightSceneNode)
-	{
-		glm::mat4 parentTransform = lightSceneNode->GetParentTransform();
-		m_shader->SetUniform3f(GetLightDirectionUniformName(lightIndex),
-		                       glm::vec3(parentTransform * glm::vec4(direction, 0)));
-	}
+	m_shader->SetUniform3f(GetLightDirectionUniformName(lightIndex), direction);
 }
 
 void OpenGLLightContainer::SetLightColorUniform(uint32_t lightIndex, const glm::vec3& color) const

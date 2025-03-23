@@ -9,21 +9,13 @@
 #include "../../Utils/PropertyDrawer.h"
 
 TransformComponent::TransformComponent():
+	m_parentCumulativeModelMatrix(glm::mat4(1)),
+	m_localModelMatrix(glm::mat4(1)),
 	m_position(glm::vec3(0)),
 	m_rotation(glm::vec3(0)),
 	m_scale(glm::vec3(1)),
-	m_localXUnitVector(glm::vec3(1, 0, 0)),
-	m_modelMatrix(glm::mat4(1))
-{
-}
+	m_localXUnitVector(glm::vec3(1, 0, 0))
 
-TransformComponent::TransformComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer):
-	m_openGLRenderer(openGLRenderer),
-	m_position(glm::vec3(0)),
-	m_rotation(glm::vec3(0)),
-	m_scale(glm::vec3(1)),
-	m_localXUnitVector(glm::vec3(1, 0, 0)),
-	m_modelMatrix(glm::mat4(1))
 {
 }
 
@@ -35,7 +27,7 @@ void TransformComponent::RenderInspector()
 		// Position
 		if (PropertyDrawer::DrawVec3fDrag("Position", m_position, 0.01f))
 		{
-			UpdateModelMatrix();
+			UpdateLocalModelMatrix();
 		}
 
 		// Rotation
@@ -47,26 +39,46 @@ void TransformComponent::RenderInspector()
 			rotationModulus.z = std::fmodf(rotationModulus.z, 360.0f);
 			m_rotation.SetAndNotify(rotationModulus);
 
-			UpdateModelMatrix();
+			UpdateLocalModelMatrix();
 			UpdateLocalXUnitVector();
 		}
 
 		// Scale
 		if (PropertyDrawer::DrawVec3fDrag("Scale", m_scale, 0.01f))
 		{
-			UpdateModelMatrix();
+			UpdateLocalModelMatrix();
 		}
 	}
 }
 
-void TransformComponent::SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer)
+glm::mat4 TransformComponent::GetCumulativeModelMatrix() const
 {
-	m_openGLRenderer = openGLRenderer;
+	return m_parentCumulativeModelMatrix.GetData() * m_localModelMatrix.GetData();
 }
 
-const glm::mat4& TransformComponent::GetModelMatrix() const
+void TransformComponent::SetParentCumulativeModelMatrix(glm::mat4 parentCumulativeModelMatrix)
 {
-	return m_modelMatrix;
+	m_parentCumulativeModelMatrix.SetAndNotify(parentCumulativeModelMatrix, true);
+}
+
+glm::mat4 TransformComponent::GetParentCumulativeModelMatrix() const
+{
+	return m_parentCumulativeModelMatrix.GetData();
+}
+
+DataBinding<glm::mat4>& TransformComponent::GetParentCumulativeModelMatrixDataBinding()
+{
+	return m_parentCumulativeModelMatrix;
+}
+
+const glm::mat4& TransformComponent::GetLocalModelMatrix() const
+{
+	return m_localModelMatrix.GetData();
+}
+
+DataBinding<glm::mat4>& TransformComponent::GetLocalModelMatrixDataBinding()
+{
+	return m_localModelMatrix;
 }
 
 const glm::vec3& TransformComponent::GetPosition() const
@@ -99,7 +111,7 @@ DataBinding<glm::vec3>& TransformComponent::GetLocalXUnitVectorDataBinding()
 	return m_localXUnitVector;
 }
 
-void TransformComponent::UpdateModelMatrix()
+void TransformComponent::UpdateLocalModelMatrix()
 {
 	// scale
 	glm::mat4 scaleMatrix = scale(glm::mat4(1), m_scale.GetData());
@@ -113,12 +125,7 @@ void TransformComponent::UpdateModelMatrix()
 	glm::mat4 translationMatrix = translate(glm::mat4(1), m_position.GetData());
 
 	// model matrix
-	m_modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-
-	if (m_openGLRenderer != nullptr)
-	{
-		m_openGLRenderer->ResetAllLightTransforms();
-	}
+	m_localModelMatrix.SetAndNotify(translationMatrix * rotationMatrix * scaleMatrix);
 }
 
 void TransformComponent::UpdateLocalXUnitVector()

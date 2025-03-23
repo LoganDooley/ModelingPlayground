@@ -47,26 +47,12 @@ void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHier
 {
 	m_sceneHierarchy = sceneHierarchy;
 
-	m_sceneHierarchy->BreadthFirstProcessAllSceneNodes([this](std::shared_ptr<SceneNode> node)
-	{
-		if (std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
-			PrimitiveComponent>())
-		{
-			primitiveComponent->SetPrimitiveManager(m_openGLPrimitiveManager);
-		}
-	});
-
 	m_openGLLightContainer->SetSceneHierarchy(m_sceneHierarchy);
 
 	m_sceneHierarchy->SubscribeToSceneNodeAdded([this](const std::shared_ptr<SceneNode>& newSceneNode)
 	{
 		OnSceneNodeAdded(newSceneNode);
 	});
-}
-
-void OpenGLRenderer::ResetAllLightTransforms() const
-{
-	m_openGLLightContainer->ResetAllLightTransforms();
 }
 
 void OpenGLRenderer::RenderSceneHierarchy() const
@@ -85,21 +71,19 @@ void OpenGLRenderer::RenderSceneHierarchy() const
 	m_defaultShader->SetUniform3f("cameraPosition", m_camera->GetCameraPosition());
 
 	// DFS draw objects
-	std::stack<std::pair<std::shared_ptr<SceneNode>, glm::mat4>> traversal;
-	traversal.push({m_sceneHierarchy->GetRootSceneNode(), glm::mat4(1.0f)});
+	std::stack<std::shared_ptr<SceneNode>> traversal;
+	traversal.push(m_sceneHierarchy->GetRootSceneNode());
 	while (!traversal.empty())
 	{
-		std::pair<std::shared_ptr<SceneNode>, glm::mat4> sceneNodeToProcess = traversal.top();
-		std::shared_ptr<SceneNode> sceneNode = sceneNodeToProcess.first;
-		glm::mat4 cumulativeModelMatrix = sceneNodeToProcess.second;
+		std::shared_ptr<SceneNode> sceneNodeToProcess = traversal.top();
 		traversal.pop();
-		ProcessObject(sceneNode->GetObject(), cumulativeModelMatrix);
+		ProcessObject(sceneNodeToProcess->GetObject());
 
 		// Add children to stack in reverse order
-		const std::vector<std::shared_ptr<SceneNode>>& children = sceneNode->GetChildren();
+		const std::vector<std::shared_ptr<SceneNode>>& children = sceneNodeToProcess->GetChildren();
 		for (int i = static_cast<int>(children.size()) - 1; i >= 0; i--)
 		{
-			traversal.push({children[i], cumulativeModelMatrix});
+			traversal.push(children[i]);
 		}
 	}
 
@@ -112,7 +96,7 @@ std::shared_ptr<OpenGLPrimitiveManager> OpenGLRenderer::GetOpenGLPrimitiveManage
 	return m_openGLPrimitiveManager;
 }
 
-void OpenGLRenderer::ProcessObject(const Object& object, glm::mat4& cumulativeModelMatrix) const
+void OpenGLRenderer::ProcessObject(const Object& object) const
 {
 	if (std::shared_ptr<PrimitiveComponent> primitiveComponent = object.GetFirstComponentOfType<PrimitiveComponent>())
 	{
@@ -122,7 +106,7 @@ void OpenGLRenderer::ProcessObject(const Object& object, glm::mat4& cumulativeMo
 			if (std::shared_ptr<MaterialComponent> materialComponent = object.GetFirstComponentOfType<
 				MaterialComponent>())
 			{
-				DrawMesh(*primitiveComponent, *transformComponent, *materialComponent, cumulativeModelMatrix);
+				DrawMesh(*primitiveComponent, *transformComponent, *materialComponent);
 			}
 		}
 	}
@@ -139,10 +123,10 @@ void OpenGLRenderer::ProcessObject(const Object& object, glm::mat4& cumulativeMo
 }
 
 void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
-                              const TransformComponent& transformComponent, const MaterialComponent& materialComponent,
-                              glm::mat4& cumulativeModelMatrix) const
+                              const TransformComponent& transformComponent,
+                              const MaterialComponent& materialComponent) const
 {
-	cumulativeModelMatrix = cumulativeModelMatrix * transformComponent.GetModelMatrix();
+	glm::mat4 cumulativeModelMatrix = transformComponent.GetCumulativeModelMatrix();
 	m_defaultShader->BindShader();
 	m_defaultShader->SetUniformMatrix4f("modelMatrix", false, cumulativeModelMatrix);
 	glm::mat3 inverseTransposeModelMatrix = transpose(inverse(glm::mat3(cumulativeModelMatrix)));

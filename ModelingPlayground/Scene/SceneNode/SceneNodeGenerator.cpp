@@ -48,6 +48,8 @@ std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
 	parent->AddChild(sceneNode);
 	sceneNode->SetParent(parent);
 
+	sceneNode->RegisterTransformModelMatrix();
+
 	return sceneNode;
 }
 
@@ -79,26 +81,26 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
 
 void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
-	object.AddComponent<TransformComponent>(m_openGLRenderer);
+	object.AddComponent<TransformComponent>();
 	object.AddComponent<PrimitiveComponent>(m_openGLRenderer->GetOpenGLPrimitiveManager());
 	object.AddComponent<MaterialComponent>();
 }
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)
 {
-	object.AddComponent<TransformComponent>(m_openGLRenderer);
+	object.AddComponent<TransformComponent>();
 	object.AddComponent<DirectionalLightComponent>();
 }
 
 void SceneNodeGenerator::InitializePointLightObject(Object& object)
 {
-	object.AddComponent<TransformComponent>(m_openGLRenderer);
+	object.AddComponent<TransformComponent>();
 	object.AddComponent<PointLightComponent>();
 }
 
 void SceneNodeGenerator::InitializeSpotLightObject(Object& object)
 {
-	object.AddComponent<TransformComponent>(m_openGLRenderer);
+	object.AddComponent<TransformComponent>();
 	object.AddComponent<SpotLightComponent>();
 }
 

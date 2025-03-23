@@ -6,22 +6,29 @@
 #include "../../nlohmann/json_fwd.hpp"
 #include "../../Utils/DataBinding.h"
 
-class OpenGLRenderer;
-
 class TransformComponent : public Component
 {
 public:
 	TransformComponent();
-	TransformComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer);
 
 	void RenderInspector() override;
 
-	void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
-	const glm::mat4& GetModelMatrix() const;
+	glm::mat4 GetCumulativeModelMatrix() const;
+
+	void SetParentCumulativeModelMatrix(glm::mat4 parentCumulativeModelMatrix);
+	glm::mat4 GetParentCumulativeModelMatrix() const;
+	DataBinding<glm::mat4>& GetParentCumulativeModelMatrixDataBinding();
+
+	const glm::mat4& GetLocalModelMatrix() const;
+	DataBinding<glm::mat4>& GetLocalModelMatrixDataBinding();
+
 	const glm::vec3& GetPosition() const;
 	DataBinding<glm::vec3>& GetPositionDataBinding();
+
 	const glm::vec3& GetRotation() const;
+
 	const glm::vec3& GetScale() const;
+
 	const glm::vec3& GetLocalXUnitVector() const;
 	DataBinding<glm::vec3>& GetLocalXUnitVectorDataBinding();
 
@@ -29,15 +36,14 @@ public:
 	friend void from_json(const nlohmann::json& json, TransformComponent& transformComponent);
 
 private:
-	void UpdateModelMatrix();
+	void UpdateLocalModelMatrix();
 	void UpdateLocalXUnitVector();
 
-	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	DataBinding<glm::mat4> m_parentCumulativeModelMatrix;
+	DataBinding<glm::mat4> m_localModelMatrix;
 
 	DataBinding<glm::vec3> m_position;
 	DataBinding<glm::vec3> m_rotation;
 	DataBinding<glm::vec3> m_scale;
 	DataBinding<glm::vec3> m_localXUnitVector;
-
-	glm::mat4 m_modelMatrix;
 };

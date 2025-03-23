@@ -1,5 +1,7 @@
 ﻿#include "SceneNode.h"
 
+#include <queue>
+#include <stack>
 #include <glm/glm.hpp>
 #include "../Object.h"
 
@@ -93,21 +95,46 @@ bool SceneNode::HasParent() const
 	return GetParent() != nullptr;
 }
 
-glm::mat4 SceneNode::GetParentTransform() const
+void SceneNode::RegisterTransformModelMatrix() const
 {
-	auto parentTransform = glm::mat4(1.0f);
-	std::shared_ptr<SceneNode> parent = GetParent();
-	while (parent != nullptr)
+	std::shared_ptr<TransformComponent> transformComponent = m_object->GetFirstComponentOfType<TransformComponent>();
+	if (transformComponent == nullptr)
 	{
-		std::shared_ptr<TransformComponent> parentTransformComponent = parent->GetObject().GetFirstComponentOfType<
-			TransformComponent>();
-		if (parentTransformComponent != nullptr)
-		{
-			parentTransform = parentTransformComponent->GetModelMatrix() * parentTransform;
-		}
-		parent = parent->GetParent();
+		return;
 	}
-	return parentTransform;
+
+	// If this object's local model matrix changes
+	transformComponent->GetLocalModelMatrixDataBinding().Subscribe(
+		[this, transformComponent](const glm::mat4& modelMatrix, glm::mat4)
+		{
+			std::queue<std::pair<std::shared_ptr<SceneNode>, glm::mat4>> bfs;
+			glm::mat4 parentModelMatrix = transformComponent->GetParentCumulativeModelMatrix() * modelMatrix;
+			// Start a bfs with this node's children
+			for (const auto& childSceneNode : m_childSceneNodes)
+			{
+				bfs.emplace(childSceneNode, parentModelMatrix);
+			}
+			while (!bfs.empty())
+			{
+				std::pair<std::shared_ptr<SceneNode>, glm::mat4> sceneNodeAndMatrix = bfs.front();
+				bfs.pop();
+
+				// Does this node have a transform component?
+				std::shared_ptr<TransformComponent> sceneNodeTransformComponent = sceneNodeAndMatrix.first->GetObject().
+					GetFirstComponentOfType<TransformComponent>();
+				if (sceneNodeTransformComponent != nullptr)
+				{
+					// Set this node's parent cumulative matrix, and update the cumulative matrix to include this transform
+					sceneNodeTransformComponent->SetParentCumulativeModelMatrix(sceneNodeAndMatrix.second);
+					sceneNodeAndMatrix.second = sceneNodeAndMatrix.second * sceneNodeTransformComponent->
+						GetLocalModelMatrix();
+				}
+				for (const auto& childSceneNode : sceneNodeAndMatrix.first->GetChildren())
+				{
+					bfs.emplace(childSceneNode, sceneNodeAndMatrix.second);
+				}
+			}
+		});
 }
 
 void SceneNode::SetName(std::string name)

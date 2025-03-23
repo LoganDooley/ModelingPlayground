@@ -33,7 +33,7 @@ public:
 	void SetParent(const std::shared_ptr<SceneNode>& parentSceneNode);
 	bool HasParent() const;
 
-	glm::mat4 GetParentTransform() const;
+	void RegisterTransformModelMatrix() const;
 
 	void SetName(std::string name);
 	std::string GetName() const;
