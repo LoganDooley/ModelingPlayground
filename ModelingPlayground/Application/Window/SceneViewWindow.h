@@ -30,4 +30,3 @@ private:
 	std::shared_ptr<SceneViewCamera> m_camera;
 	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
 };
-

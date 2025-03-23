@@ -8,19 +8,19 @@
 class PrimitiveComponent : public Component
 {
 public:
-    PrimitiveComponent();
-    PrimitiveComponent(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
+	PrimitiveComponent();
+	PrimitiveComponent(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
 
-    void SetPrimitiveManager(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
-    
-    void RenderInspector() override;
-    std::string GetPrimitiveName() const;
+	void SetPrimitiveManager(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
 
-    friend void to_json(nlohmann::json& json, const PrimitiveComponent& primitiveComponent);
-    friend void from_json(const nlohmann::json& json, PrimitiveComponent& primitiveComponent);
+	void RenderInspector() override;
+	std::string GetPrimitiveName() const;
+
+	friend void to_json(nlohmann::json& json, const PrimitiveComponent& primitiveComponent);
+	friend void from_json(const nlohmann::json& json, PrimitiveComponent& primitiveComponent);
 
 private:
-    std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
-    std::string m_primitiveName;
-    int m_currentItem;
+	std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
+	std::string m_primitiveName;
+	int m_currentItem;
 };

@@ -1,8 +1,8 @@
 #include "Application/ApplicationManager.h"
 
-int main() 
+int main()
 {
-	ApplicationManager app = ApplicationManager();
+	auto app = ApplicationManager();
 	int exitCode = app.Run();
 	return exitCode;
 }

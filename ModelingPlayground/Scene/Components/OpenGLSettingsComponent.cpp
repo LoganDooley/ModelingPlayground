@@ -6,30 +6,30 @@
 #include "../../Utils/PropertyDrawer.h"
 
 OpenGLSettingsComponent::OpenGLSettingsComponent():
-    m_clearColor(glm::vec4(glm::vec3(0.0f), 1.0f)),
-    m_ambientLight(glm::vec3(0.03f))
+	m_clearColor(glm::vec4(glm::vec3(0.0f), 1.0f)),
+	m_ambientLight(glm::vec3(0.03f))
 {
 }
 
 void OpenGLSettingsComponent::RenderInspector()
 {
-    ImGuiTreeNodeFlags ambientLightHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
-    if (ImGui::CollapsingHeader("OpenGL Settings", ambientLightHeaderFlags))
-    {
-        // Clear color
-        PropertyDrawer::DrawVec4fColor("Clear Color", m_clearColor);
+	ImGuiTreeNodeFlags ambientLightHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
+	if (ImGui::CollapsingHeader("OpenGL Settings", ambientLightHeaderFlags))
+	{
+		// Clear color
+		PropertyDrawer::DrawVec4fColor("Clear Color", m_clearColor);
 
-        // Ambient light
-        PropertyDrawer::DrawVec3fColor("Ambient Light", m_ambientLight);
-    }
+		// Ambient light
+		PropertyDrawer::DrawVec3fColor("Ambient Light", m_ambientLight);
+	}
 }
 
 glm::vec4 OpenGLSettingsComponent::GetClearColor() const
 {
-    return m_clearColor;
+	return m_clearColor;
 }
 
 glm::vec3 OpenGLSettingsComponent::GetAmbientLight() const
 {
-    return m_ambientLight;
+	return m_ambientLight;
 }

@@ -5,7 +5,8 @@
 
 #include "InputManager.h"
 
-class GlfwWindow {
+class GlfwWindow
+{
 public:
 	GlfwWindow();
 	~GlfwWindow();
@@ -20,7 +21,6 @@ public:
 	const std::shared_ptr<InputManager>& GetInputManager() const;
 
 private:
-	
 	GLFWwindow* m_window;
 	std::shared_ptr<InputManager> m_inputManager;
 };

@@ -1,135 +1,136 @@
 ﻿#include "SceneNode.h"
 
-#include "../Object.h"
 #include <glm/glm.hpp>
+#include "../Object.h"
 
 #include "../Components/TransformComponent.h"
 
 SceneNode::SceneNode(std::string name, std::vector<std::shared_ptr<SceneNode>> childSceneNodes):
-    m_name(name),
-    m_object(std::make_shared<Object>(name)),
-    m_childSceneNodes(childSceneNodes)
+	m_name(name),
+	m_object(std::make_shared<Object>(name)),
+	m_childSceneNodes(childSceneNodes)
 {
 }
 
 SceneNode::~SceneNode()
 {
-    for (const auto& subscriber : m_onDestroyedSubscribers)
-    {
-        subscriber();
-    }
+	for (const auto& subscriber : m_onDestroyedSubscribers)
+	{
+		subscriber();
+	}
 }
 
 SceneNode::SceneNode(const SceneNode& other) noexcept
 {
-    m_name = other.m_name;
-    m_object = other.m_object;
-    m_parentSceneNode = other.m_parentSceneNode;
-    m_childSceneNodes = other.m_childSceneNodes;
-    m_onDestroyedSubscribers = other.m_onDestroyedSubscribers;
+	m_name = other.m_name;
+	m_object = other.m_object;
+	m_parentSceneNode = other.m_parentSceneNode;
+	m_childSceneNodes = other.m_childSceneNodes;
+	m_onDestroyedSubscribers = other.m_onDestroyedSubscribers;
 }
 
 SceneNode::SceneNode(SceneNode&& other) noexcept
 {
-    m_name = std::move(other.m_name);
-    m_object = std::move(other.m_object);
-    m_parentSceneNode = std::move(other.m_parentSceneNode);
-    m_childSceneNodes = std::move(other.m_childSceneNodes);
-    m_onDestroyedSubscribers = std::move(other.m_onDestroyedSubscribers);
+	m_name = std::move(other.m_name);
+	m_object = std::move(other.m_object);
+	m_parentSceneNode = std::move(other.m_parentSceneNode);
+	m_childSceneNodes = std::move(other.m_childSceneNodes);
+	m_onDestroyedSubscribers = std::move(other.m_onDestroyedSubscribers);
 }
 
 SceneNode& SceneNode::operator=(const SceneNode& other) noexcept
 {
-    m_name = other.m_name;
-    m_object = other.m_object;
-    m_parentSceneNode = other.m_parentSceneNode;
-    m_childSceneNodes = other.m_childSceneNodes;
-    m_onDestroyedSubscribers = other.m_onDestroyedSubscribers;
-    return *this;
+	m_name = other.m_name;
+	m_object = other.m_object;
+	m_parentSceneNode = other.m_parentSceneNode;
+	m_childSceneNodes = other.m_childSceneNodes;
+	m_onDestroyedSubscribers = other.m_onDestroyedSubscribers;
+	return *this;
 }
 
 SceneNode& SceneNode::operator=(SceneNode&& other) noexcept
 {
-    m_name = std::move(other.m_name);
-    m_object = std::move(other.m_object);
-    m_parentSceneNode = std::move(other.m_parentSceneNode);
-    m_childSceneNodes = std::move(other.m_childSceneNodes);
-    m_onDestroyedSubscribers = std::move(other.m_onDestroyedSubscribers);
-    return *this;
+	m_name = std::move(other.m_name);
+	m_object = std::move(other.m_object);
+	m_parentSceneNode = std::move(other.m_parentSceneNode);
+	m_childSceneNodes = std::move(other.m_childSceneNodes);
+	m_onDestroyedSubscribers = std::move(other.m_onDestroyedSubscribers);
+	return *this;
 }
 
 const std::vector<std::shared_ptr<SceneNode>>& SceneNode::GetChildren() const
 {
-    return m_childSceneNodes;
+	return m_childSceneNodes;
 }
 
 void SceneNode::AddChild(const std::shared_ptr<SceneNode>& childSceneNode)
 {
-    m_childSceneNodes.push_back(childSceneNode);
+	m_childSceneNodes.push_back(childSceneNode);
 }
 
 bool SceneNode::RemoveChild(const std::shared_ptr<SceneNode>& targetChildSceneNode)
 {
-    return std::erase(m_childSceneNodes, targetChildSceneNode) > 0;
+	return std::erase(m_childSceneNodes, targetChildSceneNode) > 0;
 }
 
 bool SceneNode::HasChildren() const
 {
-    return !m_childSceneNodes.empty();
+	return !m_childSceneNodes.empty();
 }
 
 std::shared_ptr<SceneNode> SceneNode::GetParent() const
 {
-    return m_parentSceneNode.lock();
+	return m_parentSceneNode.lock();
 }
 
 void SceneNode::SetParent(const std::shared_ptr<SceneNode>& parentSceneNode)
 {
-    m_parentSceneNode = parentSceneNode;
+	m_parentSceneNode = parentSceneNode;
 }
 
 bool SceneNode::HasParent() const
 {
-    return GetParent() != nullptr;
+	return GetParent() != nullptr;
 }
 
 glm::mat4 SceneNode::GetParentTransform() const
 {
-    glm::mat4 parentTransform = glm::mat4(1.0f);
-    std::shared_ptr<SceneNode> parent = GetParent();
-    while (parent != nullptr)
-    {
-        std::shared_ptr<TransformComponent> parentTransformComponent = parent->GetObject().GetFirstComponentOfType<TransformComponent>();
-        if (parentTransformComponent != nullptr)
-        {
-            parentTransform = parentTransformComponent->GetModelMatrix() * parentTransform;
-        }
-        parent = parent->GetParent();
-    }
-    return parentTransform;
+	auto parentTransform = glm::mat4(1.0f);
+	std::shared_ptr<SceneNode> parent = GetParent();
+	while (parent != nullptr)
+	{
+		std::shared_ptr<TransformComponent> parentTransformComponent = parent->GetObject().GetFirstComponentOfType<
+			TransformComponent>();
+		if (parentTransformComponent != nullptr)
+		{
+			parentTransform = parentTransformComponent->GetModelMatrix() * parentTransform;
+		}
+		parent = parent->GetParent();
+	}
+	return parentTransform;
 }
 
 void SceneNode::SetName(std::string name)
 {
-    m_name = name;
+	m_name = name;
 }
 
 std::string SceneNode::GetName() const
 {
-    return m_name;
+	return m_name;
 }
 
 Object& SceneNode::GetObject() const
 {
-    return *m_object;
+	return *m_object;
 }
 
 void SceneNode::RenderInspector() const
 {
-    m_object->RenderInspector();
+	m_object->RenderInspector();
 }
 
 void SceneNode::SubscribeToOnDestroyed(const std::function<void()>& callback)
 {
-    m_onDestroyedSubscribers.push_back(callback);
+	m_onDestroyedSubscribers.push_back(callback);
 }

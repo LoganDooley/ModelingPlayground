@@ -2,7 +2,8 @@
 #include "WindowManager.h"
 #include "../OpenGLHelpers/OpenGLRenderer.h"
 
-class ApplicationManager {
+class ApplicationManager
+{
 public:
 	ApplicationManager();
 	~ApplicationManager();

@@ -8,15 +8,15 @@
 class OpenGLPrimitiveManager
 {
 public:
-    OpenGLPrimitiveManager();
-    ~OpenGLPrimitiveManager() = default;
+	OpenGLPrimitiveManager();
+	~OpenGLPrimitiveManager() = default;
 
-    void GeneratePrimitives(int sphereLatitudinalResolution, int sphereLongitudinalResolution);
-    std::string LoadPrimitive(std::string filePath);
-    
-    void DrawPrimitive(std::string primitiveName);
-    std::vector<std::string> GetPrimitiveNames() const;
+	void GeneratePrimitives(int sphereLatitudinalResolution, int sphereLongitudinalResolution);
+	std::string LoadPrimitive(std::string filePath);
+
+	void DrawPrimitive(std::string primitiveName);
+	std::vector<std::string> GetPrimitiveNames() const;
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<OpenGLPrimitive>> m_primitives;
+	std::unordered_map<std::string, std::shared_ptr<OpenGLPrimitive>> m_primitives;
 };

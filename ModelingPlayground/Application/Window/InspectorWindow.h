@@ -19,4 +19,3 @@ public:
 private:
 	std::shared_ptr<SceneHierarchy> m_scene;
 };
-

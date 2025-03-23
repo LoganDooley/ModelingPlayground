@@ -3,22 +3,22 @@
 #include <glm/vec3.hpp>
 
 #include "Component.h"
-#include "../../Utils/DataBinding.h"
 #include "../../nlohmann/json_fwd.hpp"
+#include "../../Utils/DataBinding.h"
 
 class DirectionalLightComponent : public Component
 {
 public:
-    DirectionalLightComponent();
+	DirectionalLightComponent();
 
-    void RenderInspector() override;
+	void RenderInspector() override;
 
-    const glm::vec3& GetLightColor() const;
-    DataBinding<glm::vec3>& GetLightColorDataBinding();
+	const glm::vec3& GetLightColor() const;
+	DataBinding<glm::vec3>& GetLightColorDataBinding();
 
-    friend void to_json(nlohmann::json& json, const DirectionalLightComponent& directionalLightComponent);
-    friend void from_json(const nlohmann::json& json, DirectionalLightComponent& directionalLightComponent);
-    
+	friend void to_json(nlohmann::json& json, const DirectionalLightComponent& directionalLightComponent);
+	friend void from_json(const nlohmann::json& json, DirectionalLightComponent& directionalLightComponent);
+
 private:
-    DataBinding<glm::vec3> m_lightColor;
+	DataBinding<glm::vec3> m_lightColor;
 };

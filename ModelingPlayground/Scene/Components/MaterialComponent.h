@@ -8,19 +8,19 @@
 class MaterialComponent : public Component
 {
 public:
-    MaterialComponent();
-    
-    void RenderInspector() override;
+	MaterialComponent();
 
-    glm::vec3 GetMaterialColor() const;
-    float GetMetallic() const;
-    float GetRoughness() const;
+	void RenderInspector() override;
 
-    friend void to_json(nlohmann::json& json, const MaterialComponent& materialComponent);
-    friend void from_json(const nlohmann::json& json, MaterialComponent& materialComponent);
+	glm::vec3 GetMaterialColor() const;
+	float GetMetallic() const;
+	float GetRoughness() const;
+
+	friend void to_json(nlohmann::json& json, const MaterialComponent& materialComponent);
+	friend void from_json(const nlohmann::json& json, MaterialComponent& materialComponent);
 
 private:
-    glm::vec3 m_materialColor;
-    float m_metallic;
-    float m_roughness;
+	glm::vec3 m_materialColor;
+	float m_metallic;
+	float m_roughness;
 };

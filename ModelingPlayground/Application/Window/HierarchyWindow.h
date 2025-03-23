@@ -28,4 +28,3 @@ private:
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 	std::shared_ptr<SceneNodeGenerator> m_sceneNodeGenerator;
 };
-

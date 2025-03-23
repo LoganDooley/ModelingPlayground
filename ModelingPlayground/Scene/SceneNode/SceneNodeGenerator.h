@@ -9,27 +9,28 @@ class Object;
 
 enum class SceneNodeType
 {
-    Primitive, DirectionalLight, PointLight, SpotLight,
+	Primitive, DirectionalLight, PointLight, SpotLight,
 };
 
 class SceneNodeGenerator
 {
 public:
-    SceneNodeGenerator();
+	SceneNodeGenerator();
 
-    void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
-    
-    std::shared_ptr<SceneNode> CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
-    static std::vector<SceneNodeType> GetSceneNodeTypes();
-    static std::string GetSceneNodeTypeName(SceneNodeType sceneNodeType);
+	void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
+
+	std::shared_ptr<SceneNode> CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType,
+	                                                        const std::shared_ptr<SceneNode>& parent);
+	static std::vector<SceneNodeType> GetSceneNodeTypes();
+	static std::string GetSceneNodeTypeName(SceneNodeType sceneNodeType);
 
 private:
-    void InitializePrimitiveObject(Object& object);
-    void InitializeDirectionalLightObject(Object& object);
-    void InitializePointLightObject(Object& object);
-    void InitializeSpotLightObject(Object& object);
-    
-    static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
+	void InitializePrimitiveObject(Object& object);
+	void InitializeDirectionalLightObject(Object& object);
+	void InitializePointLightObject(Object& object);
+	void InitializeSpotLightObject(Object& object);
 
-    std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
+
+	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
 };

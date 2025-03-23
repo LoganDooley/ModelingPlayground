@@ -10,12 +10,13 @@
 class PrimitiveGenerator
 {
 public:
-    static std::pair<std::vector<OpenGLVertex>, std::vector<int>> GenerateSphere(int latitudinalResolution, int longitudinalResolution);
-    static std::vector<OpenGLVertex> GenerateCube();
+	static std::pair<std::vector<OpenGLVertex>, std::vector<int>> GenerateSphere(
+		int latitudinalResolution, int longitudinalResolution);
+	static std::vector<OpenGLVertex> GenerateCube();
 
 private:
-    // Converts phi, theta (both in radians), and r to cartesian xyz coordinates
-    static glm::vec3 SphericalToCartesian(float phi, float theta, float r);
-    static int GetSphereVertexIndex(int latitudeIndex, int longitudeIndex, int latitudinalResolution);
-    static void GenerateCubeFace(std::vector<OpenGLVertex>& vertices, glm::vec3 faceNormal);
+	// Converts phi, theta (both in radians), and r to cartesian xyz coordinates
+	static glm::vec3 SphericalToCartesian(float phi, float theta, float r);
+	static int GetSphereVertexIndex(int latitudeIndex, int longitudeIndex, int latitudinalResolution);
+	static void GenerateCubeFace(std::vector<OpenGLVertex>& vertices, glm::vec3 faceNormal);
 };

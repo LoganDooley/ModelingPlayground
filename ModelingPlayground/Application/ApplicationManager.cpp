@@ -8,25 +8,27 @@ ApplicationManager::ApplicationManager():
 	m_glfwWindow(std::make_unique<GlfwWindow>()),
 	m_windowManager(std::make_unique<WindowManager>())
 {
-	
 }
 
-ApplicationManager::~ApplicationManager() {
-	
+ApplicationManager::~ApplicationManager()
+{
 }
 
 int ApplicationManager::Run()
 {
 	int initializeCode = Initialize();
-	if (initializeCode != 0) {
+	if (initializeCode != 0)
+	{
 		return initializeCode;
 	}
 	int loopCode = Loop();
-	if (loopCode != 0) {
+	if (loopCode != 0)
+	{
 		return loopCode;
 	}
 	int endCode = End();
-	if (endCode != 0) {
+	if (endCode != 0)
+	{
 		return endCode;
 	}
 	return 0;
@@ -44,7 +46,8 @@ int ApplicationManager::Initialize()
 int ApplicationManager::Loop()
 {
 	double time = glfwGetTime();
-	while (!m_glfwWindow->ShouldClose()) {
+	while (!m_glfwWindow->ShouldClose())
+	{
 		m_glfwWindow->PollEvents();
 		double deltaTime = glfwGetTime() - time;
 		time = glfwGetTime();

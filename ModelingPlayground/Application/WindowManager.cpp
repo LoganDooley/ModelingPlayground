@@ -1,18 +1,18 @@
 #include "WindowManager.h"
+#include <filesystem>
+#include <iostream>
+#include <GLFW/glfw3.h>
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
-#include <iostream>
-#include <filesystem>
-#include <GLFW/glfw3.h>
 
 #include "../../../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/tinyfiledialogs/tinyfiledialogs.h"
 #include "../Utils/SceneLoader.h"
 #include "Window/HierarchyWindow.h"
-#include "Window/SceneViewWindow.h"
 #include "Window/InspectorWindow.h"
+#include "Window/SceneViewWindow.h"
 #include "Window/Window.h"
 
 WindowManager::WindowManager()
@@ -23,15 +23,18 @@ WindowManager::~WindowManager()
 {
 }
 
-void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow, std::shared_ptr<SceneHierarchy> sceneHierarchy, std::shared_ptr<OpenGLRenderer> openGLRenderer)
+void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow,
+                               std::shared_ptr<SceneHierarchy> sceneHierarchy,
+                               std::shared_ptr<OpenGLRenderer> openGLRenderer)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	io.ConfigDockingWithShift = false;                        // Dock just by grabbing window title
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
+	io.ConfigDockingWithShift = false; // Dock just by grabbing window title
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
 	ImGui::StyleColorsDark();
 
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -94,9 +97,10 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 			ImGuiID rootDockSpace = ImGui::GetID("Root");
 			ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
 			ImGui::DockSpace(rootDockSpace, ImVec2(0.0f, 0.0f), dockspaceFlags);
-			
+
 			static bool firstTime = true;
-			if (firstTime) {
+			if (firstTime)
+			{
 				firstTime = false;
 				// Clear out existing layout
 				ImGui::DockBuilderRemoveNode(rootDockSpace);
@@ -105,9 +109,11 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 				// Main node should cover entire window
 				ImGui::DockBuilderSetNodeSize(rootDockSpace, ImGui::GetWindowSize());
 				// Create a dock node for the middle docked window
-				ImGuiID middleDockSpace = ImGui::DockBuilderSplitNode(rootDockSpace, ImGuiDir_Right, 0.75f, nullptr, &rootDockSpace);
+				ImGuiID middleDockSpace = ImGui::DockBuilderSplitNode(rootDockSpace, ImGuiDir_Right, 0.75f, nullptr,
+				                                                      &rootDockSpace);
 				// Create a dock node for the right docked window
-				ImGuiID rightDockSpace = ImGui::DockBuilderSplitNode(middleDockSpace, ImGuiDir_Right, 0.33f, nullptr, &middleDockSpace);
+				ImGuiID rightDockSpace = ImGui::DockBuilderSplitNode(middleDockSpace, ImGuiDir_Right, 0.33f, nullptr,
+				                                                     &middleDockSpace);
 
 				ImGui::DockBuilderDockWindow(HierarchyWindow::Name.c_str(), rootDockSpace);
 				ImGui::DockBuilderDockWindow(SceneViewWindow::Name.c_str(), middleDockSpace);
@@ -118,14 +124,18 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 
 		// Menu bar
 		{
-			if (ImGui::BeginMenuBar()) {
-				if (ImGui::BeginMenu("File")) {
-					char const * lFilterPatterns[1] = { "*.json" };
+			if (ImGui::BeginMenuBar())
+			{
+				if (ImGui::BeginMenu("File"))
+				{
+					const char* lFilterPatterns[1] = {"*.json"};
 					std::string existingFilePath = m_sceneHierarchy->GetFilePath();
-					if (ImGui::MenuItem("New")) {
+					if (ImGui::MenuItem("New"))
+					{
 						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer);
 					}
-					if (ImGui::MenuItem("Open")) {
+					if (ImGui::MenuItem("Open"))
+					{
 						const char* filePath = tinyfd_openFileDialog(
 							"Select a scene to open",
 							"",
@@ -133,20 +143,22 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							lFilterPatterns,
 							"json files",
 							0
-							);
+						);
 						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer, filePath);
 					}
-					if (ImGui::MenuItem("Save", 0, false, !existingFilePath.empty())) {
+					if (ImGui::MenuItem("Save", nullptr, false, !existingFilePath.empty()))
+					{
 						SceneLoader::SaveScene(m_sceneHierarchy, existingFilePath.c_str());
 					}
-					if (ImGui::MenuItem("Save as...")) {
+					if (ImGui::MenuItem("Save as..."))
+					{
 						const char* filePath = tinyfd_saveFileDialog(
 							"Save scene as",
 							"",
 							1,
 							lFilterPatterns,
 							"json files"
-							);
+						);
 						SceneLoader::SaveScene(m_sceneHierarchy, filePath);
 					}
 					ImGui::EndMenu();
@@ -158,7 +170,8 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 		ImGui::End();
 	}
 
-	for (auto window : m_windows) {
+	for (auto window : m_windows)
+	{
 		window->Render();
 	}
 
