@@ -3,16 +3,17 @@
 #include <memory>
 
 #include "Window.h"
-#include "../../Scene/SceneNode/SceneNodeGenerator.h"
 
 class SceneNode;
 class ObjectSceneNode;
 class SceneHierarchy;
+class OpenGLRenderer;
+class SceneNodeGenerator;
 
 class HierarchyWindow : public Window
 {
 public:
-	HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
+	HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLRenderer> openGLRenderer);
 
 	void Render() override;
 	void Update(double seconds) override;

@@ -2,12 +2,14 @@
 #include "imgui.h"
 #include "SceneViewWindow.h"
 #include "../../Scene/SceneHierarchy.h"
+#include "../../OpenGLHelpers/OpenGLRenderer.h"
+#include "../../Scene/SceneNode/SceneNodeGenerator.h"
 
-HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager):
+HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLRenderer> openGLRenderer):
 	m_sceneHierarchy(scene),
 	m_sceneNodeGenerator(std::make_shared<SceneNodeGenerator>())
 {
-	m_sceneNodeGenerator->SetOpenGLPrimitiveManager(openGLPrimitiveManager);
+	m_sceneNodeGenerator->SetOpenGLRenderer(openGLRenderer);
 }
 
 void HierarchyWindow::Render()

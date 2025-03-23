@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <glm/fwd.hpp>
 
 #include "../../nlohmann/json_fwd.hpp"
 
@@ -26,13 +27,20 @@ public:
     void AddChild(const std::shared_ptr<SceneNode>& childSceneNode);
     bool RemoveChild(const std::shared_ptr<SceneNode>& targetChildSceneNode);
     bool HasChildren() const;
+    
     std::shared_ptr<SceneNode> GetParent() const;
     void SetParent(const std::shared_ptr<SceneNode>& parentSceneNode);
     bool HasParent() const;
+
+    glm::mat4 GetParentTransform() const;
+    
     void SetName(std::string name);
     std::string GetName() const;
+    
     Object& GetObject() const;
+    
     void RenderInspector() const;
+    
     void SubscribeToOnDestroyed(const std::function<void()>& callback);
 
     friend void to_json(nlohmann::json& json, const SceneNode& sceneNode);

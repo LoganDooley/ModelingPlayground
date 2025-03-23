@@ -17,8 +17,8 @@ public:
         return m_data;
     }
     
-    bool SetAndNotify(T newData){
-        if (newData == m_data)
+    bool SetAndNotify(T newData, bool forceNotify = false){
+        if (!forceNotify && newData == m_data)
         {
             return false;
         }

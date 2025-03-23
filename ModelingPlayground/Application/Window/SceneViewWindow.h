@@ -3,9 +3,7 @@
 #include <memory>
 #include <glm/fwd.hpp>
 
-#include "SceneViewCamera.h"
 #include "Window.h"
-#include "../../OpenGLHelpers/OpenGLRenderer.h"
 
 class MaterialComponent;
 class TransformComponent;
@@ -14,6 +12,9 @@ class Object;
 class SceneNode;
 class ObjectData;
 class SceneHierarchy;
+class SceneViewCamera;
+class InputManager;
+class OpenGLRenderer;
 
 class SceneViewWindow : public Window
 {

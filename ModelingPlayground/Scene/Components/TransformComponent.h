@@ -6,13 +6,17 @@
 #include "../../Utils/DataBinding.h"
 #include "../../nlohmann/json_fwd.hpp"
 
+class OpenGLRenderer;
+
 class TransformComponent : public Component
 {
 public:
     TransformComponent();
+    TransformComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer);
     
     void RenderInspector() override;
 
+    void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
     const glm::mat4& GetModelMatrix() const;
     const glm::vec3& GetPosition() const;
     DataBinding<glm::vec3>& GetPositionDataBinding();
@@ -28,6 +32,8 @@ private:
     void UpdateModelMatrix();
     void UpdateLocalXUnitVector();
 
+    std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+    
     DataBinding<glm::vec3> m_position;
     DataBinding<glm::vec3> m_rotation;
     DataBinding<glm::vec3> m_scale;

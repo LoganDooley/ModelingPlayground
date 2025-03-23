@@ -1,6 +1,9 @@
 ﻿#include "SceneNode.h"
 
 #include "../Object.h"
+#include <glm/glm.hpp>
+
+#include "../Components/TransformComponent.h"
 
 SceneNode::SceneNode(std::string name, std::vector<std::shared_ptr<SceneNode>> childSceneNodes):
     m_name(name),
@@ -88,6 +91,22 @@ void SceneNode::SetParent(const std::shared_ptr<SceneNode>& parentSceneNode)
 bool SceneNode::HasParent() const
 {
     return GetParent() != nullptr;
+}
+
+glm::mat4 SceneNode::GetParentTransform() const
+{
+    glm::mat4 parentTransform = glm::mat4(1.0f);
+    std::shared_ptr<SceneNode> parent = GetParent();
+    while (parent != nullptr)
+    {
+        std::shared_ptr<TransformComponent> parentTransformComponent = parent->GetObject().GetFirstComponentOfType<TransformComponent>();
+        if (parentTransformComponent != nullptr)
+        {
+            parentTransform = parentTransformComponent->GetModelMatrix() * parentTransform;
+        }
+        parent = parent->GetParent();
+    }
+    return parentTransform;
 }
 
 void SceneNode::SetName(std::string name)

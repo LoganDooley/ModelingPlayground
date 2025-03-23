@@ -29,6 +29,8 @@ public:
     void RemoveLight(uint32_t lightIndex);
     void ClearLights();
 
+    void ResetAllLightTransforms() const;
+
 private:
     bool AddLightInternal(const std::shared_ptr<SceneNode>& lightSceneNode, LightType lightType);
     static LightType GetLightType(const std::shared_ptr<SceneNode>& lightSceneNode);

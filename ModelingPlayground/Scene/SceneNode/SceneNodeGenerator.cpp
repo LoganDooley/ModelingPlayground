@@ -5,6 +5,7 @@
 
 #include "../Object.h"
 #include "../SceneNode/SceneNode.h"
+#include "../../OpenGLHelpers/OpenGLRenderer.h"
 #include "../Components/DirectionalLightComponent.h"
 #include "../Components/MaterialComponent.h"
 #include "../Components/PointLightComponent.h"
@@ -16,9 +17,9 @@ SceneNodeGenerator::SceneNodeGenerator()
 {
 }
 
-void SceneNodeGenerator::SetOpenGLPrimitiveManager(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager)
+void SceneNodeGenerator::SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer)
 {
-    m_openGLPrimitiveManager = openGLPrimitiveManager;
+    m_openGLRenderer = openGLRenderer;
 }
 
 std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent)
@@ -77,26 +78,26 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
 
 void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
-    object.AddComponent<TransformComponent>();
-    object.AddComponent<PrimitiveComponent>(m_openGLPrimitiveManager);
+    object.AddComponent<TransformComponent>(m_openGLRenderer);
+    object.AddComponent<PrimitiveComponent>(m_openGLRenderer->GetOpenGLPrimitiveManager());
     object.AddComponent<MaterialComponent>();
 }
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)
 {
-    object.AddComponent<TransformComponent>();
+    object.AddComponent<TransformComponent>(m_openGLRenderer);
     object.AddComponent<DirectionalLightComponent>();
 }
 
 void SceneNodeGenerator::InitializePointLightObject(Object& object)
 {
-    object.AddComponent<TransformComponent>();
+    object.AddComponent<TransformComponent>(m_openGLRenderer);
     object.AddComponent<PointLightComponent>();
 }
 
 void SceneNodeGenerator::InitializeSpotLightObject(Object& object)
 {
-    object.AddComponent<TransformComponent>();
+    object.AddComponent<TransformComponent>(m_openGLRenderer);
     object.AddComponent<SpotLightComponent>();
 }
 

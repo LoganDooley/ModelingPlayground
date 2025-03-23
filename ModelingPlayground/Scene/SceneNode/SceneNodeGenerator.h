@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../../OpenGLHelpers/OpenGLPrimitiveManager.h"
-
+class OpenGLRenderer;
 class SceneNode;
 class Object;
 
@@ -18,7 +17,7 @@ class SceneNodeGenerator
 public:
     SceneNodeGenerator();
 
-    void SetOpenGLPrimitiveManager(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
+    void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
     
     std::shared_ptr<SceneNode> CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
     static std::vector<SceneNodeType> GetSceneNodeTypes();
@@ -26,11 +25,11 @@ public:
 
 private:
     void InitializePrimitiveObject(Object& object);
-    static void InitializeDirectionalLightObject(Object& object);
-    static void InitializePointLightObject(Object& object);
-    static void InitializeSpotLightObject(Object& object);
+    void InitializeDirectionalLightObject(Object& object);
+    void InitializePointLightObject(Object& object);
+    void InitializeSpotLightObject(Object& object);
     
     static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
 
-    std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
+    std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
 };

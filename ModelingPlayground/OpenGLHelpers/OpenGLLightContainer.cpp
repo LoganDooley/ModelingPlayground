@@ -55,6 +55,34 @@ void OpenGLLightContainer::SetSceneHierarchy(const std::shared_ptr<SceneHierarch
     }
 }
 
+void OpenGLLightContainer::ResetAllLightTransforms() const
+{
+    for (int i = 0; i < m_lights.size(); i++)
+    {
+        std::shared_ptr<SceneNode> lightSceneNode = m_lights[i].first.lock();
+        if (lightSceneNode == nullptr)
+        {
+            continue;   
+        }
+        std::shared_ptr<TransformComponent> lightTransform = lightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>();
+        switch (m_lights[i].second)
+        {
+            case LightType::Directional:
+                SetLightDirectionUniform(i, lightTransform->GetLocalXUnitVector());
+            break;
+            case LightType::Point:
+                SetLightPositionUniform(i, lightTransform->GetPosition());
+            break;
+            case LightType::Spot:
+                SetLightPositionUniform(i, lightTransform->GetPosition());
+                SetLightDirectionUniform(i, lightTransform->GetLocalXUnitVector());
+            break;
+            case LightType::None:
+            break;
+        }
+    }
+}
+
 bool OpenGLLightContainer::TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode)
 {
     LightType lightType = GetLightType(lightSceneNode);
@@ -354,12 +382,22 @@ void OpenGLLightContainer::SetLightTypeUniform(uint32_t lightIndex, LightType ty
 
 void OpenGLLightContainer::SetLightPositionUniform(uint32_t lightIndex, const glm::vec3& position) const
 {
-    m_shader->SetUniform3f(GetLightPositionUniformName(lightIndex), position);
+    std::shared_ptr<SceneNode> lightSceneNode = m_lights[lightIndex].first.lock();
+    if (lightSceneNode)
+    {
+        glm::mat4 parentTransform = lightSceneNode->GetParentTransform();
+        m_shader->SetUniform3f(GetLightPositionUniformName(lightIndex), glm::vec3(parentTransform * glm::vec4(position, 1)));
+    }
 }
 
 void OpenGLLightContainer::SetLightDirectionUniform(uint32_t lightIndex, const glm::vec3& direction) const
 {
-    m_shader->SetUniform3f(GetLightDirectionUniformName(lightIndex), direction);
+    std::shared_ptr<SceneNode> lightSceneNode = m_lights[lightIndex].first.lock();
+    if (lightSceneNode)
+    {
+        glm::mat4 parentTransform = lightSceneNode->GetParentTransform();
+        m_shader->SetUniform3f(GetLightDirectionUniformName(lightIndex), glm::vec3(parentTransform * glm::vec4(direction, 0)));
+    }
 }
 
 void OpenGLLightContainer::SetLightColorUniform(uint32_t lightIndex, const glm::vec3& color) const

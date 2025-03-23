@@ -6,8 +6,19 @@
 
 #include "imgui.h"
 #include "../../Utils/PropertyDrawer.h"
+#include "../../OpenGLHelpers/OpenGLRenderer.h"
 
 TransformComponent::TransformComponent():
+    m_position(glm::vec3(0)),
+    m_rotation(glm::vec3(0)),
+    m_scale(glm::vec3(1)),
+    m_localXUnitVector(glm::vec3(1, 0, 0)),
+    m_modelMatrix(glm::mat4(1))
+{
+}
+
+TransformComponent::TransformComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer):
+    m_openGLRenderer(openGLRenderer),
     m_position(glm::vec3(0)),
     m_rotation(glm::vec3(0)),
     m_scale(glm::vec3(1)),
@@ -46,6 +57,11 @@ void TransformComponent::RenderInspector()
             UpdateModelMatrix();
         }
     }
+}
+
+void TransformComponent::SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer)
+{
+    m_openGLRenderer = openGLRenderer;
 }
 
 const glm::mat4& TransformComponent::GetModelMatrix() const
@@ -96,6 +112,11 @@ void TransformComponent::UpdateModelMatrix()
 
     // model matrix
     m_modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
+    if (m_openGLRenderer != nullptr)
+    {
+        m_openGLRenderer->ResetAllLightTransforms();
+    }
 }
 
 void TransformComponent::UpdateLocalXUnitVector()

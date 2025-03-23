@@ -1,15 +1,11 @@
 #include "SceneViewWindow.h"
 
 #include <ostream>
-#include <stack>
 
 #include "imgui.h"
-#include "../../Scene/Object.h"
-#include "../../Scene/SceneHierarchy.h"
+#include "SceneViewCamera.h"
 #include "../../Scene/Components/OpenGLSettingsComponent.h"
-#include "../../Scene/Components/MaterialComponent.h"
-#include "../../Scene/Components/PrimitiveComponent.h"
-#include "../../Scene/Components/TransformComponent.h"
+#include "../../OpenGLHelpers/OpenGLRenderer.h"
 #include "glm/glm.hpp"
 
 SceneViewWindow::SceneViewWindow(std::shared_ptr<OpenGLRenderer> openGLRenderer, std::shared_ptr<InputManager> inputManager):

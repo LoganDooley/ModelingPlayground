@@ -19,6 +19,8 @@ public:
 
     void SetCamera(std::shared_ptr<SceneViewCamera> camera);
     void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
+
+    void ResetAllLightTransforms() const;
     
     void RenderSceneHierarchy() const;
     std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;

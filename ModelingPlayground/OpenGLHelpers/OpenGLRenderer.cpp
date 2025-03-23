@@ -64,6 +64,11 @@ void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHier
     });
 }
 
+void OpenGLRenderer::ResetAllLightTransforms() const
+{
+    m_openGLLightContainer->ResetAllLightTransforms();
+}
+
 void OpenGLRenderer::RenderSceneHierarchy() const
 {
     // Switch to offscreen framebuffer

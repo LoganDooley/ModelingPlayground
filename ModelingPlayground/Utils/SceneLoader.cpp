@@ -31,6 +31,13 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
     SceneHierarchy newSceneHierarchy = sceneJson;
     *sceneHierarchy = std::move(newSceneHierarchy);
     openGLRenderer->SetSceneHierarchy(sceneHierarchy);
+    sceneHierarchy->BreadthFirstProcessAllSceneNodes([openGLRenderer](std::shared_ptr<SceneNode> node)
+    {
+        if (std::shared_ptr<TransformComponent> transformComponent = node->GetObject().GetFirstComponentOfType<TransformComponent>())
+        {
+            transformComponent->SetOpenGLRenderer(openGLRenderer);
+        }
+    });
     sceneHierarchy->SetFilePath(sceneFilePath);
     return true;
 }

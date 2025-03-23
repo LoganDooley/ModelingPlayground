@@ -44,7 +44,7 @@ void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow, st
 	ImGui_ImplGlfw_InitForOpenGL(glfwWindow->GetWindowPointer(), true);
 	ImGui_ImplOpenGL3_Init();
 
-	m_windows.push_back(std::make_shared<HierarchyWindow>(sceneHierarchy, openGLRenderer->GetOpenGLPrimitiveManager()));
+	m_windows.push_back(std::make_shared<HierarchyWindow>(sceneHierarchy, openGLRenderer));
 	m_windows.push_back(std::make_shared<SceneViewWindow>(openGLRenderer, glfwWindow->GetInputManager()));
 	m_windows.push_back(std::make_shared<InspectorWindow>(sceneHierarchy));
 
