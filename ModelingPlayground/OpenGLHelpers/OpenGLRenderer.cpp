@@ -1,5 +1,6 @@
 ﻿#include "OpenGLRenderer.h"
 
+#include <queue>
 #include <stack>
 
 #include "../Application/Window/SceneViewCamera.h"
@@ -47,6 +48,14 @@ void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHier
 {
     m_sceneHierarchy = sceneHierarchy;
 
+    m_sceneHierarchy->BreadthFirstProcessAllSceneNodes([this](std::shared_ptr<SceneNode> node)
+    {
+        if (std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<PrimitiveComponent>())
+        {
+            primitiveComponent->SetPrimitiveManager(m_openGLPrimitiveManager);
+        }
+    });
+    
     m_openGLLightContainer->SetSceneHierarchy(m_sceneHierarchy);
     
     m_sceneHierarchy->SubscribeToSceneNodeAdded([this](const std::shared_ptr<SceneNode>& newSceneNode)
@@ -134,15 +143,7 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
     m_defaultShader->SetUniform1f("roughness", materialComponent.GetRoughness());
     m_defaultShader->SetUniform1f("metallic", materialComponent.GetRoughness());
 
-    std::string customPrimitiveFilePath = primitiveComponent.GetCustomPrimitiveFilePath();
-    if (!customPrimitiveFilePath.empty())
-    {
-        m_openGLPrimitiveManager->DrawPrimitive(customPrimitiveFilePath);
-    }
-    else
-    {
-        m_openGLPrimitiveManager->DrawPrimitive(primitiveComponent.GetPrimitiveType());
-    }
+    m_openGLPrimitiveManager->DrawPrimitive(primitiveComponent.GetPrimitiveName());
 }
 
 void OpenGLRenderer::OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const

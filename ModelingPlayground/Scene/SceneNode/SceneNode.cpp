@@ -17,6 +17,44 @@ SceneNode::~SceneNode()
     }
 }
 
+SceneNode::SceneNode(const SceneNode& other) noexcept
+{
+    m_name = other.m_name;
+    m_object = other.m_object;
+    m_parentSceneNode = other.m_parentSceneNode;
+    m_childSceneNodes = other.m_childSceneNodes;
+    m_onDestroyedSubscribers = other.m_onDestroyedSubscribers;
+}
+
+SceneNode::SceneNode(SceneNode&& other) noexcept
+{
+    m_name = std::move(other.m_name);
+    m_object = std::move(other.m_object);
+    m_parentSceneNode = std::move(other.m_parentSceneNode);
+    m_childSceneNodes = std::move(other.m_childSceneNodes);
+    m_onDestroyedSubscribers = std::move(other.m_onDestroyedSubscribers);
+}
+
+SceneNode& SceneNode::operator=(const SceneNode& other) noexcept
+{
+    m_name = other.m_name;
+    m_object = other.m_object;
+    m_parentSceneNode = other.m_parentSceneNode;
+    m_childSceneNodes = other.m_childSceneNodes;
+    m_onDestroyedSubscribers = other.m_onDestroyedSubscribers;
+    return *this;
+}
+
+SceneNode& SceneNode::operator=(SceneNode&& other) noexcept
+{
+    m_name = std::move(other.m_name);
+    m_object = std::move(other.m_object);
+    m_parentSceneNode = std::move(other.m_parentSceneNode);
+    m_childSceneNodes = std::move(other.m_childSceneNodes);
+    m_onDestroyedSubscribers = std::move(other.m_onDestroyedSubscribers);
+    return *this;
+}
+
 const std::vector<std::shared_ptr<SceneNode>>& SceneNode::GetChildren() const
 {
     return m_childSceneNodes;

@@ -4,15 +4,21 @@
 TEST_CASE("Object Serialization")
 {
     std::shared_ptr<Object> myObject = std::make_shared<Object>("objectName");
+    myObject->AddComponent<TransformComponent>();
+    myObject->AddComponent<DirectionalLightComponent>();
 
     // Serialization
     nlohmann::json myObjectJson = myObject;
     std::string objectName = myObjectJson.at("m_name");
     REQUIRE(objectName == "objectName");
+    std::vector<std::shared_ptr<Component>> objectComponents = myObjectJson.at("m_components");
+    REQUIRE(objectComponents.size() == 2);
 
     // Deserialization
     std::shared_ptr<Object> myObjectPostJson = myObjectJson.get<std::shared_ptr<Object>>();
     REQUIRE(myObjectPostJson->GetName() == "objectName");
+    REQUIRE(myObjectPostJson->GetComponents<TransformComponent>().size() == 1);
+    REQUIRE(myObjectPostJson->GetComponents<DirectionalLightComponent>().size() == 1);
 }
 
 TEST_CASE("SceneNode Serialization")
@@ -38,8 +44,20 @@ TEST_CASE("SceneNode Serialization")
     std::shared_ptr<SceneNode> mySceneNodePostJson = mySceneNodeJson.get<std::shared_ptr<SceneNode>>();
     REQUIRE(mySceneNodePostJson->GetName() == "sceneNodeName");
     REQUIRE(mySceneNodePostJson->GetChildren().size() == 2);
+}
 
-    // pointers
-    std::shared_ptr<SceneNode> temp = nullptr;
-    temp = std::make_shared<SceneNode>("hi");
+TEST_CASE("Component Vector Serialization")
+{
+    std::vector<std::shared_ptr<Component>> components = {
+        std::make_shared<TransformComponent>(),
+        std::make_shared<DirectionalLightComponent>()
+    };
+
+    // Serialization
+    nlohmann::json componentsJson = components;
+    
+    // Deserialization
+    std::vector<std::shared_ptr<Component>> componentsPostJson;
+    componentsJson.get_to(componentsPostJson);
+    REQUIRE(true);
 }

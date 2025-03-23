@@ -9,6 +9,7 @@ class OpenGLShader
 {
 public:
     OpenGLShader();
+    ~OpenGLShader();
 
     void LoadShader(const char * vertexFilePath, const char * fragmentFilePath);
     void BindShader() const;
@@ -27,5 +28,5 @@ private:
     bool ValidateUniformName(std::string uniformName);
     
     std::unordered_map<std::string, GLint> m_uniformLocationCache;
-    GLuint m_shaderID;
+    GLuint m_shaderProgramId;
 };

@@ -11,14 +11,22 @@ OpenGLShader::OpenGLShader()
 
 }
 
+OpenGLShader::~OpenGLShader()
+{
+    if (m_shaderProgramId > 0)
+    {
+        glDeleteProgram(m_shaderProgramId);
+    }
+}
+
 void OpenGLShader::LoadShader(const char* vertexFilePath, const char* fragmentFilePath)
 {
-    m_shaderID = ShaderLoader::createShaderProgram(vertexFilePath, fragmentFilePath);
+    m_shaderProgramId = ShaderLoader::createShaderProgram(vertexFilePath, fragmentFilePath);
 }
 
 void OpenGLShader::BindShader() const
 {
-    glUseProgram(m_shaderID);
+    glUseProgram(m_shaderProgramId);
 }
 
 void OpenGLShader::UnbindShader() const
@@ -33,7 +41,7 @@ void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
         std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName << " is already registered!\n";
         return;
     }
-    m_uniformLocationCache[uniformName] = glGetUniformLocation(m_shaderID, uniformName.c_str());
+    m_uniformLocationCache[uniformName] = glGetUniformLocation(m_shaderProgramId, uniformName.c_str());
     if (m_uniformLocationCache[uniformName] == -1)
     {
         std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName << " does not exist in shader! Please check if this uniform exists and is used within the shader program.\n";

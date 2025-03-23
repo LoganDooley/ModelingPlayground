@@ -1,5 +1,6 @@
 ﻿#include "SceneNodeGenerator.h"
 
+#include <iostream>
 #include <unordered_set>
 
 #include "../Object.h"

@@ -6,73 +6,12 @@
 #include "../Scene/SceneNode/SceneNode.h"
 #include "../Scene/Components/ComponentIncludes.h"
 
-#include "PolymorphicSerializer.h"
+#include "ComponentSerializer.h"
+#include "DataBindingSerializer.h"
+#include "SharedPointerSerializer.h"
 #include "GLMSerializers.h"
-#include "../Utils/EnumLabels/PrimitiveTypeEnumLabel.h"
 
 #include <memory>
-
-NLOHMANN_JSON_NAMESPACE_BEGIN
-// Shared Pointers
-template<typename T>
-struct adl_serializer<std::shared_ptr<T>>
-{
-    static void to_json(nlohmann::json& json, const std::shared_ptr<T>& pointer)
-    {
-        if (pointer)
-        {
-            json = *pointer;
-        }
-        else
-        {
-            json = nullptr;
-        }
-    }
-
-    static void from_json(const nlohmann::json& json, std::shared_ptr<T>& pointer)
-    {
-        if (json.is_null())
-        {
-            pointer = nullptr;
-        }
-        else
-        {
-            pointer.reset(new T(json.get<T>()));
-        }
-    }
-};
-
-// Data Bindings
-template<typename T>
-struct adl_serializer<DataBinding<T>>
-{
-    static void to_json(nlohmann::json& json, const DataBinding<T>& dataBinding)
-    {
-        json = dataBinding.GetData();
-    }
-
-    static void from_json(const nlohmann::json& json, DataBinding<T>& dataBinding)
-    {
-        dataBinding.SetWithoutNotify(json.get<T>());
-    }
-};
-
-// Component Polymorphism
-template<>
-struct adl_serializer<Component> : PolymorphicSerializer<Component> {};
-NLOHMANN_JSON_NAMESPACE_END
-
-// Primitive Type
-inline void to_json(nlohmann::json& json, const PrimitiveType& primitiveType)
-{
-    json = PrimitiveTypeEnumLabel.ToString(primitiveType);
-}
-
-inline void from_json(const nlohmann::json& json, PrimitiveType& primitiveType)
-{
-    std::string primitiveTypeString = json.get<std::string>();
-    primitiveType = PrimitiveTypeEnumLabel.ToEnum(primitiveTypeString);
-}
 
 // DirectionalLightComponent
 inline void to_json(nlohmann::json& json, const DirectionalLightComponent& directionalLightComponent)
@@ -138,17 +77,15 @@ inline void from_json(const nlohmann::json& json, PointLightComponent& pointLigh
 inline void to_json(nlohmann::json& json, const PrimitiveComponent& primitiveComponent)
 {
     json = {
-        {"m_customPrimitiveFilePath", primitiveComponent.m_customPrimitiveFilePath},
-        {"m_primitiveType", primitiveComponent.m_primitiveType},
+        {"m_primitiveName", primitiveComponent.m_primitiveName},
         {"m_currentItem", primitiveComponent.m_currentItem}
     };
 }
 
 inline void from_json(const nlohmann::json& json, PrimitiveComponent& primitiveComponent)
 {
-    json.at("m_primitiveType").get_to(primitiveComponent.m_primitiveType);
+    json.at("m_primitiveName").get_to(primitiveComponent.m_primitiveName);
     json.at("m_currentItem").get_to(primitiveComponent.m_currentItem);
-    json.at("m_customPrimitiveFilePath").get_to(primitiveComponent.m_customPrimitiveFilePath);
 }
 
 // SpotLightComponent

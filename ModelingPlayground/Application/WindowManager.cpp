@@ -5,6 +5,7 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
 #include <iostream>
+#include <filesystem>
 #include <GLFW/glfw3.h>
 
 #include "../../../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/tinyfiledialogs/tinyfiledialogs.h"
@@ -120,11 +121,11 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 			if (ImGui::BeginMenuBar()) {
 				if (ImGui::BeginMenu("File")) {
 					char const * lFilterPatterns[1] = { "*.json" };
+					std::string existingFilePath = m_sceneHierarchy->GetFilePath();
 					if (ImGui::MenuItem("New")) {
 						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer);
 					}
 					if (ImGui::MenuItem("Open")) {
-						char const * lFilterPatterns[1] = { "*.json" };
 						const char* filePath = tinyfd_openFileDialog(
 							"Select a scene to open",
 							"",
@@ -135,15 +136,8 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							);
 						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer, filePath);
 					}
-					if (ImGui::MenuItem("Save")) {
-						const char* filePath = tinyfd_saveFileDialog(
-							"Save scene as",
-							"",
-							1,
-							lFilterPatterns,
-							"json files"
-							);
-						SceneLoader::SaveScene(m_sceneHierarchy, filePath);
+					if (ImGui::MenuItem("Save", 0, false, !existingFilePath.empty())) {
+						SceneLoader::SaveScene(m_sceneHierarchy, existingFilePath.c_str());
 					}
 					if (ImGui::MenuItem("Save as...")) {
 						const char* filePath = tinyfd_saveFileDialog(

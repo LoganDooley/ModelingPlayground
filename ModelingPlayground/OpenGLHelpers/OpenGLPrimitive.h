@@ -23,6 +23,7 @@ class OpenGLPrimitive
 public:
     OpenGLPrimitive(const std::vector<OpenGLVertex>& vertices, const std::vector<int>& indices = {});
     OpenGLPrimitive(const std::vector<float>& vertices, GLsizei vertexCount, bool hasTexCoords, const std::vector<int>& indices = {});
+    ~OpenGLPrimitive();
 
     void Draw() const;
     

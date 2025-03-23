@@ -285,10 +285,11 @@
     <ClInclude Include="Scene\SceneHierarchy.h" />
     <ClInclude Include="Scene\SceneNode\SceneNode.h" />
     <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h" />
+    <ClInclude Include="Serialization\ComponentSerializer.h" />
+    <ClInclude Include="Serialization\DataBindingSerializer.h" />
     <ClInclude Include="Serialization\GLMSerializers.h" />
     <ClInclude Include="Utils\LazyValue.h" />
     <ClInclude Include="Utils\EnumLabels\EnumLabel.h" />
-    <ClInclude Include="Utils\EnumLabels\PrimitiveTypeEnumLabel.h" />
     <ClInclude Include="Utils\PrimitiveGenerator.h" />
     <ClInclude Include="Utils\PropertyDrawer.h" />
     <ClInclude Include="Utils\SceneLoader.h" />
@@ -300,7 +301,7 @@
     <Natvis Include="Libraries\imgui-docking\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Serialization\PolymorphicSerializer.h" />
+    <Content Include="Serialization\SharedPointerSerializer.h" />
     <Content Include="Shaders\default.frag" />
     <Content Include="Shaders\default.vert" />
     <Content Include="Utils\DataBinding.h" />

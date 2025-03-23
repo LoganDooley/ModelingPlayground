@@ -36,24 +36,28 @@ public:
     static bool DrawVec4fColor(const std::string& propertyName, DataBinding<glm::vec4>& vec4f);
 
     // Combo
+    static bool DrawCombo(const char* propertyName, std::vector<std::string> options, std::string& currentValue);
+    
     template <typename E>
     static bool DrawEnumLabelCombo(const char* propertyName, EnumLabel<E> enumLabel, E& enumValue)
     {
         int newEnumIndex = enumLabel.GetEnumIndex(enumValue);
-        ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(), static_cast<int>(enumLabel.Count()));
-        if (enumLabel.GetEnums()[newEnumIndex] == enumValue)
+        if (ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(), static_cast<int>(enumLabel.Count())))
         {
-            return false;
+            enumValue = enumLabel.GetEnums()[newEnumIndex];
+            return true;
         }
-        enumValue = enumLabel.GetEnums()[newEnumIndex];
-        return true;
+        return false;
     }
 
     template <typename E>
     static bool DrawEnumLabelCombo(const char* propertyName, EnumLabel<E> enumLabel, DataBinding<E>& enumValue)
     {
         int newEnumIndex = enumLabel.GetEnumIndex(enumValue.GetData());
-        ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(), enumLabel.Count());
-        return enumValue.SetAndNotify(enumLabel.GetEnums()[newEnumIndex]);
+        if (ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(), enumLabel.Count()))
+        {
+            return enumValue.SetAndNotify(enumLabel.GetEnums()[newEnumIndex]);
+        }
+        return false;
     }
 };

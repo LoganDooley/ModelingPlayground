@@ -1,27 +1,14 @@
 ﻿#include "SceneLoader.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "../Serialization/Serializers.h"
-
-void SceneLoader::Initialize()
-{
-    PolymorphicSerializer<Component>::RegisterTypes<DirectionalLightComponent,
-    MaterialComponent,
-    OpenGLSettingsComponent,
-    PointLightComponent,
-    PrimitiveComponent,
-    SpotLightComponent,
-    TransformComponent
-    >();
-}
 
 bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
                             const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const char* sceneFilePath)
 {
-    Initialize();
-    
-    if (sceneFilePath == "")
+    if (sceneFilePath == nullptr)
     {
         // Create new scene
         *sceneHierarchy = SceneHierarchy();
@@ -31,7 +18,7 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
         openGLRenderer->SetSceneHierarchy(sceneHierarchy);
         return true;
     }
-
+    
     // Load scene from path
     std::ifstream file(sceneFilePath);
     if (file.fail())
@@ -39,17 +26,22 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
         std::cerr << "Error opening file " << sceneFilePath << "\n";
         return false;
     }
-
+    
     nlohmann::json sceneJson = nlohmann::json::parse(file);
     SceneHierarchy newSceneHierarchy = sceneJson;
     *sceneHierarchy = std::move(newSceneHierarchy);
     openGLRenderer->SetSceneHierarchy(sceneHierarchy);
+    sceneHierarchy->SetFilePath(sceneFilePath);
     return true;
 }
 
 bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const char* sceneFilePath)
 {
-    Initialize();
+    if (sceneFilePath == nullptr)
+    {
+        std::cout << "SceneLoader|SaveScene: No file path specified.\n";
+        return false;
+    }
     
     nlohmann::json sceneJson = sceneHierarchy;
     std::ofstream sceneFile(sceneFilePath);
@@ -58,5 +50,6 @@ bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
         std::cerr << "Error opening file " << sceneFilePath <<"\n";
     }
     sceneFile << sceneJson;
+    sceneHierarchy->SetFilePath(sceneFilePath);
     return true;
 }

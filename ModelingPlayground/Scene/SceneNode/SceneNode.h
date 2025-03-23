@@ -15,6 +15,12 @@ public:
     SceneNode() = default;
     SceneNode(std::string name, std::vector<std::shared_ptr<SceneNode>> childSceneNodes = std::vector<std::shared_ptr<SceneNode>>());
     ~SceneNode();
+
+    SceneNode(const SceneNode& other) noexcept;
+    SceneNode(SceneNode&& other) noexcept;
+    
+    SceneNode& operator=(const SceneNode& other) noexcept;
+    SceneNode& operator=(SceneNode&& other) noexcept;
     
     const std::vector<std::shared_ptr<SceneNode>>& GetChildren() const;
     void AddChild(const std::shared_ptr<SceneNode>& childSceneNode);

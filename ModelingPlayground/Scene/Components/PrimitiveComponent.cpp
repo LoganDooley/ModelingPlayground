@@ -5,9 +5,15 @@
 #include "../../Utils/PropertyDrawer.h"
 #include "misc/cpp/imgui_stdlib.h"
 
+PrimitiveComponent::PrimitiveComponent():
+    m_primitiveName("Triangle"),
+    m_currentItem(0)
+{
+}
+
 PrimitiveComponent::PrimitiveComponent(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager):
     m_openGLPrimitiveManager(openGLPrimitiveManager),
-    m_primitiveType(PrimitiveType::Triangle),
+    m_primitiveName("Triangle"),
     m_currentItem(0)
 {
 }
@@ -22,33 +28,29 @@ void PrimitiveComponent::RenderInspector()
     ImGuiTreeNodeFlags meshHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
     if (ImGui::CollapsingHeader("Mesh", meshHeaderFlags))
     {
-        PropertyDrawer::DrawEnumLabelCombo<PrimitiveType>("Primitive Type", PrimitiveTypeEnumLabel, m_primitiveType);
-    }
-    if (ImGui::Button("Use Custom Obj"))
-    {
-        char const * lFilterPatterns[1] = { "*.obj" };
-        const char* filePath = tinyfd_openFileDialog(
-            "Select an obj file to use",
-            "",
-            1,
-            lFilterPatterns,
-            ".obj",
-            0
-            );
-        // If user actually selected a file
-        if (filePath != NULL)
+        PropertyDrawer::DrawCombo("Primitive Type", m_openGLPrimitiveManager->GetPrimitiveNames(), m_primitiveName);
+        
+        if (ImGui::Button("Use Custom Obj"))
         {
-            m_customPrimitiveFilePath = m_openGLPrimitiveManager->LoadPrimitive(filePath);
+            char const * lFilterPatterns[1] = { "*.obj" };
+            const char* filePath = tinyfd_openFileDialog(
+                "Select an obj file to use",
+                "",
+                1,
+                lFilterPatterns,
+                ".obj",
+                0
+                );
+            // If user actually selected a file
+            if (filePath != NULL)
+            {
+                m_primitiveName = m_openGLPrimitiveManager->LoadPrimitive(filePath);
+            }
         }
     }
 }
 
-std::string PrimitiveComponent::GetCustomPrimitiveFilePath() const
+std::string PrimitiveComponent::GetPrimitiveName() const
 {
-    return m_customPrimitiveFilePath;
-}
-
-PrimitiveType PrimitiveComponent::GetPrimitiveType() const
-{
-    return m_primitiveType;
+    return m_primitiveName;
 }

@@ -7,6 +7,9 @@
 #include "../../Utils/PrimitiveGenerator.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
+#include <iostream>
+#include <ranges>
+
 #include "../Libraries/tinyobjloader/tiny_obj_loader.h"
 
 OpenGLPrimitiveManager::OpenGLPrimitiveManager():
@@ -30,19 +33,19 @@ void OpenGLPrimitiveManager::GeneratePrimitives(int sphereLatitudinalResolution,
 		OpenGLVertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.5, 1), true)
 	};
 
-	m_primitives[PrimitiveType::Triangle] = std::make_shared<OpenGLPrimitive>(triangleVertices);
+	m_primitives["Triangle"] = std::make_shared<OpenGLPrimitive>(triangleVertices);
 
 
     std::pair<std::vector<OpenGLVertex>, std::vector<int>> sphereData = PrimitiveGenerator::GenerateSphere(sphereLatitudinalResolution, sphereLongitudinalResolution);
-	m_primitives[PrimitiveType::Sphere] = std::make_shared<OpenGLPrimitive>(sphereData.first, sphereData.second);
+	m_primitives["Sphere"] = std::make_shared<OpenGLPrimitive>(sphereData.first, sphereData.second);
 	
     std::vector<OpenGLVertex> cubeVertices = PrimitiveGenerator::GenerateCube();
-	m_primitives[PrimitiveType::Cube] = std::make_shared<OpenGLPrimitive>(cubeVertices);
+	m_primitives["Cube"] = std::make_shared<OpenGLPrimitive>(cubeVertices);
 }
 
 std::string OpenGLPrimitiveManager::LoadPrimitive(std::string filePath)
 {
-	if (m_customPrimitives.contains(filePath))
+	if (m_primitives.contains(filePath))
 	{
 		return filePath;
 	}
@@ -122,21 +125,26 @@ std::string OpenGLPrimitiveManager::LoadPrimitive(std::string filePath)
 		}
 	}
 
-	m_customPrimitives[filePath] = std::make_shared<OpenGLPrimitive>(vertices);
+	m_primitives[filePath] = std::make_shared<OpenGLPrimitive>(vertices);
 	return filePath;
-}
-
-void OpenGLPrimitiveManager::DrawPrimitive(PrimitiveType primitiveType)
-{
-	m_primitives[primitiveType]->Draw();
 }
 
 void OpenGLPrimitiveManager::DrawPrimitive(std::string fileName)
 {
-	if (!m_customPrimitives.contains(fileName))
+	if (!m_primitives.contains(fileName))
 	{
-		std::cout<<"OpenGLPrimitiveManager|DrawPrimitive|Custom Primitive for "<<fileName<<" not found\n";
+		std::cout<<"OpenGLPrimitiveManager|DrawPrimitive| Primitive for "<<fileName<<" not found\n";
 		return;
 	}
-	m_customPrimitives[fileName]->Draw();
+	m_primitives[fileName]->Draw();
+}
+
+std::vector<std::string> OpenGLPrimitiveManager::GetPrimitiveNames() const
+{
+	std::vector<std::string> names;
+	for (const auto& name : m_primitives | std::views::keys)
+	{
+		names.push_back(name);
+	}
+	return names;
 }
