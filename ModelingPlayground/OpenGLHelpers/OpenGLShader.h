@@ -1,8 +1,10 @@
 ﻿#pragma once
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <glm/fwd.hpp>
 
+#include "OpenGLUniformVariable.h"
 #include "glad/glad.h"
 
 class OpenGLShader
@@ -16,17 +18,40 @@ public:
 	void UnbindShader() const;
 
 	void RegisterUniformVariable(const std::string& uniformName);
+	bool RegisterUniformBufferObject(std::string uniformBufferObjectName, GLsizeiptr sizeInBytes,
+	                                 GLuint bindingLocation);
 
-	void SetUniform1i(const std::string& uniformName, int uniformValue);
-	void SetUniform1ui(const std::string& uniformName, uint32_t uniformValue);
-	void SetUniform1f(const std::string& uniformName, float uniformValue);
-	void SetUniform3f(const std::string& uniformName, glm::vec3 vector);
-	void SetUniformMatrix3f(const std::string& uniformName, bool transpose, const glm::mat3& matrix);
-	void SetUniformMatrix4f(const std::string& uniformName, bool transpose, const glm::mat4& matrix);
+	template <typename T>
+	void SetUniform(const std::string& uniformName, T uniformValue)
+	{
+		if (!ValidateUniformName(uniformName))
+		{
+			return;
+		}
+		m_uniforms[uniformName]->SetValue(uniformValue);
+	}
+
+	template <typename T>
+	void SetUniform(const std::string& uniformName, bool transpose, const T& matrix)
+	{
+		if (!ValidateUniformName(uniformName))
+		{
+			return;
+		}
+		m_uniforms[uniformName]->SetValue(transpose, matrix);
+	}
+
+	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+	                                   int data) const;
+
+	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+	                                   glm::vec3 data) const;
 
 private:
-	bool ValidateUniformName(std::string uniformName);
+	bool ValidateUniformName(const std::string& uniformName) const;
+	bool ValidateUniformBufferObjectName(const std::string& uniformBufferObjectName) const;
 
-	std::unordered_map<std::string, GLint> m_uniformLocationCache;
+	std::unordered_map<std::string, std::unique_ptr<OpenGLUniformVariable>> m_uniforms;
+	std::unordered_map<std::string, std::pair<GLuint, GLuint>> m_uniformBufferObjects;
 	GLuint m_shaderProgramId;
 };

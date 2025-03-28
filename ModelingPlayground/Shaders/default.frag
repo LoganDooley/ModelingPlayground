@@ -1,6 +1,6 @@
-﻿#version 330 core
+﻿#version 460 core
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 199
 
 // Light types
 #define DIRECTIONAL_LIGHT 0
@@ -9,16 +9,20 @@
 
 #define PI 3.1415926
 
+// 80 bytes
 struct Light{
-    int type;
-    vec3 color;
-    vec3 position;
-    vec3 direction;
-    vec3 falloff;
+    int type; // 0
+    vec3 color; // 16
+    vec3 position; // 32 
+    vec3 direction; // 48
+    vec3 falloff; // 64
 };
 
-uniform Light lights[MAX_LIGHTS];
-uniform int lightCount;
+layout (std140, binding = 0) uniform LightsBlock
+{
+    Light lights[MAX_LIGHTS]; // lights[i] = 80 * i
+    int lightCount; // lightCount = 80 * MAX_LIGHTS
+};
 
 uniform vec3 ambientColor;
 uniform vec3 materialColor;

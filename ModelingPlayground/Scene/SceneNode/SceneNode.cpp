@@ -103,6 +103,19 @@ void SceneNode::RegisterTransformModelMatrix() const
 		return;
 	}
 
+	// Find first parent node with a transform and use it to set this nodes cumulative parent transform
+	std::shared_ptr<SceneNode> parentSceneNode = GetParent();
+	while (parentSceneNode != nullptr)
+	{
+		if (std::shared_ptr<TransformComponent> parentTransformComponent = parentSceneNode->GetObject().
+			GetFirstComponentOfType<TransformComponent>())
+		{
+			transformComponent->SetParentCumulativeModelMatrix(parentTransformComponent->GetCumulativeModelMatrix());
+			break;
+		}
+		parentSceneNode = parentSceneNode->GetParent();
+	}
+
 	// If this object's local model matrix changes
 	transformComponent->GetLocalModelMatrixDataBinding().Subscribe(
 		[this, transformComponent](const glm::mat4& modelMatrix, glm::mat4)

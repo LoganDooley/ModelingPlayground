@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <ostream>
+#include <utility>
 
 #include "../Application/ShaderLoader.h"
 #include "glm/glm.hpp"
@@ -35,79 +36,81 @@ void OpenGLShader::UnbindShader() const
 
 void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
 {
-	if (m_uniformLocationCache.contains(uniformName))
+	if (m_uniforms.contains(uniformName))
 	{
 		std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName <<
 			" is already registered!\n";
 		return;
 	}
-	m_uniformLocationCache[uniformName] = glGetUniformLocation(m_shaderProgramId, uniformName.c_str());
-	if (m_uniformLocationCache[uniformName] == -1)
-	{
-		std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName <<
-			" does not exist in shader! Please check if this uniform exists and is used within the shader program.\n";
-	}
+	m_uniforms[uniformName] = std::make_unique<OpenGLUniformVariable>(uniformName, m_shaderProgramId);
 }
 
-void OpenGLShader::SetUniform1i(const std::string& uniformName, int uniformValue)
+bool OpenGLShader::RegisterUniformBufferObject(std::string uniformBufferObjectName, GLsizeiptr sizeInBytes,
+                                               GLuint bindingLocation)
 {
-	if (!ValidateUniformName(uniformName))
+	if (m_uniformBufferObjects.contains(uniformBufferObjectName))
 	{
-		return;
+		std::cout << "OpenGLShader|RegisterUniformBufferObject: Uniform buffer object " << uniformBufferObjectName <<
+			"	is already registered!\n";
+		return false;
 	}
-	glUniform1i(m_uniformLocationCache[uniformName], uniformValue);
+
+	GLuint uniformBufferObject = 0;
+	glGenBuffers(1, &uniformBufferObject);
+	if (uniformBufferObject == -1)
+	{
+		std::cout << "OpenGLShader|RegisterUniformBufferObject: Failed to create uniform buffer object!\n";
+		return false;
+	}
+	glBindBufferBase(GL_UNIFORM_BUFFER, bindingLocation, uniformBufferObject);
+	m_uniformBufferObjects[uniformBufferObjectName] = {uniformBufferObject, bindingLocation};
+	glBindBuffer(GL_UNIFORM_BUFFER, uniformBufferObject);
+	glBufferData(GL_UNIFORM_BUFFER, sizeInBytes, nullptr, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	return true;
 }
 
-void OpenGLShader::SetUniform1ui(const std::string& uniformName, uint32_t uniformValue)
+void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+                                                 int data) const
 {
-	if (!ValidateUniformName(uniformName))
-	{
-		return;
-	}
-	glUniform1ui(m_uniformLocationCache[uniformName], uniformValue);
-}
-
-void OpenGLShader::SetUniform1f(const std::string& uniformName, float uniformValue)
-{
-	if (!ValidateUniformName(uniformName))
-	{
-		return;
-	}
-	glUniform1f(m_uniformLocationCache[uniformName], uniformValue);
-}
-
-void OpenGLShader::SetUniform3f(const std::string& uniformName, glm::vec3 vector)
-{
-	if (!ValidateUniformName(uniformName))
+	if (!ValidateUniformBufferObjectName(uniformBufferObjectName))
 	{
 		return;
 	}
-	glUniform3f(m_uniformLocationCache[uniformName], vector.x, vector.y, vector.z);
+	std::vector<int> intData = {data};
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
+	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(int), intData.data());
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void OpenGLShader::SetUniformMatrix3f(const std::string& uniformName, bool transpose, const glm::mat3& matrix)
+void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+                                                 glm::vec3 data) const
 {
-	if (!ValidateUniformName(uniformName))
+	if (!ValidateUniformBufferObjectName(uniformBufferObjectName))
 	{
 		return;
 	}
-	glUniformMatrix3fv(m_uniformLocationCache[uniformName], 1, transpose, &matrix[0][0]);
+	std::vector<float> floatData = {data.x, data.y, data.z};
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
+	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float) * 3, floatData.data());
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void OpenGLShader::SetUniformMatrix4f(const std::string& uniformName, bool transpose, const glm::mat4& matrix)
+bool OpenGLShader::ValidateUniformName(const std::string& uniformName) const
 {
-	if (!ValidateUniformName(uniformName))
-	{
-		return;
-	}
-	glUniformMatrix4fv(m_uniformLocationCache[uniformName], 1, transpose, &matrix[0][0]);
-}
-
-bool OpenGLShader::ValidateUniformName(std::string uniformName)
-{
-	if (!m_uniformLocationCache.contains(uniformName))
+	if (!m_uniforms.contains(uniformName))
 	{
 		std::cout << "Uniform variable " << uniformName << " is not registered!" << std::endl;
+		return false;
+	}
+	return true;
+}
+
+bool OpenGLShader::ValidateUniformBufferObjectName(const std::string& uniformBufferObjectName) const
+{
+	if (!m_uniformBufferObjects.contains(uniformBufferObjectName))
+	{
+		std::cout << "Uniform buffer object " << uniformBufferObjectName << " is not registered!" << std::endl;
 		return false;
 	}
 	return true;

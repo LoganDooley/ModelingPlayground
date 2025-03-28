@@ -19,7 +19,7 @@ int GlfwWindow::Initialize()
 		return -1;
 	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
 	m_window = glfwCreateWindow(1280, 720, "Modeling Playground", nullptr, nullptr);
 	if (m_window == nullptr)

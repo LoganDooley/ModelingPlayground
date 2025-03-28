@@ -22,7 +22,7 @@ public:
 	OpenGLLightContainer();
 	~OpenGLLightContainer() = default;
 
-	void Initialize(std::shared_ptr<OpenGLShader> shader, uint32_t maxLights = 8);
+	void Initialize(std::shared_ptr<OpenGLShader> shader);
 	void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
 
 	bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);
@@ -76,6 +76,10 @@ private:
 	void SetLightFalloffUniform(uint32_t lightIndex, const glm::vec3& falloff) const;
 
 	std::shared_ptr<OpenGLShader> m_shader;
-	uint32_t m_maxLights;
 	std::vector<std::pair<std::weak_ptr<SceneNode>, LightType>> m_lights;
+
+	int m_maxLights = 199;
+	const int m_lightStructSize = 80;
+	const int m_lightCountOffset = m_maxLights * m_lightStructSize;
+	const std::string m_lightsBlockName = "LightsBlock";
 };

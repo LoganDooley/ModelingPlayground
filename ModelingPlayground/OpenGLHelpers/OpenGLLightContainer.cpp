@@ -8,33 +8,21 @@
 
 OpenGLLightContainer::OpenGLLightContainer():
 	m_shader(std::make_shared<OpenGLShader>()),
-	m_maxLights(0),
 	m_lights({})
 {
 }
 
-void OpenGLLightContainer::Initialize(std::shared_ptr<OpenGLShader> shader, uint32_t maxLights)
+void OpenGLLightContainer::Initialize(std::shared_ptr<OpenGLShader> shader)
 {
 	m_shader = shader;
-	m_maxLights = maxLights;
 
-	// Register uniforms
-	for (uint32_t i = 0; i < maxLights; i++)
-	{
-		m_shader->RegisterUniformVariable(GetLightTypeUniformName(i));
-		m_shader->RegisterUniformVariable(GetLightPositionUniformName(i));
-		m_shader->RegisterUniformVariable(GetLightDirectionUniformName(i));
-		m_shader->RegisterUniformVariable(GetLightColorUniformName(i));
-		m_shader->RegisterUniformVariable(GetLightFalloffUniformName(i));
-	}
-	m_shader->RegisterUniformVariable("lightCount");
-	m_shader->SetUniform1i("lightCount", 0);
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
 }
 
 void OpenGLLightContainer::SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
 {
 	m_lights.clear();
-	m_shader->SetUniform1i("lightCount", 0);
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
 
 	// bfs through hierarchy and add nodes that are lights
 	std::queue<std::shared_ptr<SceneNode>> bfs;
@@ -72,13 +60,14 @@ void OpenGLLightContainer::RemoveLight(uint32_t lightIndex)
 		// Reset this light's uniforms
 		SetLightUniforms(lightIndex);
 	}
-	m_shader->SetUniform1i("lightCount", static_cast<int>(m_lights.size()));
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, m_lights.size());
 }
 
 void OpenGLLightContainer::ClearLights()
 {
 	m_lights.clear();
-	m_shader->SetUniform1i("lightCount", 0);
+
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
 }
 
 bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& light, LightType type)
@@ -91,7 +80,7 @@ bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& li
 
 	m_lights.push_back({light, type});
 	InitializeLight(m_lights.size() - 1);
-	m_shader->SetUniform1i("lightCount", m_lights.size());
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, m_lights.size());
 	return true;
 }
 
@@ -421,25 +410,25 @@ void OpenGLLightContainer::SubscribeToSpotLight(uint32_t lightIndex,
 
 void OpenGLLightContainer::SetLightTypeUniform(uint32_t lightIndex, LightType type) const
 {
-	m_shader->SetUniform1i(GetLightTypeUniformName(lightIndex), type);
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, lightIndex * m_lightStructSize, type);
 }
 
 void OpenGLLightContainer::SetLightPositionUniform(uint32_t lightIndex, const glm::vec3& position) const
 {
-	m_shader->SetUniform3f(GetLightPositionUniformName(lightIndex), position);
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, lightIndex * m_lightStructSize + 32, position);
 }
 
 void OpenGLLightContainer::SetLightDirectionUniform(uint32_t lightIndex, const glm::vec3& direction) const
 {
-	m_shader->SetUniform3f(GetLightDirectionUniformName(lightIndex), direction);
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, lightIndex * m_lightStructSize + 48, direction);
 }
 
 void OpenGLLightContainer::SetLightColorUniform(uint32_t lightIndex, const glm::vec3& color) const
 {
-	m_shader->SetUniform3f(GetLightColorUniformName(lightIndex), color);
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, lightIndex * m_lightStructSize + 16, color);
 }
 
 void OpenGLLightContainer::SetLightFalloffUniform(uint32_t lightIndex, const glm::vec3& falloff) const
 {
-	m_shader->SetUniform3f(GetLightFalloffUniformName(lightIndex), falloff);
+	m_shader->SetUniformBufferObjectSubData(m_lightsBlockName, lightIndex * m_lightStructSize + 64, falloff);
 }
