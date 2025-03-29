@@ -144,11 +144,14 @@
         <ClCompile Include="main.cpp">
             <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'">true</ExcludedFromBuild>
         </ClCompile>
+        <ClCompile Include="OpenGLHelpers\OpenGLFramebuffer.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLLightContainer.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLPrimitive.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLPrimitiveManager.cpp"/>
+        <ClCompile Include="OpenGLHelpers\OpenGLRenderbuffer.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLRenderer.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLShader.cpp"/>
+        <ClCompile Include="OpenGLHelpers\OpenGLTexture.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLUniformVariable.cpp"/>
         <ClCompile Include="Scene\Components\OpenGLSettingsComponent.cpp"/>
         <ClCompile Include="Scene\Components\DirectionalLightComponent.cpp"/>
@@ -270,11 +273,14 @@
         <ClInclude Include="Libraries\stb\stb_image.h"/>
         <ClInclude Include="Libraries\tinyfiledialogs\tinyfiledialogs.h"/>
         <ClInclude Include="Libraries\tinyobjloader\tiny_obj_loader.h"/>
+        <ClInclude Include="OpenGLHelpers\OpenGLFramebuffer.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLLightContainer.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLPrimitive.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLPrimitiveManager.h"/>
+        <ClInclude Include="OpenGLHelpers\OpenGLRenderbuffer.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLRenderer.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLShader.h"/>
+        <ClInclude Include="OpenGLHelpers\OpenGLTexture.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLUniformVariable.h"/>
         <ClInclude Include="Scene\Components\ComponentIncludes.h"/>
         <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h"/>

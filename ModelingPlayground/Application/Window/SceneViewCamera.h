@@ -5,6 +5,7 @@
 #include "../../Utils/LazyValue.h"
 #include "glad/glad.h"
 
+class OpenGLFramebuffer;
 class InputManager;
 
 class SceneViewCamera
@@ -28,7 +29,6 @@ public:
 	void PrintCameraMatrix();
 
 private:
-	void UpdateFramebuffer();
 	void UpdateViewMatrix();
 	void UpdateProjectionMatrix();
 
@@ -55,9 +55,7 @@ private:
 	glm::mat4 m_viewMatrix;
 	LazyValue<glm::mat4> m_cameraMatrix;
 
-	GLuint m_framebuffer;
-	GLuint m_framebufferTexture;
-	GLuint m_framebufferRenderbuffer;
+	std::shared_ptr<OpenGLFramebuffer> m_framebuffer;
 
 	std::shared_ptr<InputManager> m_inputManager;
 	float m_movementSpeed;
