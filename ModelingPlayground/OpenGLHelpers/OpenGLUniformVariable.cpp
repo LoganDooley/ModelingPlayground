@@ -33,6 +33,11 @@ void OpenGLUniformVariable::SetValue(glm::vec3 vector) const
 	glUniform3f(m_uniformLocation, vector.x, vector.y, vector.z);
 }
 
+void OpenGLUniformVariable::SetValue(glm::vec4 vector) const
+{
+	glUniform4f(m_uniformLocation, vector.x, vector.y, vector.z, vector.w);
+}
+
 void OpenGLUniformVariable::SetValue(bool transpose, const glm::mat3& matrix) const
 {
 	glUniformMatrix3fv(m_uniformLocation, 1, transpose, &matrix[0][0]);

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 #include "Component.h"
 #include "../../nlohmann/json_fwd.hpp"
@@ -12,7 +12,7 @@ public:
 
 	void RenderInspector() override;
 
-	glm::vec3 GetMaterialColor() const;
+	glm::vec4 GetMaterialColor() const;
 	float GetMetallic() const;
 	float GetRoughness() const;
 
@@ -20,7 +20,7 @@ public:
 	friend void from_json(const nlohmann::json& json, MaterialComponent& materialComponent);
 
 private:
-	glm::vec3 m_materialColor;
+	glm::vec4 m_materialColor;
 	float m_metallic;
 	float m_roughness;
 };

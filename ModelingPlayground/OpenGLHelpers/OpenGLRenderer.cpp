@@ -39,6 +39,8 @@ void OpenGLRenderer::Initialize()
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void OpenGLRenderer::SetCamera(std::shared_ptr<SceneViewCamera> camera)
@@ -134,7 +136,7 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 	m_defaultShader->SetUniform<glm::mat4>("modelMatrix", false, cumulativeModelMatrix);
 	glm::mat3 inverseTransposeModelMatrix = transpose(inverse(glm::mat3(cumulativeModelMatrix)));
 	m_defaultShader->SetUniform<glm::mat3>("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
-	m_defaultShader->SetUniform<glm::vec3>("materialColor", materialComponent.GetMaterialColor());
+	m_defaultShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());
 	m_defaultShader->SetUniform<float>("roughness", materialComponent.GetRoughness());
 	m_defaultShader->SetUniform<float>("metallic", materialComponent.GetRoughness());
 

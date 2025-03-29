@@ -14,6 +14,7 @@ public:
 	void SetValue(unsigned int uniformValue) const;
 	void SetValue(float uniformValue) const;
 	void SetValue(glm::vec3 vector) const;
+	void SetValue(glm::vec4 vector) const;
 	void SetValue(bool transpose, const glm::mat3& matrix) const;
 	void SetValue(bool transpose, const glm::mat4& matrix) const;
 

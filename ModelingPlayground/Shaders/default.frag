@@ -25,7 +25,7 @@ layout (std140, binding = 0) uniform LightsBlock
 };
 
 uniform vec3 ambientColor;
-uniform vec3 materialColor;
+uniform vec4 materialColor = vec4(1, 0, 0, 1);
 uniform float roughness;
 uniform float metallic;
 
@@ -130,8 +130,11 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity,
 }
 
 vec3 GetObjectColor(){
-    return vec3(vertexTexCoord.x, vertexTexCoord.y, 1);
-    //return materialColor;
+    return materialColor.xyz;
+}
+
+float GetObjectTransparency(){
+    return materialColor.w;
 }
 
 void main()
@@ -160,5 +163,7 @@ void main()
     // Apply gamma correction
     color = pow(color, vec3(1.0/2.2));
     
-    FragColor = vec4(color, 1);
+    float transparency = GetObjectTransparency();
+    
+    FragColor = vec4(color, transparency);
 }
