@@ -18,6 +18,10 @@ public:
 	~OpenGLTexture();
 
 	GLuint GetTextureId();
+	GLuint64 GetTextureHandle();
+
+	void MakeTextureResident();
+	void MakeTextureNonResident();
 
 	void Bind();
 	void Unbind();

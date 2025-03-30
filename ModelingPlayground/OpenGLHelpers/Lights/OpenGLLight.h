@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/vec3.hpp>
 
+class OpenGLRenderer;
 class TransformComponent;
 class OpenGLShader;
 class SceneNode;
@@ -22,10 +23,16 @@ public:
 
 	void SetLightIndex(unsigned int lightIndex);
 
+	void SetShadowMapDirty();
+	void TryUpdateShadowMap(OpenGLRenderer* openGLRenderer);
+
 protected:
+	virtual void UpdateShadowMap(OpenGLRenderer* openGLRenderer) = 0;
+
 	// A batch function to set all uniforms. Prefer data bindings if possible
 	virtual void SetAllUniforms() = 0;
 	virtual void SetLightTypeUniform() const = 0;
+	virtual void SetLightShadowMapHandleUniform() const = 0;
 	void SetLightPositionUniform(const glm::vec3& position) const;
 	void SetLightDirectionUniform(const glm::vec3& direction) const;
 	void SetLightColorUniform(const glm::vec3& color) const;
@@ -34,6 +41,7 @@ protected:
 	std::shared_ptr<OpenGLShader> m_defaultShader;
 	std::shared_ptr<TransformComponent> m_transformComponent;
 	std::shared_ptr<ShadowMap> m_shadowMap;
+	bool m_shadowMapIsDirty;
 	unsigned int m_lightIndex;
 
 	const int m_maxLights = 199;

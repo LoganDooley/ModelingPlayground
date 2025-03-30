@@ -168,5 +168,10 @@ void main()
     
     float transparency = GetObjectTransparency();
     
+    if(lightCount > 0){
+        FragColor = vec4(vec3(texture(lights[0].shadowMap, vertexTexCoord).r), 1);
+        return;
+    }
+    
     FragColor = vec4(color, transparency);
 }

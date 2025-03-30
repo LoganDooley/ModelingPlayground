@@ -32,6 +32,9 @@ public:
 	const glm::vec3& GetLocalXUnitVector() const;
 	DataBinding<glm::vec3>& GetLocalXUnitVectorDataBinding();
 
+	glm::vec3 GetWorldSpacePosition() const;
+	glm::vec3 GetWorldSpaceXUnitVector() const;
+
 	friend void to_json(nlohmann::json& json, const TransformComponent& transformComponent);
 	friend void from_json(const nlohmann::json& json, TransformComponent& transformComponent);
 

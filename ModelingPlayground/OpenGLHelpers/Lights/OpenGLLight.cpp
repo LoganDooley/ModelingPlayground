@@ -9,6 +9,7 @@ OpenGLLight::OpenGLLight(std::shared_ptr<OpenGLShader> defaultShader, std::share
                          unsigned int lightIndex):
 	m_defaultShader(defaultShader),
 	m_transformComponent(lightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()),
+	m_shadowMapIsDirty(true),
 	m_lightIndex(lightIndex)
 {
 }
@@ -17,6 +18,20 @@ void OpenGLLight::SetLightIndex(unsigned int lightIndex)
 {
 	m_lightIndex = lightIndex;
 	SetAllUniforms();
+}
+
+void OpenGLLight::SetShadowMapDirty()
+{
+	m_shadowMapIsDirty = true;
+}
+
+void OpenGLLight::TryUpdateShadowMap(OpenGLRenderer* openGLRenderer)
+{
+	if (m_shadowMapIsDirty)
+	{
+		UpdateShadowMap(openGLRenderer);
+		m_shadowMapIsDirty = false;
+	}
 }
 
 void OpenGLLight::SetLightPositionUniform(const glm::vec3& position) const

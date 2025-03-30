@@ -111,6 +111,16 @@ DataBinding<glm::vec3>& TransformComponent::GetLocalXUnitVectorDataBinding()
 	return m_localXUnitVector;
 }
 
+glm::vec3 TransformComponent::GetWorldSpacePosition() const
+{
+	return glm::vec3(m_parentCumulativeModelMatrix.GetData() * glm::vec4(m_position.GetData(), 1.0f));
+}
+
+glm::vec3 TransformComponent::GetWorldSpaceXUnitVector() const
+{
+	return glm::vec3(m_parentCumulativeModelMatrix.GetData() * glm::vec4(m_localXUnitVector.GetData(), 0.0f));
+}
+
 void TransformComponent::UpdateLocalModelMatrix()
 {
 	// scale

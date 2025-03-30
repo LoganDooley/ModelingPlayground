@@ -49,6 +49,15 @@ GLuint OpenGLFramebuffer::GetFramebufferId() const
 	return m_framebufferId;
 }
 
+std::shared_ptr<OpenGLTexture> OpenGLFramebuffer::GetTexture(GLenum attachment)
+{
+	if (m_textures.contains(attachment))
+	{
+		return m_textures[attachment];
+	}
+	return nullptr;
+}
+
 void OpenGLFramebuffer::DeleteFramebuffer()
 {
 	glDeleteFramebuffers(1, &m_framebufferId);
@@ -66,26 +75,26 @@ void OpenGLFramebuffer::CreateFramebuffer()
 	for (unsigned int i = 0; i < m_textureAttachmentArguments.size(); i++)
 	{
 		TextureAttachmentArguments textureAttachmentArguments = m_textureAttachmentArguments[i];
-		m_textures.push_back(std::make_shared<OpenGLTexture>(m_width, m_height,
-		                                                     textureAttachmentArguments.m_internalFormat,
-		                                                     textureAttachmentArguments.m_format,
-		                                                     textureAttachmentArguments.m_dataType,
-		                                                     textureAttachmentArguments.m_textureParameterSettings,
-		                                                     GL_TEXTURE_2D));
+		m_textures[textureAttachmentArguments.m_attachment] = std::make_shared<OpenGLTexture>(m_width, m_height,
+			textureAttachmentArguments.m_internalFormat,
+			textureAttachmentArguments.m_format,
+			textureAttachmentArguments.m_dataType,
+			textureAttachmentArguments.m_textureParameterSettings,
+			GL_TEXTURE_2D);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, textureAttachmentArguments.m_attachment, GL_TEXTURE_2D,
-		                       m_textures[i]->GetTextureId(), 0);
+		                       m_textures[textureAttachmentArguments.m_attachment]->GetTextureId(), 0);
 	}
 
 	// Create and bind renderbuffer attachments
 	for (unsigned int i = 0; i < m_renderbufferAttachmentArguments.size(); i++)
 	{
 		RenderbufferAttachmentArguments renderbufferAttachmentArguments = m_renderbufferAttachmentArguments[i];
-		m_renderbuffers.push_back(
-			std::make_shared<OpenGLRenderbuffer>(m_width, m_height, renderbufferAttachmentArguments.m_internalFormat));
+		m_renderbuffers[renderbufferAttachmentArguments.m_attachment] = std::make_shared<OpenGLRenderbuffer>(
+			m_width, m_height, renderbufferAttachmentArguments.m_internalFormat);
 
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, renderbufferAttachmentArguments.m_attachment, GL_RENDERBUFFER,
-		                          m_renderbuffers[i]->GetRenderbufferId());
+		                          m_renderbuffers[renderbufferAttachmentArguments.m_attachment]->GetRenderbufferId());
 	}
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

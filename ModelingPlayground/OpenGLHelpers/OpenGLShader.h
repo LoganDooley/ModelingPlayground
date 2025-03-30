@@ -45,6 +45,9 @@ public:
 	                                   int data) const;
 
 	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+	                                   uint64_t data) const;
+
+	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
 	                                   glm::vec3 data) const;
 
 private:

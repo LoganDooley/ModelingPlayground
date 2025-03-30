@@ -62,6 +62,22 @@ void OpenGLLightContainer::ClearLights()
 	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
 }
 
+void OpenGLLightContainer::SetAllShadowMapsDirty()
+{
+	for (const auto& light : m_lights)
+	{
+		light->SetShadowMapDirty();
+	}
+}
+
+void OpenGLLightContainer::UpdateDirtyShadowMaps(OpenGLRenderer* openGLRenderer)
+{
+	for (const auto& light : m_lights)
+	{
+		light->TryUpdateShadowMap(openGLRenderer);
+	}
+}
+
 bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& light, LightType type)
 {
 	if (m_lights.size() == m_maxLights)
@@ -92,7 +108,10 @@ bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& li
 	std::shared_ptr<OpenGLLight> newLight = m_lights[newLightIndex];
 	light->SubscribeToOnDestroyed([this, newLight]()
 	{
-		std::erase(m_lights, newLight);
+		if (m_lights.size() > 0)
+		{
+			std::erase(m_lights, newLight);
+		}
 		m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, m_lights.size());
 	});
 

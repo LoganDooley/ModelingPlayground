@@ -15,56 +15,55 @@ OpenGLSpotLight::OpenGLSpotLight(std::shared_ptr<OpenGLShader> defaultShader, st
 		SetLightColorUniform(lightColor);
 	});
 
-	m_transformComponent->GetPositionDataBinding().Subscribe([this](const glm::vec3& localPosition, glm::vec3)
+	m_transformComponent->GetPositionDataBinding().Subscribe([this](const glm::vec3&, glm::vec3)
 	{
-		auto worldPosition = glm::vec3(
-			m_transformComponent->GetParentCumulativeModelMatrix() * glm::vec4(localPosition, 1));
-		SetLightPositionUniform(worldPosition);
+		SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
+		SetShadowMapDirty();
 	});
 
 	m_transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(
-		[this](const glm::vec3& localXUnitVector, glm::vec3)
+		[this](const glm::vec3&, glm::vec3)
 		{
-			auto worldXUnitVector = glm::vec3(
-				m_transformComponent->GetParentCumulativeModelMatrix() * glm::vec4(localXUnitVector, 0));
-			SetLightDirectionUniform(worldXUnitVector);
+			SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
+			SetShadowMapDirty();
 		});
 
 	m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
-		[this](const glm::mat4& parentCumulativeModelMatrix, glm::mat4)
+		[this](const glm::mat4&, glm::mat4)
 		{
-			auto worldPosition = glm::vec3(
-				parentCumulativeModelMatrix * glm::vec4(m_transformComponent->GetPosition(), 1));
-			SetLightPositionUniform(worldPosition);
-			auto worldXUnitVector = glm::vec3(
-				parentCumulativeModelMatrix * glm::vec4(m_transformComponent->GetLocalXUnitVector(), 0));
-			SetLightDirectionUniform(worldXUnitVector);
+			SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
+			SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
+			SetShadowMapDirty();
 		});
 
 	m_spotLightComponent->GetLightFalloffAnglesDataBinding().Subscribe(
 		[this](const glm::vec2& lightFalloffAngles, glm::vec2)
 		{
 			SetLightFalloffUniform(glm::vec3(lightFalloffAngles, 0));
+			SetShadowMapDirty();
 		});
 
 	OpenGLSpotLight::SetAllUniforms();
+}
+
+void OpenGLSpotLight::UpdateShadowMap(OpenGLRenderer* openGLRenderer)
+{
 }
 
 void OpenGLSpotLight::SetAllUniforms()
 {
 	SetLightTypeUniform();
 	SetLightColorUniform(m_spotLightComponent->GetLightColor());
-	glm::mat4 parentCumulativeModelMatrix = m_transformComponent->GetParentCumulativeModelMatrix();
-	auto localPosition = glm::vec4(m_transformComponent->GetPosition(), 1);
-	auto worldPosition = glm::vec3(parentCumulativeModelMatrix * localPosition);
-	SetLightPositionUniform(worldPosition);
-	auto localXUnitVector = glm::vec4(m_transformComponent->GetLocalXUnitVector(), 0);
-	auto worldXUnitVector = glm::vec3(parentCumulativeModelMatrix * localXUnitVector);
-	SetLightDirectionUniform(worldXUnitVector);
+	SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
+	SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
 	SetLightFalloffUniform(glm::vec3(m_spotLightComponent->GetLightFalloffAngles(), 0));
 }
 
 void OpenGLSpotLight::SetLightTypeUniform() const
 {
 	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize, Spot);
+}
+
+void OpenGLSpotLight::SetLightShadowMapHandleUniform() const
+{
 }

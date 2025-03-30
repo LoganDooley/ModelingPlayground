@@ -401,6 +401,8 @@
         <Content Include="Serialization\SharedPointerSerializer.h"/>
         <Content Include="Shaders\default.frag"/>
         <Content Include="Shaders\default.vert"/>
+        <Content Include="Shaders\directionalAndSpotShadows.frag"/>
+        <Content Include="Shaders\directionalAndSpotShadows.vert"/>
         <Content Include="Utils\DataBinding.h"/>
     </ItemGroup>
     <ItemGroup>

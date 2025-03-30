@@ -29,6 +29,21 @@ GLuint OpenGLTexture::GetTextureId()
 	return m_textureId;
 }
 
+GLuint64 OpenGLTexture::GetTextureHandle()
+{
+	return m_textureHandle;
+}
+
+void OpenGLTexture::MakeTextureResident()
+{
+	glMakeTextureHandleResidentARB(m_textureHandle);
+}
+
+void OpenGLTexture::MakeTextureNonResident()
+{
+	glMakeTextureHandleNonResidentARB(m_textureHandle);
+}
+
 void OpenGLTexture::Bind()
 {
 	glBindTexture(m_textureTarget, m_textureId);

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "OpenGLTexture.h"
@@ -38,6 +39,8 @@ public:
 
 	GLuint GetFramebufferId() const;
 
+	std::shared_ptr<OpenGLTexture> GetTexture(GLenum attachment);
+
 private:
 	void DeleteFramebuffer();
 	void CreateFramebuffer();
@@ -48,6 +51,6 @@ private:
 	std::vector<RenderbufferAttachmentArguments> m_renderbufferAttachmentArguments;
 
 	GLuint m_framebufferId;
-	std::vector<std::shared_ptr<OpenGLTexture>> m_textures;
-	std::vector<std::shared_ptr<OpenGLRenderbuffer>> m_renderbuffers;
+	std::unordered_map<GLenum, std::shared_ptr<OpenGLTexture>> m_textures;
+	std::unordered_map<GLenum, std::shared_ptr<OpenGLRenderbuffer>> m_renderbuffers;
 };

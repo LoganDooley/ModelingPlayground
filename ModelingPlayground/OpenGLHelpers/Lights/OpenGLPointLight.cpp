@@ -15,19 +15,17 @@ OpenGLPointLight::OpenGLPointLight(std::shared_ptr<OpenGLShader> defaultShader,
 		SetLightColorUniform(lightColor);
 	});
 
-	m_transformComponent->GetPositionDataBinding().Subscribe([this](const glm::vec3& localPosition, glm::vec3)
+	m_transformComponent->GetPositionDataBinding().Subscribe([this](const glm::vec3&, glm::vec3)
 	{
-		auto worldPosition = glm::vec3(
-			m_transformComponent->GetParentCumulativeModelMatrix() * glm::vec4(localPosition, 1));
-		SetLightPositionUniform(worldPosition);
+		SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
+		SetShadowMapDirty();
 	});
 
 	m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
-		[this](const glm::mat4& parentCumulativeModelMatrix, glm::mat4)
+		[this](const glm::mat4&, glm::mat4)
 		{
-			auto worldPosition = glm::vec3(
-				parentCumulativeModelMatrix * glm::vec4(m_transformComponent->GetPosition(), 1));
-			SetLightPositionUniform(worldPosition);
+			SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
+			SetShadowMapDirty();
 		});
 
 	m_pointLightComponent->GetFalloffDataBinding().Subscribe([this](const glm::vec3& falloff, glm::vec3)
@@ -38,17 +36,23 @@ OpenGLPointLight::OpenGLPointLight(std::shared_ptr<OpenGLShader> defaultShader,
 	OpenGLPointLight::SetAllUniforms();
 }
 
+void OpenGLPointLight::UpdateShadowMap(OpenGLRenderer* openGLRenderer)
+{
+}
+
 void OpenGLPointLight::SetAllUniforms()
 {
 	SetLightTypeUniform();
 	SetLightColorUniform(m_pointLightComponent->GetLightColor());
-	auto localPosition = glm::vec4(m_transformComponent->GetPosition(), 1.0f);
-	auto worldPosition = glm::vec3(m_transformComponent->GetParentCumulativeModelMatrix() * localPosition);
-	SetLightPositionUniform(worldPosition);
+	SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
 	SetLightFalloffUniform(m_pointLightComponent->GetFalloff());
 }
 
 void OpenGLPointLight::SetLightTypeUniform() const
 {
 	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize, Point);
+}
+
+void OpenGLPointLight::SetLightShadowMapHandleUniform() const
+{
 }

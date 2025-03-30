@@ -12,6 +12,7 @@
 
 OpenGLRenderer::OpenGLRenderer():
 	m_defaultShader(std::make_shared<OpenGLShader>()),
+	m_directionalAndSpotShadowsShader(std::make_shared<OpenGLShader>()),
 	m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
 	m_openGLPrimitiveManager(std::make_shared<OpenGLPrimitiveManager>()),
 	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>())
@@ -33,6 +34,13 @@ void OpenGLRenderer::Initialize()
 	m_defaultShader->RegisterUniformVariable("metallic");
 
 	m_defaultShader->RegisterUniformBufferObject("LightsBlock", 64 * 250 + 4, 0);
+
+	m_directionalAndSpotShadowsShader->LoadShader("Shaders/directionalAndSpotShadows.vert",
+	                                              "Shaders/directionalAndSpotShadows.frag");
+
+	// Initialize shadow shader
+	m_directionalAndSpotShadowsShader->RegisterUniformVariable("lightMatrix");
+	m_directionalAndSpotShadowsShader->RegisterUniformVariable("modelMatrix");
 
 	m_openGLPrimitiveManager->GeneratePrimitives(10, 10);
 	m_openGLLightContainer->Initialize(m_defaultShader);
@@ -60,7 +68,12 @@ void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHier
 	});
 }
 
-void OpenGLRenderer::RenderSceneHierarchy() const
+void OpenGLRenderer::TryUpdateShadowMaps()
+{
+	m_openGLLightContainer->UpdateDirtyShadowMaps(this);
+}
+
+void OpenGLRenderer::RenderScene() const
 {
 	// Switch to offscreen framebuffer
 	m_camera->BindFramebuffer();
@@ -71,10 +84,42 @@ void OpenGLRenderer::RenderSceneHierarchy() const
 	m_defaultShader->BindShader();
 
 	// Set camera uniforms
-	// TODO: Only set these if dirty
 	m_defaultShader->SetUniform<glm::mat4>("cameraMatrix", false, m_camera->GetCameraMatrix());
 	m_defaultShader->SetUniform<glm::vec3>("cameraPosition", m_camera->GetCameraPosition());
 
+	std::shared_ptr<SceneNode> rootSceneNode = m_sceneHierarchy->GetRootSceneNode();
+	if (rootSceneNode != nullptr)
+	{
+		std::shared_ptr<OpenGLSettingsComponent> openGLSettingsComponent = rootSceneNode->GetObject().
+			GetFirstComponentOfType<OpenGLSettingsComponent>();
+		if (openGLSettingsComponent != nullptr)
+		{
+			glm::vec4 clearColor = openGLSettingsComponent->GetClearColor();
+			glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			m_defaultShader->SetUniform<glm::vec3>("ambientColor", openGLSettingsComponent->GetAmbientLight());
+		}
+	}
+
+	RenderSceneHierarchy(m_defaultShader);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void OpenGLRenderer::RenderDirectionalShadow(const glm::mat4& lightMatrix) const
+{
+	m_directionalAndSpotShadowsShader->BindShader();
+
+	m_directionalAndSpotShadowsShader->SetUniform<glm::mat4>("lightMatrix", false, lightMatrix);
+
+	RenderSceneHierarchy(m_directionalAndSpotShadowsShader);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void OpenGLRenderer::RenderSceneHierarchy(std::shared_ptr<OpenGLShader> activeShader) const
+{
 	// DFS draw objects
 	std::stack<std::shared_ptr<SceneNode>> traversal;
 	traversal.push(m_sceneHierarchy->GetRootSceneNode());
@@ -82,7 +127,7 @@ void OpenGLRenderer::RenderSceneHierarchy() const
 	{
 		std::shared_ptr<SceneNode> sceneNodeToProcess = traversal.top();
 		traversal.pop();
-		ProcessObject(sceneNodeToProcess->GetObject());
+		ProcessObject(sceneNodeToProcess->GetObject(), activeShader);
 
 		// Add children to stack in reverse order
 		const std::vector<std::shared_ptr<SceneNode>>& children = sceneNodeToProcess->GetChildren();
@@ -101,7 +146,7 @@ std::shared_ptr<OpenGLPrimitiveManager> OpenGLRenderer::GetOpenGLPrimitiveManage
 	return m_openGLPrimitiveManager;
 }
 
-void OpenGLRenderer::ProcessObject(const Object& object) const
+void OpenGLRenderer::ProcessObject(const Object& object, std::shared_ptr<OpenGLShader> activeShader) const
 {
 	if (std::shared_ptr<PrimitiveComponent> primitiveComponent = object.GetFirstComponentOfType<PrimitiveComponent>())
 	{
@@ -111,34 +156,24 @@ void OpenGLRenderer::ProcessObject(const Object& object) const
 			if (std::shared_ptr<MaterialComponent> materialComponent = object.GetFirstComponentOfType<
 				MaterialComponent>())
 			{
-				DrawMesh(*primitiveComponent, *transformComponent, *materialComponent);
+				DrawMesh(*primitiveComponent, *transformComponent, *materialComponent, activeShader);
 			}
 		}
-	}
-
-	if (std::shared_ptr<OpenGLSettingsComponent> openGLSettingsComponent = object.GetFirstComponentOfType<
-		OpenGLSettingsComponent>())
-	{
-		glm::vec4 clearColor = openGLSettingsComponent->GetClearColor();
-		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		m_defaultShader->SetUniform<glm::vec3>("ambientColor", openGLSettingsComponent->GetAmbientLight());
 	}
 }
 
 void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
                               const TransformComponent& transformComponent,
-                              const MaterialComponent& materialComponent) const
+                              const MaterialComponent& materialComponent,
+                              std::shared_ptr<OpenGLShader> activeShader) const
 {
 	glm::mat4 cumulativeModelMatrix = transformComponent.GetCumulativeModelMatrix();
-	m_defaultShader->BindShader();
-	m_defaultShader->SetUniform<glm::mat4>("modelMatrix", false, cumulativeModelMatrix);
+	activeShader->SetUniform<glm::mat4>("modelMatrix", false, cumulativeModelMatrix);
 	glm::mat3 inverseTransposeModelMatrix = transpose(inverse(glm::mat3(cumulativeModelMatrix)));
-	m_defaultShader->SetUniform<glm::mat3>("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
-	m_defaultShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());
-	m_defaultShader->SetUniform<float>("roughness", materialComponent.GetRoughness());
-	m_defaultShader->SetUniform<float>("metallic", materialComponent.GetRoughness());
+	activeShader->SetUniform<glm::mat3>("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
+	activeShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());
+	activeShader->SetUniform<float>("roughness", materialComponent.GetRoughness());
+	activeShader->SetUniform<float>("metallic", materialComponent.GetRoughness());
 
 	m_openGLPrimitiveManager->DrawPrimitive(primitiveComponent.GetPrimitiveName());
 }

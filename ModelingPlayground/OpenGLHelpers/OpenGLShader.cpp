@@ -84,6 +84,19 @@ void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBuffe
 }
 
 void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+                                                 uint64_t data) const
+{
+	if (!ValidateUniformBufferObjectName(uniformBufferObjectName))
+	{
+		return;
+	}
+	std::vector<uint64_t> intData = {data};
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
+	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(uint64_t), intData.data());
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
                                                  glm::vec3 data) const
 {
 	if (!ValidateUniformBufferObjectName(uniformBufferObjectName))

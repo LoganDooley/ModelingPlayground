@@ -11,8 +11,11 @@ public:
 	                 unsigned int lightIndex);
 
 protected:
+	void UpdateShadowMap(OpenGLRenderer* openGLRenderer) override;
+
 	void SetAllUniforms() override;
 	void SetLightTypeUniform() const override;
+	void SetLightShadowMapHandleUniform() const override;
 
 	std::shared_ptr<PointLightComponent> m_pointLightComponent;
 };

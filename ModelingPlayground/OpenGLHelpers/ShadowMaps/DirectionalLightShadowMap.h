@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <glm/mat4x4.hpp>
+
 #include "ShadowMap.h"
 
 class OpenGLFramebuffer;
@@ -9,9 +11,8 @@ public:
 	DirectionalLightShadowMap(unsigned int resolution = 1024);
 	~DirectionalLightShadowMap() override;
 
-	void CaptureShadowMap(std::shared_ptr<SceneViewCamera> camera,
-	                      std::shared_ptr<OpenGLRenderer> openGLRenderer) override;
+	void CaptureShadowMap(const glm::mat4& lightMatrix, OpenGLRenderer* openGLRenderer) override;
 
 private:
-	std::shared_ptr<OpenGLFramebuffer> m_shadowMapFramebuffer;
+	unsigned int m_resolution;
 };
