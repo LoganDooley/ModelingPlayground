@@ -70,8 +70,7 @@ void OpenGLFramebuffer::CreateFramebuffer()
 		                                                     textureAttachmentArguments.m_internalFormat,
 		                                                     textureAttachmentArguments.m_format,
 		                                                     textureAttachmentArguments.m_dataType,
-		                                                     textureAttachmentArguments.m_minFilter,
-		                                                     textureAttachmentArguments.m_magFilter,
+		                                                     textureAttachmentArguments.m_textureParameterSettings,
 		                                                     GL_TEXTURE_2D));
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, textureAttachmentArguments.m_attachment, GL_TEXTURE_2D,

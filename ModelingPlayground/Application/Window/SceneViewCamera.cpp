@@ -36,8 +36,11 @@ SceneViewCamera::SceneViewCamera(std::shared_ptr<InputManager> inputManager, glm
 			                                                    .m_internalFormat = GL_RGB,
 			                                                    .m_format = GL_RGB,
 			                                                    .m_dataType = GL_UNSIGNED_BYTE,
-			                                                    .m_minFilter = GL_LINEAR,
-			                                                    .m_magFilter = GL_LINEAR
+			                                                    .m_textureParameterSettings = std::vector<
+				                                                    TextureParameterSetting>({
+				                                                    {GL_TEXTURE_MIN_FILTER, GL_LINEAR},
+				                                                    {GL_TEXTURE_MAG_FILTER, GL_LINEAR}
+			                                                    }),
 		                                                    }
 	                                                    }),
 	                                                    std::vector<RenderbufferAttachmentArguments>({

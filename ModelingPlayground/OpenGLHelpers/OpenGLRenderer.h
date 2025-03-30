@@ -23,6 +23,7 @@ public:
 	void ResetAllLightTransforms() const;
 
 	void RenderSceneHierarchy() const;
+	void RenderSceneHierarchyForShadowMap() const;
 	std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
 
 private:

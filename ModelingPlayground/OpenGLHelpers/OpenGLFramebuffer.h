@@ -2,10 +2,10 @@
 #include <memory>
 #include <vector>
 
+#include "OpenGLTexture.h"
 #include "glad/glad.h"
 
 class OpenGLRenderbuffer;
-class OpenGLTexture;
 
 struct TextureAttachmentArguments
 {
@@ -13,8 +13,7 @@ struct TextureAttachmentArguments
 	GLint m_internalFormat;
 	GLenum m_format;
 	GLenum m_dataType;
-	GLenum m_minFilter;
-	GLenum m_magFilter;
+	std::vector<TextureParameterSetting> m_textureParameterSettings;
 };
 
 struct RenderbufferAttachmentArguments

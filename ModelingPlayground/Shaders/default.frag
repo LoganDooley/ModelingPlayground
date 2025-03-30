@@ -1,5 +1,7 @@
 ﻿#version 460 core
 
+#extension GL_ARB_bindless_texture: require
+
 #define MAX_LIGHTS 199
 
 // Light types
@@ -12,6 +14,7 @@
 // 80 bytes
 struct Light{
     int type; // 0
+    sampler2D shadowMap; // 8
     vec3 color; // 16
     vec3 position; // 32 
     vec3 direction; // 48
