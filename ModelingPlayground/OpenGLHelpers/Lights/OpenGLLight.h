@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 #include <string>
+#include <glm/fwd.hpp>
 #include <glm/vec3.hpp>
 
 class OpenGLRenderer;
@@ -37,6 +38,8 @@ protected:
 	void SetLightDirectionUniform(const glm::vec3& direction) const;
 	void SetLightColorUniform(const glm::vec3& color) const;
 	void SetLightFalloffUniform(const glm::vec3& falloff) const;
+	void SetHasShadowMapUniform(bool hasShadowMap) const;
+	void SetLightMatrixUniform(const glm::mat4& matrix) const;
 
 	std::shared_ptr<OpenGLShader> m_defaultShader;
 	std::shared_ptr<TransformComponent> m_transformComponent;
@@ -44,8 +47,8 @@ protected:
 	bool m_shadowMapIsDirty;
 	unsigned int m_lightIndex;
 
-	const int m_maxLights = 199;
-	const int m_lightStructSize = 80;
+	const int m_maxLights = 50;
+	const int m_lightStructSize = 128;
 	const int m_lightCountOffset = m_maxLights * m_lightStructSize;
 	const std::string m_lightsBlockName = "LightsBlock";
 };

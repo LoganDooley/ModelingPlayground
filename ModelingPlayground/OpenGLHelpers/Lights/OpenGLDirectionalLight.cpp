@@ -16,6 +16,8 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
 	OpenGLLight(defaultShader, lightSceneNode, lightIndex),
 	m_directionalLightComponent(lightSceneNode->GetObject().GetFirstComponentOfType<DirectionalLightComponent>())
 {
+	UpdateLightMatrix();
+
 	m_directionalLightComponent->GetLightColorDataBinding().Subscribe([this](const glm::vec3& lightColor, glm::vec3)
 	{
 		SetLightColorUniform(lightColor);
@@ -37,7 +39,10 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
 			SetShadowMapDirty();
 		});
 
-	UpdateLightMatrix();
+	m_lightMatrix.Subscribe([this](const glm::mat4& lightMatrix, glm::mat4)
+	{
+		SetLightMatrixUniform(lightMatrix);
+	});
 
 	m_shadowMap = std::make_shared<DirectionalLightShadowMap>();
 	m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->MakeTextureResident();
@@ -56,24 +61,27 @@ void OpenGLDirectionalLight::SetAllUniforms()
 	SetLightShadowMapHandleUniform();
 	SetLightColorUniform(m_directionalLightComponent->GetLightColor());
 	SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
+	SetHasShadowMapUniform(true);
+	SetLightMatrixUniform(m_lightMatrix.GetData());
 }
 
 void OpenGLDirectionalLight::SetLightTypeUniform() const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize, Directional);
+	m_defaultShader->
+		SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 8, Directional);
 }
 
 void OpenGLDirectionalLight::SetLightShadowMapHandleUniform() const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 8,
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize,
 	                                               m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->
 	                                                            GetTextureHandle());
 }
 
 void OpenGLDirectionalLight::UpdateLightMatrix()
 {
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.f);
-	glm::vec3 lightPosition = m_transformComponent->GetWorldSpaceXUnitVector() * -50.f;
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 10.f);
+	glm::vec3 lightPosition = m_transformComponent->GetWorldSpaceXUnitVector() * -5.f;
 	glm::mat4 lightView = lookAt(lightPosition, glm::vec3(0), glm::vec3(0, 1, 0));
 	m_lightMatrix.SetAndNotify(lightProjection * lightView);
 }

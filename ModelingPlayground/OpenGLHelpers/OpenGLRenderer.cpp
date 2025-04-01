@@ -169,11 +169,14 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 {
 	glm::mat4 cumulativeModelMatrix = transformComponent.GetCumulativeModelMatrix();
 	activeShader->SetUniform<glm::mat4>("modelMatrix", false, cumulativeModelMatrix);
-	glm::mat3 inverseTransposeModelMatrix = transpose(inverse(glm::mat3(cumulativeModelMatrix)));
-	activeShader->SetUniform<glm::mat3>("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
-	activeShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());
-	activeShader->SetUniform<float>("roughness", materialComponent.GetRoughness());
-	activeShader->SetUniform<float>("metallic", materialComponent.GetRoughness());
+	if (activeShader == m_defaultShader)
+	{
+		glm::mat3 inverseTransposeModelMatrix = transpose(inverse(glm::mat3(cumulativeModelMatrix)));
+		activeShader->SetUniform<glm::mat3>("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
+		activeShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());
+		activeShader->SetUniform<float>("roughness", materialComponent.GetRoughness());
+		activeShader->SetUniform<float>("metallic", materialComponent.GetRoughness());
+	}
 
 	m_openGLPrimitiveManager->DrawPrimitive(primitiveComponent.GetPrimitiveName());
 }

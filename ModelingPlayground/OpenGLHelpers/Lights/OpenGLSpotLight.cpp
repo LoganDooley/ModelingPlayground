@@ -57,11 +57,12 @@ void OpenGLSpotLight::SetAllUniforms()
 	SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
 	SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
 	SetLightFalloffUniform(glm::vec3(m_spotLightComponent->GetLightFalloffAngles(), 0));
+	SetHasShadowMapUniform(false);
 }
 
 void OpenGLSpotLight::SetLightTypeUniform() const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize, Spot);
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 8, Spot);
 }
 
 void OpenGLSpotLight::SetLightShadowMapHandleUniform() const

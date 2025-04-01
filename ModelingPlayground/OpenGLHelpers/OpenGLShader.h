@@ -50,6 +50,9 @@ public:
 	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
 	                                   glm::vec3 data) const;
 
+	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+	                                   glm::mat4 data) const;
+
 private:
 	bool ValidateUniformName(const std::string& uniformName) const;
 	bool ValidateUniformBufferObjectName(const std::string& uniformBufferObjectName) const;

@@ -2,7 +2,7 @@
 
 #extension GL_ARB_bindless_texture: require
 
-#define MAX_LIGHTS 199
+#define MAX_LIGHTS 50
 
 // Light types
 #define DIRECTIONAL_LIGHT 0
@@ -11,20 +11,30 @@
 
 #define PI 3.1415926
 
-// 80 bytes
+// 128 bytes
 struct Light{
-    int type; // 0
-    sampler2D shadowMap; // 8
-    vec3 color; // 16
-    vec3 position; // 32 
-    vec3 direction; // 48
-    vec3 falloff; // 64
+    sampler2D shadowMap; // 0
+    int type; // 8
+    float colorR; // 12
+    float colorG; // 16
+    float colorB; // 20
+    float positionX; // 24
+    float positionY; // 28
+    float positionZ; // 32
+    float directionX; // 36
+    float directionY; // 40
+    float directionZ; // 44
+    float falloffA; // 48
+    float falloffB; // 52
+    float falloffC; // 56
+    bool hasShadowMap; // 60
+    mat4 lightMatrix; // 64
 };
 
 layout (std140, binding = 0) uniform LightsBlock
 {
-    Light lights[MAX_LIGHTS]; // lights[i] = 80 * i
-    int lightCount; // lightCount = 80 * MAX_LIGHTS
+    Light lights[MAX_LIGHTS]; // lights[i] = 60 * i
+    int lightCount; // lightCount = 60 * MAX_LIGHTS
 };
 
 uniform vec3 ambientColor;
@@ -46,37 +56,63 @@ struct LightData {
     vec3 radiance;
 };
 
+bool IsShadowed(int lightIndex){
+    if(!lights[lightIndex].hasShadowMap){
+        return false;
+    }
+    
+    vec4 lightSpacePosition = lights[lightIndex].lightMatrix * vec4(vertexWorldPosition, 1);
+    vec3 projCoords = lightSpacePosition.xyz / lightSpacePosition.w;
+    projCoords = projCoords * 0.5 + vec3(0.5);
+    float closestDepth = texture(lights[lightIndex].shadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+    float bias = 0.005;
+    return currentDepth - bias > closestDepth;
+}
+
 LightData getDirectionalLightData(int lightIndex, vec3 N, vec3 V){
     LightData lightData;
-    lightData.L = -lights[lightIndex].direction;
+    Light light = lights[lightIndex];
+    vec3 lightDirection = vec3(light.directionX, light.directionY, light.directionZ);
+    vec3 lightColor = vec3(light.colorR, light.colorG, light.colorB);
+    
+    lightData.L = -lightDirection;
     lightData.H = normalize(V + lightData.L);
-    lightData.radiance = lights[lightIndex].color;
+    lightData.radiance = lightColor;
     return lightData;
 }
 
 LightData getPointLightData(int lightIndex, vec3 N, vec3 V){
     LightData lightData;
-    vec3 toLight = lights[lightIndex].position - vertexWorldPosition;
+    Light light = lights[lightIndex];
+    vec3 lightPosition = vec3(light.positionX, light.positionY, light.positionZ);
+    vec3 lightColor = vec3(light.colorR, light.colorG, light.colorB);
+    
+    vec3 toLight = lightPosition - vertexWorldPosition;
     float d = max(length(toLight), 0.0001);
     lightData.L = toLight/d;
     lightData.H = normalize(V + lightData.L);
-    vec3 falloff = lights[lightIndex].falloff;
-    float attenuation = clamp(1.0/(falloff.x + d * falloff.y + d * d * falloff.z), 0.0, 1.0);
-    lightData.radiance = lights[lightIndex].color * attenuation;
+    float attenuation = clamp(1.0/(light.falloffA + d * light.falloffB + d * d * light.falloffC), 0.0, 1.0);
+    lightData.radiance = lightColor * attenuation;
     return lightData;
 }
 
 LightData getSpotLightData(int lightIndex, vec3 N, vec3 V){
     LightData lightData;
-    vec3 toLight = lights[lightIndex].position - vertexWorldPosition;
+    Light light = lights[lightIndex];
+    vec3 lightPosition = vec3(light.positionX, light.positionY, light.positionZ);
+    vec3 lightDirection = vec3(light.directionX, light.directionY, light.directionZ);
+    vec3 lightColor = vec3(light.colorR, light.colorG, light.colorB);
+    
+    vec3 toLight = lightPosition - vertexWorldPosition;
     float d = max(length(toLight), 0.0001);
     lightData.L = toLight/d;
     lightData.H = normalize(V + lightData.L);
-    float theta = acos(dot(-lightData.L, lights[lightIndex].direction));
-    float innerAngle = radians(lights[lightIndex].falloff.x);
-    float outerAngle = radians(lights[lightIndex].falloff.y);
+    float theta = acos(dot(-lightData.L, lightDirection));
+    float innerAngle = radians(light.falloffA);
+    float outerAngle = radians(light.falloffB);
     float attenuation = clamp((theta - outerAngle)/(innerAngle - outerAngle), 0.0, 1.0);
-    lightData.radiance = lights[lightIndex].color * attenuation;
+    lightData.radiance = lightColor * attenuation;
     return lightData;
 }
 
@@ -101,6 +137,10 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity){
 }
 
 vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity, vec3 objectColor){
+    if(IsShadowed(lightIndex)){
+        return vec3(0);
+    }
+    
     LightData lightData;
     if(lights[lightIndex].type == DIRECTIONAL_LIGHT){
         lightData = getDirectionalLightData(lightIndex, N, V);
@@ -167,11 +207,6 @@ void main()
     color = pow(color, vec3(1.0/2.2));
     
     float transparency = GetObjectTransparency();
-    
-    if(lightCount > 0){
-        FragColor = vec4(vec3(texture(lights[0].shadowMap, vertexTexCoord).r), 1);
-        return;
-    }
     
     FragColor = vec4(color, transparency);
 }

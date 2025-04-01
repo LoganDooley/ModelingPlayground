@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "../Application/ShaderLoader.h"
+#include "glm/ext.hpp"
 #include "glm/glm.hpp"
 
 OpenGLShader::OpenGLShader()
@@ -106,6 +107,19 @@ void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBuffe
 	std::vector<float> floatData = {data.x, data.y, data.z};
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float) * 3, floatData.data());
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+                                                 glm::mat4 data) const
+{
+	if (!ValidateUniformBufferObjectName(uniformBufferObjectName))
+	{
+		return;
+	}
+
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
+	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::mat4), value_ptr(data));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 

@@ -36,8 +36,8 @@ private:
 	std::shared_ptr<OpenGLShader> m_defaultShader;
 	std::vector<std::shared_ptr<OpenGLLight>> m_lights;
 
-	const int m_maxLights = 199;
-	const int m_lightStructSize = 80;
+	const int m_maxLights = 50;
+	const int m_lightStructSize = 128;
 	const int m_lightCountOffset = m_maxLights * m_lightStructSize;
 	const std::string m_lightsBlockName = "LightsBlock";
 };
