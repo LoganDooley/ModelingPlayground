@@ -12,7 +12,7 @@
 
 OpenGLRenderer::OpenGLRenderer():
 	m_defaultShader(std::make_shared<OpenGLShader>()),
-	m_directionalAndSpotShadowsShader(std::make_shared<OpenGLShader>()),
+	m_unidirectionalShadowsShader(std::make_shared<OpenGLShader>()),
 	m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
 	m_openGLPrimitiveManager(std::make_shared<OpenGLPrimitiveManager>()),
 	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>())
@@ -35,12 +35,12 @@ void OpenGLRenderer::Initialize()
 
 	m_defaultShader->RegisterUniformBufferObject("LightsBlock", 64 * 250 + 4, 0);
 
-	m_directionalAndSpotShadowsShader->LoadShader("Shaders/directionalAndSpotShadows.vert",
-	                                              "Shaders/directionalAndSpotShadows.frag");
+	m_unidirectionalShadowsShader->LoadShader("Shaders/unidirectionalShadows.vert",
+	                                          "Shaders/unidirectionalShadows.frag");
 
 	// Initialize shadow shader
-	m_directionalAndSpotShadowsShader->RegisterUniformVariable("lightMatrix");
-	m_directionalAndSpotShadowsShader->RegisterUniformVariable("modelMatrix");
+	m_unidirectionalShadowsShader->RegisterUniformVariable("lightMatrix");
+	m_unidirectionalShadowsShader->RegisterUniformVariable("modelMatrix");
 
 	m_openGLPrimitiveManager->GeneratePrimitives(10, 10);
 	m_openGLLightContainer->Initialize(m_defaultShader);
@@ -107,15 +107,19 @@ void OpenGLRenderer::RenderScene() const
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OpenGLRenderer::RenderDirectionalShadow(const glm::mat4& lightMatrix) const
+void OpenGLRenderer::RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const
 {
-	m_directionalAndSpotShadowsShader->BindShader();
+	glCullFace(GL_FRONT);
 
-	m_directionalAndSpotShadowsShader->SetUniform<glm::mat4>("lightMatrix", false, lightMatrix);
+	m_unidirectionalShadowsShader->BindShader();
 
-	RenderSceneHierarchy(m_directionalAndSpotShadowsShader);
+	m_unidirectionalShadowsShader->SetUniform<glm::mat4>("lightMatrix", false, lightMatrix);
+
+	RenderSceneHierarchy(m_unidirectionalShadowsShader);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glCullFace(GL_BACK);
 }
 
 void OpenGLRenderer::RenderSceneHierarchy(std::shared_ptr<OpenGLShader> activeShader) const

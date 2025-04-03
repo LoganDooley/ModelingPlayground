@@ -232,7 +232,7 @@
         <ClCompile Include="OpenGLHelpers\OpenGLShader.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLTexture.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLUniformVariable.cpp"/>
-        <ClCompile Include="OpenGLHelpers\ShadowMaps\DirectionalLightShadowMap.cpp"/>
+        <ClCompile Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.cpp"/>
         <ClCompile Include="Scene\Components\OpenGLSettingsComponent.cpp"/>
         <ClCompile Include="Scene\Components\DirectionalLightComponent.cpp"/>
         <ClCompile Include="Scene\Components\MaterialComponent.cpp"/>
@@ -352,6 +352,7 @@
         <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h"/>
         <ClInclude Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.h"/>
         <ClInclude Include="Libraries\stb\stb_image.h"/>
+        <ClInclude Include="Libraries\stb\stb_image_write.h"/>
         <ClInclude Include="Libraries\tinyfiledialogs\tinyfiledialogs.h"/>
         <ClInclude Include="Libraries\tinyobjloader\tiny_obj_loader.h"/>
         <ClInclude Include="OpenGLHelpers\Lights\OpenGLDirectionalLight.h"/>
@@ -367,7 +368,7 @@
         <ClInclude Include="OpenGLHelpers\OpenGLShader.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLTexture.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLUniformVariable.h"/>
-        <ClInclude Include="OpenGLHelpers\ShadowMaps\DirectionalLightShadowMap.h"/>
+        <ClInclude Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.h"/>
         <ClInclude Include="OpenGLHelpers\ShadowMaps\ShadowMap.h"/>
         <ClInclude Include="Scene\Components\ComponentIncludes.h"/>
         <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h"/>
@@ -399,10 +400,18 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include="Serialization\SharedPointerSerializer.h"/>
-        <Content Include="Shaders\default.frag"/>
-        <Content Include="Shaders\default.vert"/>
-        <Content Include="Shaders\directionalAndSpotShadows.frag"/>
-        <Content Include="Shaders\directionalAndSpotShadows.vert"/>
+        <Content Include="Shaders\default.frag">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Shaders\default.vert">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Shaders\unidirectionalShadows.frag">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Shaders\unidirectionalShadows.vert">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
         <Content Include="Utils\DataBinding.h"/>
     </ItemGroup>
     <ItemGroup>

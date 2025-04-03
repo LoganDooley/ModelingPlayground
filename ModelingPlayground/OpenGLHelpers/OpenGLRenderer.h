@@ -22,7 +22,7 @@ public:
 
 	void TryUpdateShadowMaps();
 	void RenderScene() const;
-	void RenderDirectionalShadow(const glm::mat4& lightMatrix) const;
+	void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const;
 	std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
 
 private:
@@ -35,7 +35,7 @@ private:
 	void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const;
 
 	std::shared_ptr<OpenGLShader> m_defaultShader;
-	std::shared_ptr<OpenGLShader> m_directionalAndSpotShadowsShader;
+	std::shared_ptr<OpenGLShader> m_unidirectionalShadowsShader;
 	std::shared_ptr<SceneViewCamera> m_camera;
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 	std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;

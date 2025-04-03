@@ -8,8 +8,7 @@
 #include "../../Scene/Object.h"
 #include "../../Scene/Components/ComponentIncludes.h"
 #include "../../Scene/SceneNode/SceneNode.h"
-#include "../ShadowMaps/DirectionalLightShadowMap.h"
-#include "../ShadowMaps/ShadowMap.h"
+#include "../ShadowMaps/UnidirectionalLightShadowMap.h"
 
 OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> defaultShader,
                                                std::shared_ptr<SceneNode> lightSceneNode, unsigned int lightIndex):
@@ -44,7 +43,12 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
 		SetLightMatrixUniform(lightMatrix);
 	});
 
-	m_shadowMap = std::make_shared<DirectionalLightShadowMap>();
+	m_directionalLightComponent->SetOnCaptureShadowMap([this](const std::string& filePath)
+	{
+		m_shadowMap->DebugCaptureShadowMap(filePath);
+	});
+
+	m_shadowMap = std::make_shared<UnidirectionalLightShadowMap>();
 	m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->MakeTextureResident();
 
 	OpenGLDirectionalLight::SetAllUniforms();

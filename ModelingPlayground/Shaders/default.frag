@@ -56,9 +56,9 @@ struct LightData {
     vec3 radiance;
 };
 
-bool IsShadowed(int lightIndex){
+float GetShadowFactor(int lightIndex){
     if(!lights[lightIndex].hasShadowMap){
-        return false;
+        return 1;
     }
     
     vec4 lightSpacePosition = lights[lightIndex].lightMatrix * vec4(vertexWorldPosition, 1);
@@ -66,8 +66,8 @@ bool IsShadowed(int lightIndex){
     projCoords = projCoords * 0.5 + vec3(0.5);
     float closestDepth = texture(lights[lightIndex].shadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
-    float bias = 0.005;
-    return currentDepth - bias > closestDepth;
+    float bias = 0.000;
+    return currentDepth - bias > closestDepth ? 0 : 1;
 }
 
 LightData getDirectionalLightData(int lightIndex, vec3 N, vec3 V){
@@ -137,7 +137,8 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity){
 }
 
 vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity, vec3 objectColor){
-    if(IsShadowed(lightIndex)){
+    float shadowFactor = GetShadowFactor(lightIndex);
+    if(shadowFactor == 0){
         return vec3(0);
     }
     
@@ -169,7 +170,7 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity,
     
     kD *= 1.0 - metallic;
     
-    return (kD * objectColor / PI + specular) * lightData.radiance * NdotL;
+    return (kD * objectColor / PI + specular) * lightData.radiance * NdotL * shadowFactor;
 }
 
 vec3 GetObjectColor(){
