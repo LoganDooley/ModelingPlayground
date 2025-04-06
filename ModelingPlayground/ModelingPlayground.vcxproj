@@ -406,10 +406,10 @@
         <Content Include="Shaders\default.vert">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="Shaders\unidirectionalShadows.frag">
+        <Content Include="Shaders\depth.frag">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="Shaders\unidirectionalShadows.vert">
+        <Content Include="Shaders\depth.vert">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Include="Utils\DataBinding.h"/>
