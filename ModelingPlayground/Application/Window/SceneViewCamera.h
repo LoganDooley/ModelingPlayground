@@ -18,6 +18,7 @@ public:
 	void Update(double seconds);
 
 	void BindFramebuffer() const;
+	void UnbindFramebuffer() const;
 	void SetViewport() const;
 	GLuint GetFramebuffer() const;
 	void SetScreenSize(glm::uvec2 screenSize);

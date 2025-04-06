@@ -13,7 +13,7 @@
 
 OpenGLRenderer::OpenGLRenderer():
 	m_defaultShader(std::make_shared<OpenGLShader>()),
-	m_unidirectionalShadowsShader(std::make_shared<OpenGLShader>()),
+	m_depthShader(std::make_shared<OpenGLShader>()),
 	m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
 	m_openGLPrimitiveManager(std::make_shared<OpenGLPrimitiveManager>()),
 	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>())
@@ -91,12 +91,12 @@ void OpenGLRenderer::Initialize()
 
 	m_defaultShader->RegisterUniformBufferObject("LightsBlock", 64 * 250 + 4, 0);
 
-	m_unidirectionalShadowsShader->LoadShader("Shaders/unidirectionalShadows.vert",
-	                                          "Shaders/unidirectionalShadows.frag");
+	m_depthShader->LoadShader("Shaders/depth.vert",
+	                          "Shaders/depth.frag");
 
 	// Initialize shadow shader
-	m_unidirectionalShadowsShader->RegisterUniformVariable("lightMatrix");
-	m_unidirectionalShadowsShader->RegisterUniformVariable("modelMatrix");
+	m_depthShader->RegisterUniformVariable("cameraMatrix");
+	m_depthShader->RegisterUniformVariable("modelMatrix");
 
 	m_openGLPrimitiveManager->GeneratePrimitives(10, 10);
 
@@ -105,6 +105,7 @@ void OpenGLRenderer::Initialize()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -126,9 +127,13 @@ void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHier
 	});
 }
 
-void OpenGLRenderer::TryUpdateShadowMaps()
+void OpenGLRenderer::Render() const
 {
 	m_openGLLightContainer->UpdateDirtyShadowMaps(this);
+	ClearCameraFramebuffer();
+	DepthPrepass();
+	RenderScene();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void OpenGLRenderer::RenderScene() const
@@ -138,50 +143,31 @@ void OpenGLRenderer::RenderScene() const
 	// Adjust the viewport size
 	m_camera->SetViewport();
 
-	// Bind shader
-	m_defaultShader->BindShader();
-
 	// Set camera uniforms
 	m_defaultShader->SetUniform<glm::mat4>("cameraMatrix", false, m_camera->GetCameraMatrix());
 	m_defaultShader->SetUniform<glm::vec3>("cameraPosition", m_camera->GetCameraPosition());
 
-	std::shared_ptr<SceneNode> rootSceneNode = m_sceneHierarchy->GetRootSceneNode();
-	if (rootSceneNode != nullptr)
-	{
-		std::shared_ptr<OpenGLSettingsComponent> openGLSettingsComponent = rootSceneNode->GetObject().
-			GetFirstComponentOfType<OpenGLSettingsComponent>();
-		if (openGLSettingsComponent != nullptr)
-		{
-			glm::vec4 clearColor = openGLSettingsComponent->GetClearColor();
-			glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	SetAmbientLightColor();
 
-			m_defaultShader->SetUniform<glm::vec3>("ambientColor", openGLSettingsComponent->GetAmbientLight());
-		}
-	}
+	// Set back face culling
+	glCullFace(GL_BACK);
 
 	RenderSceneHierarchy(m_defaultShader);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void OpenGLRenderer::RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const
 {
 	glCullFace(GL_FRONT);
 
-	m_unidirectionalShadowsShader->BindShader();
+	m_depthShader->SetUniform<glm::mat4>("cameraMatrix", false, lightMatrix);
 
-	m_unidirectionalShadowsShader->SetUniform<glm::mat4>("lightMatrix", false, lightMatrix);
-
-	RenderSceneHierarchy(m_unidirectionalShadowsShader);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glCullFace(GL_BACK);
+	RenderSceneHierarchy(m_depthShader);
 }
 
-void OpenGLRenderer::RenderSceneHierarchy(std::shared_ptr<OpenGLShader> activeShader) const
+void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& activeShader) const
 {
+	activeShader->BindShader();
+
 	// DFS draw objects
 	std::stack<std::shared_ptr<SceneNode>> traversal;
 	traversal.push(m_sceneHierarchy->GetRootSceneNode());
@@ -198,14 +184,60 @@ void OpenGLRenderer::RenderSceneHierarchy(std::shared_ptr<OpenGLShader> activeSh
 			traversal.push(children[i]);
 		}
 	}
-
-	// Restore framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 std::shared_ptr<OpenGLPrimitiveManager> OpenGLRenderer::GetOpenGLPrimitiveManager() const
 {
 	return m_openGLPrimitiveManager;
+}
+
+void OpenGLRenderer::ClearCameraFramebuffer() const
+{
+	// Switch to offscreen framebuffer
+	m_camera->BindFramebuffer();
+
+	// Adjust the viewport size
+	m_camera->SetViewport();
+
+	std::shared_ptr<SceneNode> rootSceneNode = m_sceneHierarchy->GetRootSceneNode();
+	if (rootSceneNode != nullptr)
+	{
+		std::shared_ptr<OpenGLSettingsComponent> openGLSettingsComponent = rootSceneNode->GetObject().
+			GetFirstComponentOfType<OpenGLSettingsComponent>();
+		if (openGLSettingsComponent != nullptr)
+		{
+			glm::vec4 clearColor = openGLSettingsComponent->GetClearColor();
+			glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+	}
+}
+
+void OpenGLRenderer::DepthPrepass() const
+{
+	// Switch to offscreen framebuffer
+	m_camera->BindFramebuffer();
+	// Adjust the viewport size
+	m_camera->SetViewport();
+
+	// Set camera uniforms
+	m_depthShader->SetUniform<glm::mat4>("cameraMatrix", false, m_camera->GetCameraMatrix());
+
+	RenderSceneHierarchy(m_depthShader);
+}
+
+void OpenGLRenderer::SetAmbientLightColor() const
+{
+	std::shared_ptr<SceneNode> rootSceneNode = m_sceneHierarchy->GetRootSceneNode();
+	if (rootSceneNode != nullptr)
+	{
+		std::shared_ptr<OpenGLSettingsComponent> openGLSettingsComponent = rootSceneNode->GetObject().
+			GetFirstComponentOfType<OpenGLSettingsComponent>();
+		if (openGLSettingsComponent != nullptr)
+		{
+			m_defaultShader->SetUniform<glm::vec3>("ambientColor", openGLSettingsComponent->GetAmbientLight());
+		}
+	}
 }
 
 void OpenGLRenderer::ProcessObject(const Object& object, std::shared_ptr<OpenGLShader> activeShader) const
@@ -231,8 +263,10 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 {
 	glm::mat4 cumulativeModelMatrix = transformComponent.GetCumulativeModelMatrix();
 	activeShader->SetUniform<glm::mat4>("modelMatrix", false, cumulativeModelMatrix);
+
 	if (activeShader == m_defaultShader)
 	{
+		// Set default shader-exclusive uniforms
 		glm::mat3 inverseTransposeModelMatrix = transpose(inverse(glm::mat3(cumulativeModelMatrix)));
 		activeShader->SetUniform<glm::mat3>("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
 		activeShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());

@@ -27,12 +27,12 @@ public:
 	void SetLightIndex(unsigned int lightIndex);
 
 	void SetShadowMapDirty();
-	void TryUpdateShadowMap(OpenGLRenderer* openGLRenderer);
+	void TryUpdateShadowMap(const OpenGLRenderer* openGLRenderer);
 
 	void DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height);
 
 protected:
-	virtual void UpdateShadowMap(OpenGLRenderer* openGLRenderer) = 0;
+	virtual void UpdateShadowMap(const OpenGLRenderer* openGLRenderer) = 0;
 
 	// A batch function to set all uniforms. Prefer data bindings if possible
 	virtual void SetAllUniforms() = 0;

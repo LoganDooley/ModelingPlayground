@@ -62,7 +62,7 @@ void OpenGLLightContainer::ClearLights()
 	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
 }
 
-void OpenGLLightContainer::SetAllShadowMapsDirty()
+void OpenGLLightContainer::SetAllShadowMapsDirty() const
 {
 	for (const auto& light : m_lights)
 	{
@@ -70,7 +70,7 @@ void OpenGLLightContainer::SetAllShadowMapsDirty()
 	}
 }
 
-void OpenGLLightContainer::UpdateDirtyShadowMaps(OpenGLRenderer* openGLRenderer)
+void OpenGLLightContainer::UpdateDirtyShadowMaps(const OpenGLRenderer* openGLRenderer) const
 {
 	SetAllShadowMapsDirty();
 	for (const auto& light : m_lights)

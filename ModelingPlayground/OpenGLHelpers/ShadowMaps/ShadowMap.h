@@ -12,7 +12,7 @@ class ShadowMap
 public:
 	virtual ~ShadowMap() = default;
 
-	virtual void CaptureShadowMap(const glm::mat4& lightMatrix, OpenGLRenderer* openGLRenderer) = 0;
+	virtual void CaptureShadowMap(const glm::mat4& lightMatrix, const OpenGLRenderer* openGLRenderer) = 0;
 	std::shared_ptr<OpenGLFramebuffer> GetFramebuffer() { return m_shadowMapFramebuffer; }
 
 	virtual void DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height) = 0;

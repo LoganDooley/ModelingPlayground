@@ -10,7 +10,7 @@ public:
 	UnidirectionalLightShadowMap(unsigned int resolution = 1024);
 	~UnidirectionalLightShadowMap() override;
 
-	void CaptureShadowMap(const glm::mat4& lightMatrix, OpenGLRenderer* openGLRenderer) override;
+	void CaptureShadowMap(const glm::mat4& lightMatrix, const OpenGLRenderer* openGLRenderer) override;
 
 	void DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height) override;
 

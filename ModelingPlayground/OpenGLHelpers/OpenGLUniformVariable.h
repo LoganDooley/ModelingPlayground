@@ -19,5 +19,6 @@ public:
 	void SetValue(bool transpose, const glm::mat4& matrix) const;
 
 private:
+	GLuint m_programId;
 	GLint m_uniformLocation;
 };

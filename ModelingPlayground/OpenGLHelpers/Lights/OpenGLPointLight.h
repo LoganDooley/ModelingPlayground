@@ -11,7 +11,7 @@ public:
 	                 unsigned int lightIndex);
 
 protected:
-	void UpdateShadowMap(OpenGLRenderer* openGLRenderer) override;
+	void UpdateShadowMap(const OpenGLRenderer* openGLRenderer) override;
 
 	void SetAllUniforms() override;
 	void SetLightTypeUniform() const override;

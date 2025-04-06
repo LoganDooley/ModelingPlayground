@@ -79,6 +79,11 @@ void SceneViewCamera::BindFramebuffer() const
 	m_framebuffer->Bind();
 }
 
+void SceneViewCamera::UnbindFramebuffer() const
+{
+	m_framebuffer->Unbind();
+}
+
 void SceneViewCamera::SetViewport() const
 {
 	glViewport(0, 0, static_cast<int>(m_screenSize.x), static_cast<int>(m_screenSize.y));

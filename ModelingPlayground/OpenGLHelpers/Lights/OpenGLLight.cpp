@@ -26,7 +26,7 @@ void OpenGLLight::SetShadowMapDirty()
 	m_shadowMapIsDirty = true;
 }
 
-void OpenGLLight::TryUpdateShadowMap(OpenGLRenderer* openGLRenderer)
+void OpenGLLight::TryUpdateShadowMap(const OpenGLRenderer* openGLRenderer)
 {
 	if (m_shadowMapIsDirty)
 	{

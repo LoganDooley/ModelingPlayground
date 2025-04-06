@@ -71,7 +71,7 @@ OpenGLSpotLight::OpenGLSpotLight(std::shared_ptr<OpenGLShader> defaultShader, st
 	OpenGLSpotLight::SetAllUniforms();
 }
 
-void OpenGLSpotLight::UpdateShadowMap(OpenGLRenderer* openGLRenderer)
+void OpenGLSpotLight::UpdateShadowMap(const OpenGLRenderer* openGLRenderer)
 {
 	m_shadowMap->CaptureShadowMap(m_lightMatrix.GetData(), openGLRenderer);
 }

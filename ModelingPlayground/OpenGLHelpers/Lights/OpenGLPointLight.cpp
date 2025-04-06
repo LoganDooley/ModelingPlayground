@@ -36,7 +36,7 @@ OpenGLPointLight::OpenGLPointLight(std::shared_ptr<OpenGLShader> defaultShader,
 	OpenGLPointLight::SetAllUniforms();
 }
 
-void OpenGLPointLight::UpdateShadowMap(OpenGLRenderer* openGLRenderer)
+void OpenGLPointLight::UpdateShadowMap(const OpenGLRenderer* openGLRenderer)
 {
 }
 

@@ -55,7 +55,7 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
 	OpenGLDirectionalLight::SetAllUniforms();
 }
 
-void OpenGLDirectionalLight::UpdateShadowMap(OpenGLRenderer* openGLRenderer)
+void OpenGLDirectionalLight::UpdateShadowMap(const OpenGLRenderer* openGLRenderer)
 {
 	m_shadowMap->CaptureShadowMap(m_lightMatrix.GetData(), openGLRenderer);
 }

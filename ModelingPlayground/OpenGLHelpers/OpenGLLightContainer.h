@@ -26,8 +26,8 @@ public:
 	bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);
 	void ClearLights();
 
-	void SetAllShadowMapsDirty();
-	void UpdateDirtyShadowMaps(OpenGLRenderer* openGLRenderer);
+	void SetAllShadowMapsDirty() const;
+	void UpdateDirtyShadowMaps(const OpenGLRenderer* openGLRenderer) const;
 
 private:
 	bool AddLightInternal(const std::shared_ptr<SceneNode>& lightSceneNode, LightType lightType);

@@ -20,13 +20,17 @@ public:
 	void SetCamera(std::shared_ptr<SceneViewCamera> camera);
 	void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
 
-	void TryUpdateShadowMaps();
-	void RenderScene() const;
+	void Render() const;
+
 	void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const;
 	std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
 
 private:
-	void RenderSceneHierarchy(std::shared_ptr<OpenGLShader> activeShader) const;
+	void ClearCameraFramebuffer() const;
+	void DepthPrepass() const;
+	void SetAmbientLightColor() const;
+	void RenderScene() const;
+	void RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& activeShader) const;
 
 	void ProcessObject(const Object& object, std::shared_ptr<OpenGLShader> activeShader) const;
 	void DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent,
@@ -35,7 +39,7 @@ private:
 	void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const;
 
 	std::shared_ptr<OpenGLShader> m_defaultShader;
-	std::shared_ptr<OpenGLShader> m_unidirectionalShadowsShader;
+	std::shared_ptr<OpenGLShader> m_depthShader;
 	std::shared_ptr<SceneViewCamera> m_camera;
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 	std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;

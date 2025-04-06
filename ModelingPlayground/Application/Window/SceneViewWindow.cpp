@@ -18,8 +18,7 @@ SceneViewWindow::SceneViewWindow(std::shared_ptr<OpenGLRenderer> openGLRenderer,
 
 void SceneViewWindow::Render()
 {
-	m_openGLRenderer->TryUpdateShadowMaps();
-	m_openGLRenderer->RenderScene();
+	m_openGLRenderer->Render();
 
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
 	ImVec2 windowSize = ImGui::GetContentRegionAvail();

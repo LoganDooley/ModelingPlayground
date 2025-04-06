@@ -37,7 +37,7 @@ UnidirectionalLightShadowMap::~UnidirectionalLightShadowMap()
 }
 
 void UnidirectionalLightShadowMap::CaptureShadowMap(const glm::mat4& lightMatrix,
-                                                    OpenGLRenderer* openGLRenderer)
+                                                    const OpenGLRenderer* openGLRenderer)
 {
 	m_shadowMapFramebuffer->Bind();
 	glViewport(0, 0, m_resolution, m_resolution);
