@@ -4,6 +4,7 @@
 #include "../../Utils/DataBinding.h"
 #include "glm/mat4x4.hpp"
 
+class UnidirectionalLightShadowMap;
 class SpotLightComponent;
 
 class OpenGLSpotLight : public OpenGLLight
@@ -22,4 +23,5 @@ protected:
 
 	std::shared_ptr<SpotLightComponent> m_spotLightComponent;
 	DataBinding<glm::mat4> m_lightMatrix;
+	std::shared_ptr<UnidirectionalLightShadowMap> m_shadowMap;
 };

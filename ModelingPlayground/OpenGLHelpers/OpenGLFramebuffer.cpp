@@ -58,31 +58,6 @@ std::shared_ptr<OpenGLTexture> OpenGLFramebuffer::GetTexture(GLenum attachment)
 	return nullptr;
 }
 
-void OpenGLFramebuffer::DepthToRGB(GLuint* targetTexture, int& width, int& height)
-{
-	Bind();
-	std::vector<GLfloat> depthData(m_width * m_height);
-	glReadPixels(0, 0, m_width, m_height, GL_DEPTH_COMPONENT, GL_FLOAT, depthData.data());
-	std::vector<unsigned char> pixels(4 * m_width * m_height, 0);
-	for (int i = 0; i < m_width * m_height; i++)
-	{
-		pixels[4 * i] = depthData[i] * 255;
-		if (pixels[4 * i] != 255)
-		{
-			unsigned char pixel = pixels[4 * i];
-		}
-		pixels[4 * i + 3] = 255;
-	}
-	glDeleteTextures(1, targetTexture);
-	glGenTextures(1, targetTexture);
-	glBindTexture(GL_TEXTURE_2D, *targetTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-	glBindTexture(GL_TEXTURE_2D, 0);
-	Unbind();
-	width = m_width;
-	height = m_height;
-}
-
 void OpenGLFramebuffer::DeleteFramebuffer()
 {
 	glDeleteFramebuffers(1, &m_framebufferId);
@@ -94,7 +69,7 @@ void OpenGLFramebuffer::CreateFramebuffer()
 {
 	// Create framebuffer
 	glGenFramebuffers(1, &m_framebufferId);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferId);
+	Bind();
 
 	// Create and bind texture attachments
 	for (unsigned int i = 0; i < m_textureAttachmentArguments.size(); i++)
@@ -105,10 +80,19 @@ void OpenGLFramebuffer::CreateFramebuffer()
 			textureAttachmentArguments.m_format,
 			textureAttachmentArguments.m_dataType,
 			textureAttachmentArguments.m_textureParameterSettings,
-			GL_TEXTURE_2D);
+			textureAttachmentArguments.m_textureTarget);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, textureAttachmentArguments.m_attachment, GL_TEXTURE_2D,
-		                       m_textures[textureAttachmentArguments.m_attachment]->GetTextureId(), 0);
+		if (textureAttachmentArguments.m_textureTarget == GL_TEXTURE_2D)
+		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, textureAttachmentArguments.m_attachment,
+			                       textureAttachmentArguments.m_textureTarget,
+			                       m_textures[textureAttachmentArguments.m_attachment]->GetTextureId(), 0);
+		}
+		else if (textureAttachmentArguments.m_textureTarget == GL_TEXTURE_CUBE_MAP)
+		{
+			glFramebufferTexture(GL_FRAMEBUFFER, textureAttachmentArguments.m_attachment,
+			                     m_textures[textureAttachmentArguments.m_attachment]->GetTextureId(), 0);
+		}
 	}
 
 	// Create and bind renderbuffer attachments
@@ -127,7 +111,5 @@ void OpenGLFramebuffer::CreateFramebuffer()
 		std::cout << "OpenGLFramebuffer|CreateFramebuffer: Framebuffer is not complete!" << '\n';
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	Unbind();
 }

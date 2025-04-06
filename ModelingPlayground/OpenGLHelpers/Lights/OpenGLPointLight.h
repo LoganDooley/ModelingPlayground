@@ -2,6 +2,7 @@
 
 #include "OpenGLLight.h"
 
+class OmnidirectionalLightShadowMap;
 class PointLightComponent;
 
 class OpenGLPointLight : public OpenGLLight
@@ -18,4 +19,5 @@ protected:
 	void SetLightShadowMapHandleUniform() const override;
 
 	std::shared_ptr<PointLightComponent> m_pointLightComponent;
+	std::shared_ptr<OmnidirectionalLightShadowMap> m_shadowMap;
 };

@@ -60,11 +60,6 @@ OpenGLSpotLight::OpenGLSpotLight(std::shared_ptr<OpenGLShader> defaultShader, st
 		SetShadowMapDirty();
 	});
 
-	m_spotLightComponent->SetOnDebugCaptureShadowMap([this](GLuint* targetTexture, int& width, int& height)
-	{
-		m_shadowMap->DebugCaptureShadowMap(targetTexture, width, height);
-	});
-
 	m_shadowMap = std::make_shared<UnidirectionalLightShadowMap>();
 	m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->MakeTextureResident();
 
@@ -90,7 +85,7 @@ void OpenGLSpotLight::SetAllUniforms()
 
 void OpenGLSpotLight::SetLightTypeUniform() const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 8, Spot);
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 16, Spot);
 }
 
 void OpenGLSpotLight::SetLightShadowMapHandleUniform() const

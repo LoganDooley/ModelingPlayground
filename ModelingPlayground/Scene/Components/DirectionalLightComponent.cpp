@@ -17,13 +17,6 @@ void DirectionalLightComponent::RenderInspector()
 	{
 		// Color
 		PropertyDrawer::DrawVec3fColor("Color", m_lightColor);
-
-		// Debug of shadow map
-		GLuint textureId;
-		int width;
-		int height;
-		m_onDebugCaptureShadowMap(&textureId, width, height);
-		ImGui::Image(textureId, ImVec2(200, 200));
 	}
 }
 
@@ -35,10 +28,4 @@ const glm::vec3& DirectionalLightComponent::GetLightColor() const
 DataBinding<glm::vec3>& DirectionalLightComponent::GetLightColorDataBinding()
 {
 	return m_lightColor;
-}
-
-void DirectionalLightComponent::SetOnDebugCaptureShadowMap(
-	std::function<void(GLuint*, int&, int&)> onDebugCaptureShadowMap)
-{
-	m_onDebugCaptureShadowMap = onDebugCaptureShadowMap;
 }

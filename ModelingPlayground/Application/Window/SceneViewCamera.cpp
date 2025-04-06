@@ -41,6 +41,7 @@ SceneViewCamera::SceneViewCamera(std::shared_ptr<InputManager> inputManager, glm
 				                                                    {GL_TEXTURE_MIN_FILTER, GL_LINEAR},
 				                                                    {GL_TEXTURE_MAG_FILTER, GL_LINEAR}
 			                                                    }),
+			                                                    .m_textureTarget = GL_TEXTURE_2D,
 		                                                    }
 	                                                    }),
 	                                                    std::vector<RenderbufferAttachmentArguments>({

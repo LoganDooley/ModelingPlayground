@@ -3,6 +3,8 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 #include "../../Scene/Object.h"
 #include "../../Scene/Components/MaterialComponent.h"
@@ -14,6 +16,7 @@
 OpenGLRenderer::OpenGLRenderer():
 	m_defaultShader(std::make_shared<OpenGLShader>()),
 	m_depthShader(std::make_shared<OpenGLShader>()),
+	m_omnidirectionalDepthShader(std::make_shared<OpenGLShader>()),
 	m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
 	m_openGLPrimitiveManager(std::make_shared<OpenGLPrimitiveManager>()),
 	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>())
@@ -75,6 +78,7 @@ void APIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLen
 void OpenGLRenderer::Initialize()
 {
 	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(openglCallbackFunction, nullptr);
 
 	m_defaultShader->LoadShader("Shaders/default.vert", "Shaders/default.frag");
@@ -97,6 +101,20 @@ void OpenGLRenderer::Initialize()
 	// Initialize shadow shader
 	m_depthShader->RegisterUniformVariable("cameraMatrix");
 	m_depthShader->RegisterUniformVariable("modelMatrix");
+
+	m_omnidirectionalDepthShader->LoadShader("Shaders/omnidirectionalDepth.vert", "Shaders/omnidirectionalDepth.geom",
+	                                         "Shaders/omnidirectionalDepth.frag");
+
+	// Initialize omnidirectional shadow shader
+	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[0]");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[1]");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[2]");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[3]");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[4]");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[5]");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("modelMatrix");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("lightPosition");
+	m_omnidirectionalDepthShader->RegisterUniformVariable("farPlane");
 
 	m_openGLPrimitiveManager->GeneratePrimitives(10, 10);
 
@@ -162,6 +180,42 @@ void OpenGLRenderer::RenderUnidirectionalShadow(const glm::mat4& lightMatrix) co
 	m_depthShader->SetUniform<glm::mat4>("cameraMatrix", false, lightMatrix);
 
 	RenderSceneHierarchy(m_depthShader);
+}
+
+void OpenGLRenderer::RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const
+{
+	glCullFace(GL_FRONT);
+
+	glm::mat4 shadowProjection = glm::perspective(glm::radians(90.0f), 1.f, 0.1f, 100.f);
+
+	const glm::mat4 matrix0 = shadowProjection *
+		lookAt(lightPosition, lightPosition + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+	m_omnidirectionalDepthShader->SetUniform<glm::mat4>("lightMatrices[0]", false, matrix0);
+
+	const glm::mat4 matrix1 = shadowProjection *
+		lookAt(lightPosition, lightPosition + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+	m_omnidirectionalDepthShader->SetUniform<glm::mat4>("lightMatrices[1]", false, matrix1);
+
+	const glm::mat4 matrix2 = shadowProjection *
+		lookAt(lightPosition, lightPosition + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
+	m_omnidirectionalDepthShader->SetUniform<glm::mat4>("lightMatrices[2]", false, matrix2);
+
+	const glm::mat4 matrix3 = shadowProjection *
+		lookAt(lightPosition, lightPosition + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0));
+	m_omnidirectionalDepthShader->SetUniform<glm::mat4>("lightMatrices[3]", false, matrix3);
+
+	const glm::mat4 matrix4 = shadowProjection *
+		lookAt(lightPosition, lightPosition + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0));
+	m_omnidirectionalDepthShader->SetUniform<glm::mat4>("lightMatrices[4]", false, matrix4);
+
+	const glm::mat4 matrix5 = shadowProjection *
+		lookAt(lightPosition, lightPosition + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0));
+	m_omnidirectionalDepthShader->SetUniform<glm::mat4>("lightMatrices[5]", false, matrix5);
+
+	m_omnidirectionalDepthShader->SetUniform<glm::vec3>("lightPosition", lightPosition);
+	m_omnidirectionalDepthShader->SetUniform<float>("farPlane", 100.f);
+
+	RenderSceneHierarchy(m_omnidirectionalDepthShader);
 }
 
 void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& activeShader) const

@@ -23,6 +23,7 @@ public:
 	void Render() const;
 
 	void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const;
+	void RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const;
 	std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
 
 private:
@@ -40,6 +41,7 @@ private:
 
 	std::shared_ptr<OpenGLShader> m_defaultShader;
 	std::shared_ptr<OpenGLShader> m_depthShader;
+	std::shared_ptr<OpenGLShader> m_omnidirectionalDepthShader;
 	std::shared_ptr<SceneViewCamera> m_camera;
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 	std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;

@@ -11,30 +11,31 @@
 
 #define PI 3.1415926
 
-// 128 bytes
+// 144 bytes
 struct Light{
     sampler2D shadowMap; // 0
-    int type; // 8
-    float colorR; // 12
-    float colorG; // 16
-    float colorB; // 20
-    float positionX; // 24
-    float positionY; // 28
-    float positionZ; // 32
-    float directionX; // 36
-    float directionY; // 40
-    float directionZ; // 44
-    float falloffA; // 48
-    float falloffB; // 52
-    float falloffC; // 56
-    bool hasShadowMap; // 60
+    samplerCube cubeShadowMap; // 8
+    int type; // 16
+    float colorR; // 20
+    float colorG; // 24
+    float colorB; // 28
+    float positionX; // 32
+    float positionY; // 36
+    float positionZ; // 40
+    float directionX; // 44
+    float directionY; // 48
+    float directionZ; // 52
+    float falloffA; // 56
+    float falloffB; // 60
     mat4 lightMatrix; // 64
+    float falloffC; // 128
+    bool hasShadowMap; // 132
 };
 
 layout (std140, binding = 0) uniform LightsBlock
 {
-    Light lights[MAX_LIGHTS]; // lights[i] = 60 * i
-    int lightCount; // lightCount = 60 * MAX_LIGHTS
+    Light lights[MAX_LIGHTS]; // lights[i] = 132 * i
+    int lightCount; // lightCount = 132 * MAX_LIGHTS
 };
 
 uniform vec3 ambientColor;

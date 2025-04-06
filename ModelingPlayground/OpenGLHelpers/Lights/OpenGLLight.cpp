@@ -35,34 +35,32 @@ void OpenGLLight::TryUpdateShadowMap(const OpenGLRenderer* openGLRenderer)
 	}
 }
 
-void OpenGLLight::DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height)
-{
-	m_shadowMap->DebugCaptureShadowMap(targetTexture, width, height);
-}
-
 void OpenGLLight::SetLightPositionUniform(const glm::vec3& position) const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 24, position);
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 32, position);
 }
 
 void OpenGLLight::SetLightDirectionUniform(const glm::vec3& direction) const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 36, direction);
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 44, direction);
 }
 
 void OpenGLLight::SetLightColorUniform(const glm::vec3& color) const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 12, color);
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 20, color);
 }
 
 void OpenGLLight::SetLightFalloffUniform(const glm::vec3& falloff) const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 48, falloff);
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 56,
+	                                               glm::vec2(falloff));
+	m_defaultShader->
+		SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 128, falloff.z);
 }
 
 void OpenGLLight::SetHasShadowMapUniform(bool hasShadowMap) const
 {
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 60,
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 132,
 	                                               hasShadowMap);
 }
 

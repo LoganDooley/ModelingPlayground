@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <string>
+
 #include <glm/mat4x4.hpp>
 
 #include "ShadowMap.h"
@@ -10,9 +10,7 @@ public:
 	UnidirectionalLightShadowMap(unsigned int resolution = 1024);
 	~UnidirectionalLightShadowMap() override;
 
-	void CaptureShadowMap(const glm::mat4& lightMatrix, const OpenGLRenderer* openGLRenderer) override;
-
-	void DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height) override;
+	void CaptureShadowMap(const glm::mat4& lightMatrix, const OpenGLRenderer* openGLRenderer);
 
 private:
 	unsigned int m_resolution;

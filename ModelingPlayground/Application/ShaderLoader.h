@@ -43,6 +43,45 @@ public:
 		return programID;
 	}
 
+	static GLuint createShaderProgram(const char* vertex_file_path, const char* geometry_file_path,
+	                                  const char* fragment_file_path)
+	{
+		// Create and compile the shaders.
+		GLuint vertexShaderID = createShader(GL_VERTEX_SHADER, vertex_file_path);
+		GLuint geometryShaderID = createShader(GL_GEOMETRY_SHADER, geometry_file_path);
+		GLuint fragmentShaderID = createShader(GL_FRAGMENT_SHADER, fragment_file_path);
+
+		// Link the shader program.
+		GLuint programID = glCreateProgram();
+		glAttachShader(programID, vertexShaderID);
+		glAttachShader(programID, geometryShaderID);
+		glAttachShader(programID, fragmentShaderID);
+		glLinkProgram(programID);
+
+		// Print the info log if error
+		GLint status;
+		glGetProgramiv(programID, GL_LINK_STATUS, &status);
+
+		if (status == GL_FALSE)
+		{
+			GLint length;
+			glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &length);
+
+			std::string log(length, '\0');
+			glGetProgramInfoLog(programID, length, nullptr, &log[0]);
+
+			glDeleteProgram(programID);
+			std::cerr << log << std::endl;
+			throw std::runtime_error(log);
+		}
+
+		// Shaders no longer necessary, stored in program
+		glDeleteShader(vertexShaderID);
+		glDeleteShader(geometryShaderID);
+		glDeleteShader(fragmentShaderID);
+
+		return programID;
+	}
 
 	static GLuint createComputeShaderProgram(const char* compute_file_path)
 	{

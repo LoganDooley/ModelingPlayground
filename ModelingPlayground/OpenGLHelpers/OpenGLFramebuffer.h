@@ -15,6 +15,7 @@ struct TextureAttachmentArguments
 	GLenum m_format;
 	GLenum m_dataType;
 	std::vector<TextureParameterSetting> m_textureParameterSettings;
+	GLenum m_textureTarget;
 };
 
 struct RenderbufferAttachmentArguments
@@ -40,8 +41,6 @@ public:
 	GLuint GetFramebufferId() const;
 
 	std::shared_ptr<OpenGLTexture> GetTexture(GLenum attachment);
-
-	void DepthToRGB(GLuint* targetTexture, int& width, int& height);
 
 private:
 	void DeleteFramebuffer();

@@ -37,7 +37,7 @@ private:
 	std::vector<std::shared_ptr<OpenGLLight>> m_lights;
 
 	const int m_maxLights = 50;
-	const int m_lightStructSize = 128;
+	const int m_lightStructSize = 144;
 	const int m_lightCountOffset = m_maxLights * m_lightStructSize;
 	const std::string m_lightsBlockName = "LightsBlock";
 };

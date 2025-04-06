@@ -25,6 +25,11 @@ void OpenGLShader::LoadShader(const char* vertexFilePath, const char* fragmentFi
 	m_shaderProgramId = ShaderLoader::createShaderProgram(vertexFilePath, fragmentFilePath);
 }
 
+void OpenGLShader::LoadShader(const char* vertexFilePath, const char* geometryFilePath, const char* fragmentFilePath)
+{
+	m_shaderProgramId = ShaderLoader::createShaderProgram(vertexFilePath, geometryFilePath, fragmentFilePath);
+}
+
 void OpenGLShader::BindShader() const
 {
 	glUseProgram(m_shaderProgramId);
@@ -94,6 +99,32 @@ void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBuffe
 	std::vector<uint64_t> intData = {data};
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(uint64_t), intData.data());
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+                                                 float data) const
+{
+	if (!ValidateUniformBufferObjectName(uniformBufferObjectName))
+	{
+		return;
+	}
+	std::vector<float> intData = {data};
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
+	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float), intData.data());
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+                                                 glm::vec2 data) const
+{
+	if (!ValidateUniformBufferObjectName(uniformBufferObjectName))
+	{
+		return;
+	}
+	std::vector<float> floatData = {data.x, data.y};
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
+	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float) * 2, floatData.data());
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 

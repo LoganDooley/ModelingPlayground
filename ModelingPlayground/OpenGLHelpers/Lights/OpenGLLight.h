@@ -29,8 +29,6 @@ public:
 	void SetShadowMapDirty();
 	void TryUpdateShadowMap(const OpenGLRenderer* openGLRenderer);
 
-	void DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height);
-
 protected:
 	virtual void UpdateShadowMap(const OpenGLRenderer* openGLRenderer) = 0;
 
@@ -47,12 +45,11 @@ protected:
 
 	std::shared_ptr<OpenGLShader> m_defaultShader;
 	std::shared_ptr<TransformComponent> m_transformComponent;
-	std::shared_ptr<ShadowMap> m_shadowMap;
 	bool m_shadowMapIsDirty;
 	unsigned int m_lightIndex;
 
 	const int m_maxLights = 50;
-	const int m_lightStructSize = 128;
+	const int m_lightStructSize = 144;
 	const int m_lightCountOffset = m_maxLights * m_lightStructSize;
 	const std::string m_lightsBlockName = "LightsBlock";
 };

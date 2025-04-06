@@ -9,12 +9,30 @@ OpenGLTexture::OpenGLTexture(unsigned int width, unsigned int height, GLint inte
 {
 	glGenTextures(1, &m_textureId);
 	Bind();
-	glTexImage2D(m_textureTarget, 0, internalFormat, width, height, 0, format, dataType, nullptr);
 
-	for (const auto& textureParameterSetting : textureParameterSettings)
+	if (m_textureTarget == GL_TEXTURE_2D)
 	{
-		glTexParameteri(m_textureTarget, textureParameterSetting.m_texParameter,
-		                textureParameterSetting.m_texParameterValue);
+		glTexImage2D(m_textureTarget, 0, internalFormat, width, height, 0, format, dataType, nullptr);
+
+		for (const auto& textureParameterSetting : textureParameterSettings)
+		{
+			glTexParameteri(m_textureTarget, textureParameterSetting.m_texParameter,
+			                textureParameterSetting.m_texParameterValue);
+		}
+	}
+	else if (m_textureTarget == GL_TEXTURE_CUBE_MAP)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, format, dataType,
+			             nullptr);
+		}
+
+		for (const auto& textureParameterSetting : textureParameterSettings)
+		{
+			glTexParameteri(m_textureTarget, textureParameterSetting.m_texParameter,
+			                textureParameterSetting.m_texParameterValue);
+		}
 	}
 	Unbind();
 
@@ -26,12 +44,12 @@ OpenGLTexture::~OpenGLTexture()
 	glDeleteTextures(1, &m_textureId);
 }
 
-GLuint OpenGLTexture::GetTextureId()
+GLuint OpenGLTexture::GetTextureId() const
 {
 	return m_textureId;
 }
 
-GLuint64 OpenGLTexture::GetTextureHandle()
+GLuint64 OpenGLTexture::GetTextureHandle() const
 {
 	return m_textureHandle;
 }

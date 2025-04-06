@@ -44,11 +44,6 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
 		SetShadowMapDirty();
 	});
 
-	m_directionalLightComponent->SetOnDebugCaptureShadowMap([this](GLuint* texture, int& width, int& height)
-	{
-		m_shadowMap->DebugCaptureShadowMap(texture, width, height);
-	});
-
 	m_shadowMap = std::make_shared<UnidirectionalLightShadowMap>();
 	m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->MakeTextureResident();
 
@@ -73,7 +68,7 @@ void OpenGLDirectionalLight::SetAllUniforms()
 void OpenGLDirectionalLight::SetLightTypeUniform() const
 {
 	m_defaultShader->
-		SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 8, Directional);
+		SetUniformBufferObjectSubData(m_lightsBlockName, m_lightIndex * m_lightStructSize + 16, Directional);
 }
 
 void OpenGLDirectionalLight::SetLightShadowMapHandleUniform() const

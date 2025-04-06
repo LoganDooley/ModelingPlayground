@@ -21,8 +21,6 @@ public:
 	const glm::vec2& GetLightFalloffAngles() const;
 	DataBinding<glm::vec2>& GetLightFalloffAnglesDataBinding();
 
-	void SetOnDebugCaptureShadowMap(std::function<void(GLuint*, int&, int&)> onCaptureShadowMap);
-
 	friend void to_json(nlohmann::json& json, const SpotLightComponent& spotLightComponent);
 	friend void from_json(const nlohmann::json& json, SpotLightComponent& spotLightComponent);
 
@@ -30,5 +28,4 @@ private:
 	DataBinding<glm::vec3> m_lightColor;
 	// x = inner angle, y = outer angle in degrees
 	DataBinding<glm::vec2> m_falloffAngles;
-	std::function<void(GLuint*, int&, int&)> m_onDebugCaptureShadowMap;
 };

@@ -20,12 +20,6 @@ void SpotLightComponent::RenderInspector()
 
 		// Falloff angle
 		PropertyDrawer::DrawVec2fDrag("Falloff Angle", m_falloffAngles, 1.f, 0.f, 180.f);
-
-		GLuint textureId = 0;
-		int width;
-		int height;
-		m_onDebugCaptureShadowMap(&textureId, width, height);
-		ImGui::Image(textureId, ImVec2(200, 200));
 	}
 }
 
@@ -47,9 +41,4 @@ const glm::vec2& SpotLightComponent::GetLightFalloffAngles() const
 DataBinding<glm::vec2>& SpotLightComponent::GetLightFalloffAnglesDataBinding()
 {
 	return m_falloffAngles;
-}
-
-void SpotLightComponent::SetOnDebugCaptureShadowMap(std::function<void(GLuint*, int&, int&)> onCaptureShadowMap)
-{
-	m_onDebugCaptureShadowMap = onCaptureShadowMap;
 }

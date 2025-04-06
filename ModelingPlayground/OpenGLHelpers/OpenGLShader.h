@@ -14,6 +14,7 @@ public:
 	~OpenGLShader();
 
 	void LoadShader(const char* vertexFilePath, const char* fragmentFilePath);
+	void LoadShader(const char* vertexFilePath, const char* geometryFilePath, const char* fragmentFilePath);
 	void BindShader() const;
 	void UnbindShader() const;
 
@@ -46,6 +47,12 @@ public:
 
 	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
 	                                   uint64_t data) const;
+
+	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+	                                   float data) const;
+
+	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
+	                                   glm::vec2 data) const;
 
 	void SetUniformBufferObjectSubData(const std::string& uniformBufferObjectName, GLintptr offset,
 	                                   glm::vec3 data) const;

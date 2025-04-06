@@ -17,8 +17,8 @@ public:
 	              std::vector<TextureParameterSetting> textureParameterSettings, GLenum textureTarget);
 	~OpenGLTexture();
 
-	GLuint GetTextureId();
-	GLuint64 GetTextureHandle();
+	GLuint GetTextureId() const;
+	GLuint64 GetTextureHandle() const;
 
 	void MakeTextureResident();
 	void MakeTextureNonResident();

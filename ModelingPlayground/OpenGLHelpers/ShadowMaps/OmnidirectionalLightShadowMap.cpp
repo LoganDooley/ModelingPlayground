@@ -1,11 +1,11 @@
-﻿#include "UnidirectionalLightShadowMap.h"
+﻿#include "OmnidirectionalLightShadowMap.h"
 
 #include "../OpenGLFramebuffer.h"
 #include "../OpenGLRenderer.h"
 
 #include "glad/glad.h"
 
-UnidirectionalLightShadowMap::UnidirectionalLightShadowMap(unsigned int resolution):
+OmnidirectionalLightShadowMap::OmnidirectionalLightShadowMap(unsigned int resolution):
 	m_resolution(resolution)
 {
 	m_shadowMapFramebuffer = std::make_shared<OpenGLFramebuffer>(m_resolution, m_resolution,
@@ -19,10 +19,11 @@ UnidirectionalLightShadowMap::UnidirectionalLightShadowMap(unsigned int resoluti
 				                                                             TextureParameterSetting>({
 				                                                             {GL_TEXTURE_MIN_FILTER, GL_NEAREST},
 				                                                             {GL_TEXTURE_MAG_FILTER, GL_NEAREST},
-				                                                             {GL_TEXTURE_WRAP_S, GL_REPEAT},
-				                                                             {GL_TEXTURE_WRAP_T, GL_REPEAT}
+				                                                             {GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE},
+				                                                             {GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE},
+				                                                             {GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE},
 			                                                             }),
-			                                                             .m_textureTarget = GL_TEXTURE_2D,
+			                                                             .m_textureTarget = GL_TEXTURE_CUBE_MAP,
 		                                                             }
 	                                                             }),
 	                                                             std::vector<RenderbufferAttachmentArguments>());
@@ -33,15 +34,15 @@ UnidirectionalLightShadowMap::UnidirectionalLightShadowMap(unsigned int resoluti
 	m_shadowMapFramebuffer->Unbind();
 }
 
-UnidirectionalLightShadowMap::~UnidirectionalLightShadowMap()
+OmnidirectionalLightShadowMap::~OmnidirectionalLightShadowMap()
 {
 }
 
-void UnidirectionalLightShadowMap::CaptureShadowMap(const glm::mat4& lightMatrix,
-                                                    const OpenGLRenderer* openGLRenderer)
+void OmnidirectionalLightShadowMap::CaptureShadowMap(const glm::vec3& lightPosition,
+                                                     const OpenGLRenderer* openGLRenderer)
 {
 	m_shadowMapFramebuffer->Bind();
 	glViewport(0, 0, m_resolution, m_resolution);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	openGLRenderer->RenderUnidirectionalShadow(lightMatrix);
+	openGLRenderer->RenderOmnidirectionalShadow(lightPosition);
 }
