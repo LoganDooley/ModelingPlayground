@@ -57,29 +57,58 @@ struct LightData {
     vec3 radiance;
 };
 
+float GetOmnidirectionalShadowFactor(int lightIndex){
+    vec3 lightPosition = vec3(lights[lightIndex].positionX, lights[lightIndex].positionY, lights[lightIndex].positionZ);
+    vec3 fragToLight = vertexWorldPosition - lightPosition;
+    float currentDepth = length(fragToLight);
+    
+    float shadowFactor = 0.0;
+    float samples = 4.0;
+    float offset = 0.1;
+    float increment = offset/(samples * 0.5);
+    
+    for(float x = -offset; x < offset; x += increment){
+        for(float y = -offset; y < offset; y += increment){
+            for(float z = -offset; z < offset; z += increment){
+                float pcfDepth = texture(lights[lightIndex].cubeShadowMap, fragToLight + vec3(x, y, z)).r;
+                pcfDepth *= 100;
+                shadowFactor += currentDepth > pcfDepth ? 0.0 : 1.0;
+            }
+        }
+    }
+    
+    return shadowFactor / (samples * samples * samples);
+}
+
+float GetUnidirectionalShadowFactor(int lightIndex){
+    vec4 lightSpacePosition = lights[lightIndex].lightMatrix * vec4(vertexWorldPosition, 1);
+    vec3 projCoords = lightSpacePosition.xyz / lightSpacePosition.w;
+    projCoords = projCoords * 0.5 + vec3(0.5);
+    float currentDepth = projCoords.z;
+    
+    float shadowFactor = 0.0;
+    vec2 texelSize = 1.0 / textureSize(lights[lightIndex].shadowMap, 0);
+    for(int x = -1; x <= 1; ++x){
+        for(int y = -1; y <=1; ++y){
+            float pcfDepth = texture(lights[lightIndex].shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadowFactor += currentDepth > pcfDepth ? 0.0 : 1.0;
+        }
+    }
+    
+    return shadowFactor / 9.0;
+}
+
 float GetShadowFactor(int lightIndex){
     if(!lights[lightIndex].hasShadowMap){
         return 1;
     }
     
-    float closestDepth = 0;
-    float currentDepth = 0;
     if(lights[lightIndex].type == POINT_LIGHT){
-        vec3 lightPosition = vec3(lights[lightIndex].positionX, lights[lightIndex].positionY, lights[lightIndex].positionZ);
-        vec3 fragToLight = vertexWorldPosition - lightPosition;
-        closestDepth = texture(lights[lightIndex].cubeShadowMap, fragToLight).r;
-        closestDepth *= 100;
-        currentDepth = length(fragToLight);
+        return GetOmnidirectionalShadowFactor(lightIndex);
     }
     else{
-        vec4 lightSpacePosition = lights[lightIndex].lightMatrix * vec4(vertexWorldPosition, 1);
-        vec3 projCoords = lightSpacePosition.xyz / lightSpacePosition.w;
-        projCoords = projCoords * 0.5 + vec3(0.5);
-        float closestDepth = texture(lights[lightIndex].shadowMap, projCoords.xy).r;
-        float currentDepth = projCoords.z;
+        return GetUnidirectionalShadowFactor(lightIndex);
     }
-    
-    return currentDepth > closestDepth ? 0 : 1;
 }
 
 LightData getDirectionalLightData(int lightIndex, vec3 N, vec3 V){

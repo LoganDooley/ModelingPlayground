@@ -112,8 +112,8 @@ bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& li
 		if (m_lights.size() > 0)
 		{
 			std::erase(m_lights, newLight);
+			m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, m_lights.size());
 		}
-		m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, m_lights.size());
 	});
 
 	return true;
