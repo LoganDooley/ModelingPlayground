@@ -57,11 +57,12 @@ OpenGLSpotLight::OpenGLSpotLight(std::shared_ptr<OpenGLShader> defaultShader, st
 	m_lightMatrix.Subscribe([this](const glm::mat4& lightMatrix, glm::mat4)
 	{
 		SetLightMatrixUniform(lightMatrix);
+		SetShadowMapDirty();
 	});
 
-	m_spotLightComponent->SetOnCaptureShadowMap([this](const std::string& filePath)
+	m_spotLightComponent->SetOnDebugCaptureShadowMap([this](GLuint* targetTexture, int& width, int& height)
 	{
-		m_shadowMap->DebugCaptureShadowMap(filePath);
+		m_shadowMap->DebugCaptureShadowMap(targetTexture, width, height);
 	});
 
 	m_shadowMap = std::make_shared<UnidirectionalLightShadowMap>();
@@ -78,6 +79,7 @@ void OpenGLSpotLight::UpdateShadowMap(OpenGLRenderer* openGLRenderer)
 void OpenGLSpotLight::SetAllUniforms()
 {
 	SetLightTypeUniform();
+	SetLightShadowMapHandleUniform();
 	SetLightColorUniform(m_spotLightComponent->GetLightColor());
 	SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
 	SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
@@ -100,8 +102,8 @@ void OpenGLSpotLight::SetLightShadowMapHandleUniform() const
 
 void OpenGLSpotLight::UpdateLightMatrix()
 {
-	glm::mat4 lightProjection = glm::perspective(glm::radians(m_spotLightComponent->GetLightFalloffAngles().y), 1.f,
-	                                             0.1f, 100.f);
+	glm::mat4 lightProjection = glm::perspective(2 * glm::radians(m_spotLightComponent->GetLightFalloffAngles().y), 1.f,
+	                                             0.01f, 10.f);
 	glm::vec3 lightPosition = m_transformComponent->GetWorldSpacePosition();
 	glm::mat4 lightView = lookAt(lightPosition,
 	                             lightPosition + m_transformComponent->

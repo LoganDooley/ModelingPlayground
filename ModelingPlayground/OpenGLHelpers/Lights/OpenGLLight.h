@@ -4,6 +4,8 @@
 #include <glm/fwd.hpp>
 #include <glm/vec3.hpp>
 
+#include "glad/glad.h"
+
 class OpenGLRenderer;
 class TransformComponent;
 class OpenGLShader;
@@ -26,6 +28,8 @@ public:
 
 	void SetShadowMapDirty();
 	void TryUpdateShadowMap(OpenGLRenderer* openGLRenderer);
+
+	void DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height);
 
 protected:
 	virtual void UpdateShadowMap(OpenGLRenderer* openGLRenderer) = 0;

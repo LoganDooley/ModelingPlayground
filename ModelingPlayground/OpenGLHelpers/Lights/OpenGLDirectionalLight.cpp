@@ -41,11 +41,12 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
 	m_lightMatrix.Subscribe([this](const glm::mat4& lightMatrix, glm::mat4)
 	{
 		SetLightMatrixUniform(lightMatrix);
+		SetShadowMapDirty();
 	});
 
-	m_directionalLightComponent->SetOnCaptureShadowMap([this](const std::string& filePath)
+	m_directionalLightComponent->SetOnDebugCaptureShadowMap([this](GLuint* texture, int& width, int& height)
 	{
-		m_shadowMap->DebugCaptureShadowMap(filePath);
+		m_shadowMap->DebugCaptureShadowMap(texture, width, height);
 	});
 
 	m_shadowMap = std::make_shared<UnidirectionalLightShadowMap>();
@@ -84,8 +85,8 @@ void OpenGLDirectionalLight::SetLightShadowMapHandleUniform() const
 
 void OpenGLDirectionalLight::UpdateLightMatrix()
 {
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 10.f);
-	glm::vec3 lightPosition = m_transformComponent->GetWorldSpaceXUnitVector() * -5.f;
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.f);
+	glm::vec3 lightPosition = m_transformComponent->GetWorldSpaceXUnitVector() * -50.f;
 	glm::mat4 lightView = lookAt(lightPosition, glm::vec3(0), glm::vec3(0, 1, 0));
 	m_lightMatrix.SetAndNotify(lightProjection * lightView);
 }

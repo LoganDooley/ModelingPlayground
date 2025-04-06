@@ -2,8 +2,6 @@
 
 #include "../OpenGLFramebuffer.h"
 #include "../OpenGLRenderer.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "../../Libraries/stb/stb_image_write.h"
 
 #include "glad/glad.h"
 
@@ -41,23 +39,13 @@ UnidirectionalLightShadowMap::~UnidirectionalLightShadowMap()
 void UnidirectionalLightShadowMap::CaptureShadowMap(const glm::mat4& lightMatrix,
                                                     OpenGLRenderer* openGLRenderer)
 {
-	glViewport(0, 0, m_resolution, m_resolution);
 	m_shadowMapFramebuffer->Bind();
+	glViewport(0, 0, m_resolution, m_resolution);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	openGLRenderer->RenderUnidirectionalShadow(lightMatrix);
 }
 
-void UnidirectionalLightShadowMap::DebugCaptureShadowMap(const std::string& filePath)
+void UnidirectionalLightShadowMap::DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height)
 {
-	m_shadowMapFramebuffer->Bind();
-	std::vector<GLfloat> depthData(m_resolution * m_resolution);
-	glReadPixels(0, 0, m_resolution, m_resolution, GL_DEPTH_COMPONENT, GL_FLOAT, depthData.data());
-	std::vector<unsigned char> pixels(m_resolution * m_resolution);
-	for (int i = 0; i < m_resolution * m_resolution; i++)
-	{
-		pixels[i] = static_cast<unsigned char>(depthData[i] * 255.0f);
-	}
-	stbi_write_png(filePath.c_str(), m_resolution, m_resolution, 1, pixels.data(),
-	               m_resolution);
-	m_shadowMapFramebuffer->Unbind();
+	m_shadowMapFramebuffer->DepthToRGB(targetTexture, width, height);
 }

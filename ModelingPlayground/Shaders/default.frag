@@ -66,8 +66,7 @@ float GetShadowFactor(int lightIndex){
     projCoords = projCoords * 0.5 + vec3(0.5);
     float closestDepth = texture(lights[lightIndex].shadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
-    float bias = 0.000;
-    return currentDepth - bias > closestDepth ? 0 : 1;
+    return currentDepth > closestDepth ? 0 : 1;
 }
 
 LightData getDirectionalLightData(int lightIndex, vec3 N, vec3 V){

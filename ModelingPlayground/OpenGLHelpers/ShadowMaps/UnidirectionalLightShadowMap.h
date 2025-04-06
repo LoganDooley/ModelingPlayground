@@ -12,7 +12,7 @@ public:
 
 	void CaptureShadowMap(const glm::mat4& lightMatrix, OpenGLRenderer* openGLRenderer) override;
 
-	void DebugCaptureShadowMap(const std::string& filePath) override;
+	void DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height) override;
 
 private:
 	unsigned int m_resolution;

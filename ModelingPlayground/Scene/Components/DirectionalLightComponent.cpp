@@ -3,7 +3,6 @@
 #include <glm/geometric.hpp>
 
 #include "imgui.h"
-#include "tinyfiledialogs.h"
 #include "../../Utils/PropertyDrawer.h"
 
 DirectionalLightComponent::DirectionalLightComponent():
@@ -19,19 +18,12 @@ void DirectionalLightComponent::RenderInspector()
 		// Color
 		PropertyDrawer::DrawVec3fColor("Color", m_lightColor);
 
-		// Debug capture shadow map
-		if (ImGui::Button("Capture Shadow Map"))
-		{
-			const char* lFilterPatterns[1] = {"*.png"};
-			const char* filePath = tinyfd_saveFileDialog(
-				"Save shadow map as",
-				"",
-				1,
-				lFilterPatterns,
-				"png files"
-			);
-			m_onCaptureShadowMap(filePath);
-		}
+		// Debug of shadow map
+		GLuint textureId;
+		int width;
+		int height;
+		m_onDebugCaptureShadowMap(&textureId, width, height);
+		ImGui::Image(textureId, ImVec2(200, 200));
 	}
 }
 
@@ -45,7 +37,8 @@ DataBinding<glm::vec3>& DirectionalLightComponent::GetLightColorDataBinding()
 	return m_lightColor;
 }
 
-void DirectionalLightComponent::SetOnCaptureShadowMap(std::function<void(const std::string&)> onCaptureShadowMap)
+void DirectionalLightComponent::SetOnDebugCaptureShadowMap(
+	std::function<void(GLuint*, int&, int&)> onDebugCaptureShadowMap)
 {
-	m_onCaptureShadowMap = onCaptureShadowMap;
+	m_onDebugCaptureShadowMap = onDebugCaptureShadowMap;
 }

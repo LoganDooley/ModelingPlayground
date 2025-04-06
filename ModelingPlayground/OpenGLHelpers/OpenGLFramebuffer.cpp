@@ -58,6 +58,31 @@ std::shared_ptr<OpenGLTexture> OpenGLFramebuffer::GetTexture(GLenum attachment)
 	return nullptr;
 }
 
+void OpenGLFramebuffer::DepthToRGB(GLuint* targetTexture, int& width, int& height)
+{
+	Bind();
+	std::vector<GLfloat> depthData(m_width * m_height);
+	glReadPixels(0, 0, m_width, m_height, GL_DEPTH_COMPONENT, GL_FLOAT, depthData.data());
+	std::vector<unsigned char> pixels(4 * m_width * m_height, 0);
+	for (int i = 0; i < m_width * m_height; i++)
+	{
+		pixels[4 * i] = depthData[i] * 255;
+		if (pixels[4 * i] != 255)
+		{
+			unsigned char pixel = pixels[4 * i];
+		}
+		pixels[4 * i + 3] = 255;
+	}
+	glDeleteTextures(1, targetTexture);
+	glGenTextures(1, targetTexture);
+	glBindTexture(GL_TEXTURE_2D, *targetTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+	glBindTexture(GL_TEXTURE_2D, 0);
+	Unbind();
+	width = m_width;
+	height = m_height;
+}
+
 void OpenGLFramebuffer::DeleteFramebuffer()
 {
 	glDeleteFramebuffers(1, &m_framebufferId);

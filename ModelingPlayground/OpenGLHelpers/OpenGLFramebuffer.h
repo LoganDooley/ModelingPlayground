@@ -41,6 +41,8 @@ public:
 
 	std::shared_ptr<OpenGLTexture> GetTexture(GLenum attachment);
 
+	void DepthToRGB(GLuint* targetTexture, int& width, int& height);
+
 private:
 	void DeleteFramebuffer();
 	void CreateFramebuffer();

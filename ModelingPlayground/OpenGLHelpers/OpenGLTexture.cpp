@@ -3,6 +3,8 @@
 OpenGLTexture::OpenGLTexture(unsigned int width, unsigned int height, GLint internalFormat, GLenum format,
                              GLenum dataType, std::vector<TextureParameterSetting> textureParameterSettings,
                              GLenum textureTarget):
+	m_textureId(0),
+	m_textureHandle(0),
 	m_textureTarget(textureTarget)
 {
 	glGenTextures(1, &m_textureId);

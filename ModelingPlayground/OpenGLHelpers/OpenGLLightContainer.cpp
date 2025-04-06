@@ -10,7 +10,7 @@
 #include "Lights/OpenGLSpotLight.h"
 
 OpenGLLightContainer::OpenGLLightContainer():
-	m_defaultShader(std::make_shared<OpenGLShader>()),
+	m_defaultShader(nullptr),
 	m_lights({})
 {
 }
@@ -72,6 +72,7 @@ void OpenGLLightContainer::SetAllShadowMapsDirty()
 
 void OpenGLLightContainer::UpdateDirtyShadowMaps(OpenGLRenderer* openGLRenderer)
 {
+	SetAllShadowMapsDirty();
 	for (const auto& light : m_lights)
 	{
 		light->TryUpdateShadowMap(openGLRenderer);

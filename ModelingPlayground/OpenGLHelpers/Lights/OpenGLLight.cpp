@@ -4,6 +4,7 @@
 #include "../../Scene/Object.h"
 #include "../../Scene/Components/TransformComponent.h"
 #include "../../Scene/SceneNode/SceneNode.h"
+#include "../ShadowMaps/ShadowMap.h"
 
 OpenGLLight::OpenGLLight(std::shared_ptr<OpenGLShader> defaultShader, std::shared_ptr<SceneNode> lightSceneNode,
                          unsigned int lightIndex):
@@ -32,6 +33,11 @@ void OpenGLLight::TryUpdateShadowMap(OpenGLRenderer* openGLRenderer)
 		UpdateShadowMap(openGLRenderer);
 		m_shadowMapIsDirty = false;
 	}
+}
+
+void OpenGLLight::DebugCaptureShadowMap(GLuint* targetTexture, int& width, int& height)
+{
+	m_shadowMap->DebugCaptureShadowMap(targetTexture, width, height);
 }
 
 void OpenGLLight::SetLightPositionUniform(const glm::vec3& position) const
