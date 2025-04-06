@@ -53,7 +53,7 @@ void OpenGLPointLight::SetAllUniforms()
 	SetLightColorUniform(m_pointLightComponent->GetLightColor());
 	SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
 	SetLightFalloffUniform(m_pointLightComponent->GetFalloff());
-	SetHasShadowMapUniform(false);
+	SetHasShadowMapUniform(true);
 }
 
 void OpenGLPointLight::SetLightTypeUniform() const
