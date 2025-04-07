@@ -6,6 +6,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
+#include "OpenGLTextureCache.h"
 #include "../../Scene/Object.h"
 #include "../../Scene/Components/MaterialComponent.h"
 #include "../../Scene/Components/OpenGLSettingsComponent.h"
@@ -19,7 +20,8 @@ OpenGLRenderer::OpenGLRenderer():
 	m_omnidirectionalDepthShader(std::make_shared<OpenGLShader>()),
 	m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
 	m_openGLPrimitiveManager(std::make_shared<OpenGLPrimitiveManager>()),
-	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>())
+	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>()),
+	m_openGLTextureCache(std::make_shared<OpenGLTextureCache>())
 {
 }
 
@@ -243,6 +245,11 @@ void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& a
 std::shared_ptr<OpenGLPrimitiveManager> OpenGLRenderer::GetOpenGLPrimitiveManager() const
 {
 	return m_openGLPrimitiveManager;
+}
+
+std::shared_ptr<OpenGLTextureCache> OpenGLRenderer::GetOpenGLTextureCache() const
+{
+	return m_openGLTextureCache;
 }
 
 void OpenGLRenderer::ClearCameraFramebuffer() const

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <string>
 #include <vector>
 
 #include "glad/glad.h"
@@ -15,6 +16,7 @@ class OpenGLTexture
 public:
 	OpenGLTexture(unsigned int width, unsigned int height, GLint internalFormat, GLenum format, GLenum dataType,
 	              std::vector<TextureParameterSetting> textureParameterSettings, GLenum textureTarget);
+	OpenGLTexture(const std::string& fileName);
 	~OpenGLTexture();
 
 	GLuint GetTextureId() const;

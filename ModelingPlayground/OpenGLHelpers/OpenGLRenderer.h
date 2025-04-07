@@ -4,6 +4,7 @@
 #include "OpenGLPrimitiveManager.h"
 #include "../Scene/SceneHierarchy.h"
 
+class OpenGLTextureCache;
 class MaterialComponent;
 class PrimitiveComponent;
 class TransformComponent;
@@ -25,6 +26,7 @@ public:
 	void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const;
 	void RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const;
 	std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
+	std::shared_ptr<OpenGLTextureCache> GetOpenGLTextureCache() const;
 
 private:
 	void ClearCameraFramebuffer() const;
@@ -46,4 +48,5 @@ private:
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 	std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
 	std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
+	std::shared_ptr<OpenGLTextureCache> m_openGLTextureCache;
 };

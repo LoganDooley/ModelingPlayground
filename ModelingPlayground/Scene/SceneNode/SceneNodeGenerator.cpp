@@ -83,7 +83,7 @@ void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
 	object.AddComponent<TransformComponent>();
 	object.AddComponent<PrimitiveComponent>(m_openGLRenderer->GetOpenGLPrimitiveManager());
-	object.AddComponent<MaterialComponent>();
+	object.AddComponent<MaterialComponent>(m_openGLRenderer->GetOpenGLTextureCache());
 }
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)

@@ -1,6 +1,7 @@
 #include "HierarchyWindow.h"
 #include "imgui.h"
 #include "SceneViewWindow.h"
+#include "tinyfiledialogs.h"
 #include "../../OpenGLHelpers/OpenGLRenderer.h"
 #include "../../Scene/SceneHierarchy.h"
 #include "../../Scene/SceneNode/SceneNodeGenerator.h"

@@ -3,7 +3,6 @@
 #include "imgui.h"
 #include "../../../../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/tinyfiledialogs/tinyfiledialogs.h"
 #include "../../Utils/PropertyDrawer.h"
-#include "misc/cpp/imgui_stdlib.h"
 
 PrimitiveComponent::PrimitiveComponent():
 	m_primitiveName("Triangle"),

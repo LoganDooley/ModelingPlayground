@@ -1,5 +1,12 @@
 ﻿#include "OpenGLTexture.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <iostream>
+#include <ostream>
+#include <unordered_map>
+
+#include "../Libraries/stb/stb_image.h"
+
 OpenGLTexture::OpenGLTexture(unsigned int width, unsigned int height, GLint internalFormat, GLenum format,
                              GLenum dataType, std::vector<TextureParameterSetting> textureParameterSettings,
                              GLenum textureTarget):
@@ -37,6 +44,50 @@ OpenGLTexture::OpenGLTexture(unsigned int width, unsigned int height, GLint inte
 	Unbind();
 
 	m_textureHandle = glGetTextureHandleARB(m_textureId);
+}
+
+OpenGLTexture::OpenGLTexture(const std::string& fileName)
+{
+	glGenTextures(1, &m_textureId);
+	std::unordered_map<int, GLenum> channelsToFormat = {
+		{1, GL_RED},
+		{2, GL_RG},
+		{3, GL_RGB},
+		{4, GL_RGB}
+	};
+	std::unordered_map<int, GLint> channelsToInternalFormat = {
+		{1, GL_RED},
+		{2, GL_RG},
+		{3, GL_RGB},
+		{4, GL_RGB}
+	};
+
+	int width;
+	int height;
+	int components;
+	unsigned char* image = stbi_load(fileName.c_str(), &width, &height, &components, STBI_default);
+
+	if (image == nullptr)
+	{
+		std::cerr << "OpenGLTexture: Failed to load image: " << fileName << "\n";
+		glDeleteTextures(1, &m_textureId);
+		return;
+	}
+
+	if (!channelsToFormat.contains(components))
+	{
+		std::cerr << "OpenGLTexture: Image has unsupported number of components: " << components << "\n";
+		glDeleteTextures(1, &m_textureId);
+		return;
+	}
+
+	Bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, channelsToInternalFormat[components], width, height, 0, channelsToFormat[components],
+	             GL_UNSIGNED_BYTE, image);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	Unbind();
+	stbi_image_free(image);
 }
 
 OpenGLTexture::~OpenGLTexture()
