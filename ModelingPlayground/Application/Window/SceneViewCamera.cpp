@@ -24,6 +24,7 @@ SceneViewCamera::SceneViewCamera(std::shared_ptr<InputManager> inputManager, glm
 	m_cameraMatrix(glm::mat4(1), [this] { return ComputeCameraMatrix(); }),
 	m_inputManager(inputManager),
 	m_movementSpeed(1.f),
+	m_rotationSpeed(1.f),
 	m_movementDirection(glm::vec3(0), [this] { return ComputeMovementDirection(); })
 {
 	UpdateViewMatrix();
@@ -56,10 +57,11 @@ SceneViewCamera::SceneViewCamera(std::shared_ptr<InputManager> inputManager, glm
 		HandleKeyEvent(key, action);
 	});
 
-	m_inputManager->SubscribeToCursorPosEvents([this](const double xpos, const double ypos)
-	{
-		HandleCursorPosEvent(xpos, ypos);
-	});
+	m_inputManager->SubscribeToCursorPosEvents(
+		[this](const double xpos, const double ypos, const double deltaX, const double deltaY)
+		{
+			HandleCursorPosEvent(xpos, ypos, deltaX, deltaY);
+		});
 
 	m_inputManager->SubscribeToMouseButtonEvents([this](const int button, const int action)
 	{
@@ -167,9 +169,21 @@ void SceneViewCamera::HandleKeyEvent(int key, int action)
 	}
 }
 
-void SceneViewCamera::HandleCursorPosEvent(double xpos, double ypos)
+void SceneViewCamera::HandleCursorPosEvent(double xpos, double ypos, double deltaX, double deltaY)
 {
 	// TODO: Rotate Camera
+	if (!m_inputManager->IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
+	{
+		return;
+	}
+	float upRotation = -glm::radians(deltaX * m_rotationSpeed);
+	float rightRotation = -glm::radians(deltaY * m_rotationSpeed);
+
+	glm::vec3 right = cross(m_look, m_up);
+
+	glm::mat4 rotationMatrix = rotate(rotate(glm::mat4(1.0f), upRotation, m_up), rightRotation, right);
+	m_look = glm::vec3(rotationMatrix * glm::vec4(m_look, 0.0f));
+	UpdateViewMatrix();
 }
 
 void SceneViewCamera::HandleMouseButtonEvent(int button, int action)

@@ -15,7 +15,6 @@ HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::sha
 void HierarchyWindow::Render()
 {
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
-	ImGui::Text("I'm the hierarchy window!");
 	DrawNode(m_sceneHierarchy->GetRootSceneNode());
 	ImGui::End();
 }

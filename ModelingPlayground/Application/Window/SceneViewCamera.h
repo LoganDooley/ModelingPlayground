@@ -37,7 +37,7 @@ private:
 	glm::vec3 ComputeMovementDirection();
 
 	void HandleKeyEvent(int key, int action);
-	void HandleCursorPosEvent(double xpos, double ypos);
+	void HandleCursorPosEvent(double xpos, double ypos, double deltaX, double deltaY);
 	void HandleMouseButtonEvent(int button, int action);
 
 	void MoveCamera(double seconds);
@@ -60,6 +60,7 @@ private:
 
 	std::shared_ptr<InputManager> m_inputManager;
 	float m_movementSpeed;
+	float m_rotationSpeed;
 
 	LazyValue<glm::vec3> m_movementDirection;
 };

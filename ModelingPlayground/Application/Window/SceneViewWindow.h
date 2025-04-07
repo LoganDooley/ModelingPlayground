@@ -29,4 +29,5 @@ public:
 private:
 	std::shared_ptr<SceneViewCamera> m_camera;
 	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<InputManager> m_inputManager;
 };

@@ -12,7 +12,6 @@ InspectorWindow::InspectorWindow(std::shared_ptr<SceneHierarchy> scene):
 void InspectorWindow::Render()
 {
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
-	ImGui::Text("I'm the inspector!");
 	if (std::shared_ptr<SceneNode> selectedSceneNode = m_scene->GetSelectedSceneNode())
 	{
 		selectedSceneNode->RenderInspector();
