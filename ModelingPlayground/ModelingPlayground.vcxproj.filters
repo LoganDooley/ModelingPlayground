@@ -54,7 +54,6 @@
     <ClCompile Include="Application\Window\SceneViewCamera.cpp" />
     <ClCompile Include="Libraries\catch\catch_amalgamated.cpp" />
     <ClCompile Include="OpenGLHelpers\OpenGLLightContainer.cpp" />
-    <ClCompile Include="OpenGLHelpers\OpenGLPrimitiveDrawer.cpp" />
     <ClCompile Include="OpenGLHelpers\OpenGLRenderer.cpp" />
     <ClCompile Include="OpenGLHelpers\OpenGLShader.cpp" />
     <ClCompile Include="Scene\Components\OpenGLSettingsComponent.cpp" />
@@ -71,7 +70,22 @@
     <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
     <ClCompile Include="Utils\PropertyDrawer.cpp" />
     <ClCompile Include="UnitTests\Serialization\SerializationTests.cpp" />
-    <ClCompile Include="Utils\Serializers.cpp" />
+    <ClCompile Include="Libraries\glad\src\glad.c" />
+    <ClCompile Include="Libraries\tinyfiledialogs\tinyfiledialogs.c" />
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLDirectionalLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLPointLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLSpotLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLFramebuffer.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLPrimitive.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLPrimitiveManager.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLRenderbuffer.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLTexture.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLUniformVariable.cpp" />
+    <ClCompile Include="OpenGLHelpers\ShadowMaps\OmnidirectionalLightShadowMap.cpp" />
+    <ClCompile Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.cpp" />
+    <ClCompile Include="Serialization\Serializers.h" />
+    <ClCompile Include="Utils\SceneLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Libraries">
@@ -118,9 +132,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\include\glad\glad.h">
-      <Filter>Libraries\glad\include\glad</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.h">
       <Filter>Libraries\tinyfiledialogs</Filter>
     </ClInclude>
@@ -177,7 +188,6 @@
     <ClInclude Include="Application\Window\SceneViewCamera.h" />
     <ClInclude Include="Libraries\catch\catch_amalgamated.hpp" />
     <ClInclude Include="OpenGLHelpers\OpenGLLightContainer.h" />
-    <ClInclude Include="OpenGLHelpers\OpenGLPrimitiveDrawer.h" />
     <ClInclude Include="OpenGLHelpers\OpenGLRenderer.h" />
     <ClInclude Include="OpenGLHelpers\OpenGLShader.h" />
     <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h" />
@@ -194,10 +204,32 @@
     <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h" />
     <ClInclude Include="Utils\LazyValue.h" />
     <ClInclude Include="Utils\EnumLabels\EnumLabel.h" />
-    <ClInclude Include="Utils\EnumLabels\PrimitiveTypeEnumLabel.h" />
     <ClInclude Include="Utils\PrimitiveGenerator.h" />
     <ClInclude Include="Utils\PropertyDrawer.h" />
     <ClInclude Include="Scene\Components\ComponentIncludes.h" />
+    <ClInclude Include="Libraries\glad\include\glad\glad.h" />
+    <ClInclude Include="Libraries\glad\include\KHR\khrplatform.h" />
+    <ClInclude Include="Libraries\stb\stb_image.h" />
+    <ClInclude Include="Libraries\stb\stb_image_write.h" />
+    <ClInclude Include="Libraries\tinyfiledialogs\tinyfiledialogs.h" />
+    <ClInclude Include="Libraries\tinyobjloader\tiny_obj_loader.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLDirectionalLight.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLLight.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLPointLight.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLSpotLight.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLFramebuffer.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLPrimitive.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLPrimitiveManager.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLRenderbuffer.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLTexture.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLUniformVariable.h" />
+    <ClInclude Include="OpenGLHelpers\ShadowMaps\OmnidirectionalLightShadowMap.h" />
+    <ClInclude Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.h" />
+    <ClInclude Include="OpenGLHelpers\ShadowMaps\ShadowMap.h" />
+    <ClInclude Include="Serialization\ComponentSerializer.h" />
+    <ClInclude Include="Serialization\DataBindingSerializer.h" />
+    <ClInclude Include="Serialization\GLMSerializers.h" />
+    <ClInclude Include="Utils\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter">
