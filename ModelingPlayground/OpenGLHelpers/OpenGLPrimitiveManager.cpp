@@ -134,6 +134,16 @@ std::string OpenGLPrimitiveManager::LoadPrimitive(std::string filePath)
 	return filePath;
 }
 
+void OpenGLPrimitiveManager::AddPrimitive(const std::string& primitiveName, std::shared_ptr<OpenGLPrimitive> primitive)
+{
+	if (m_primitives.contains(primitiveName))
+	{
+		std::cout << "OpenGLPrimitiveManager|AddPrimitive: " << primitiveName << " already exists!\n";
+		return;
+	}
+	m_primitives[primitiveName] = primitive;
+}
+
 void OpenGLPrimitiveManager::DrawPrimitive(std::string fileName)
 {
 	if (!m_primitives.contains(fileName))

@@ -86,6 +86,8 @@
     <ClCompile Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.cpp" />
     <ClCompile Include="Serialization\Serializers.h" />
     <ClCompile Include="Utils\SceneLoader.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLTextureCache.cpp" />
+    <ClCompile Include="Utils\ModelLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Libraries">
@@ -230,6 +232,8 @@
     <ClInclude Include="Serialization\DataBindingSerializer.h" />
     <ClInclude Include="Serialization\GLMSerializers.h" />
     <ClInclude Include="Utils\SceneLoader.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLTextureCache.h" />
+    <ClInclude Include="Utils\ModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter">
