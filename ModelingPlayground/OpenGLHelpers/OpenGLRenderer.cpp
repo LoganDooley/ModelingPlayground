@@ -91,9 +91,15 @@ void OpenGLRenderer::Initialize()
 	m_defaultShader->RegisterUniformVariable("cameraMatrix");
 	m_defaultShader->RegisterUniformVariable("cameraPosition");
 	m_defaultShader->RegisterUniformVariable("ambientColor");
+	m_defaultShader->RegisterUniformVariable("useMaterialTexture");
 	m_defaultShader->RegisterUniformVariable("materialColor");
+	m_defaultShader->RegisterUniformVariable("materialTexture");
+	m_defaultShader->RegisterUniformVariable("useRoughnessMap");
 	m_defaultShader->RegisterUniformVariable("roughness");
+	m_defaultShader->RegisterUniformVariable("roughnessMap");
+	m_defaultShader->RegisterUniformVariable("useMetallicMap");
 	m_defaultShader->RegisterUniformVariable("metallic");
+	m_defaultShader->RegisterUniformVariable("metallicMap");
 
 	m_defaultShader->RegisterUniformBufferObject("LightsBlock", 64 * 250 + 4, 0);
 
@@ -330,9 +336,39 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 		// Set default shader-exclusive uniforms
 		glm::mat3 inverseTransposeModelMatrix = transpose(inverse(glm::mat3(cumulativeModelMatrix)));
 		activeShader->SetUniform<glm::mat3>("inverseTransposeModelMatrix", false, inverseTransposeModelMatrix);
-		activeShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());
-		activeShader->SetUniform<float>("roughness", materialComponent.GetRoughness());
-		activeShader->SetUniform<float>("metallic", materialComponent.GetRoughness());
+
+		// Color
+		activeShader->SetUniform<bool>("useMaterialTexture", materialComponent.GetUseColorTexture());
+		if (materialComponent.GetUseColorTexture())
+		{
+			activeShader->SetUniform<GLuint64>("materialTexture", materialComponent.GetMaterialTexture());
+		}
+		else
+		{
+			activeShader->SetUniform<glm::vec4>("materialColor", materialComponent.GetMaterialColor());
+		}
+
+		// Metallic
+		activeShader->SetUniform<bool>("useMetallicMap", materialComponent.GetUseMetallicMap());
+		if (materialComponent.GetUseMetallicMap())
+		{
+			activeShader->SetUniform<GLuint64>("metallicMap", materialComponent.GetMetallicMap());
+		}
+		else
+		{
+			activeShader->SetUniform<float>("metallic", materialComponent.GetMetallic());
+		}
+
+		// Roughness
+		activeShader->SetUniform<bool>("useRoughnessMap", materialComponent.GetUseRoughnessMap());
+		if (materialComponent.GetUseRoughnessMap())
+		{
+			activeShader->SetUniform<GLuint64>("roughnessMap", materialComponent.GetRoughnessMap());
+		}
+		else
+		{
+			activeShader->SetUniform<float>("roughness", materialComponent.GetRoughness());
+		}
 	}
 
 	m_openGLPrimitiveManager->DrawPrimitive(primitiveComponent.GetPrimitiveName());

@@ -12,6 +12,7 @@ public:
 
 	void SetValue(int uniformValue) const;
 	void SetValue(unsigned int uniformValue) const;
+	void SetValue(GLuint64 uniformValue) const;
 	void SetValue(float uniformValue) const;
 	void SetValue(glm::vec3 vector) const;
 	void SetValue(glm::vec4 vector) const;

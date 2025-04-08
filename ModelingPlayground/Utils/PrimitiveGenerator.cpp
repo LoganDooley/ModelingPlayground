@@ -172,11 +172,11 @@ void PrimitiveGenerator::GenerateCubeFace(std::vector<OpenGLVertex>& vertices, g
 	v3[indexA] = -0.5;
 	v3[indexB] = 0.5;
 
-	vertices.emplace_back(v0, faceNormal, glm::vec2(1, 1), true);
-	vertices.emplace_back(v3, faceNormal, glm::vec2(1, 0), true);
-	vertices.emplace_back(v1, faceNormal, glm::vec2(0, 1), true);
+	vertices.emplace_back(v0, faceNormal, glm::vec2(1, 0), true);
+	vertices.emplace_back(v3, faceNormal, glm::vec2(1, 1), true);
+	vertices.emplace_back(v1, faceNormal, glm::vec2(0, 0), true);
 
-	vertices.emplace_back(v1, faceNormal, glm::vec2(0, 1), true);
-	vertices.emplace_back(v3, faceNormal, glm::vec2(1, 0), true);
-	vertices.emplace_back(v2, faceNormal, glm::vec2(0, 0), true);
+	vertices.emplace_back(v1, faceNormal, glm::vec2(0, 0), true);
+	vertices.emplace_back(v3, faceNormal, glm::vec2(1, 1), true);
+	vertices.emplace_back(v2, faceNormal, glm::vec2(0, 1), true);
 }

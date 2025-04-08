@@ -30,17 +30,31 @@ inline void from_json(const nlohmann::json& json, DirectionalLightComponent& dir
 inline void to_json(nlohmann::json& json, const MaterialComponent& materialComponent)
 {
 	json = {
+		{"m_useColorTexture", materialComponent.m_useColorTexture},
 		{"m_materialColor", materialComponent.m_materialColor},
+		{"m_materialColorTexturePath", materialComponent.m_materialColorTexturePath},
+		{"m_useMetallicMap", materialComponent.m_useMetallicMap},
 		{"m_metallic", materialComponent.m_metallic},
-		{"m_roughness", materialComponent.m_roughness}
+		{"m_metallicMapPath", materialComponent.m_metallicMapPath},
+		{"m_useRoughnessMap", materialComponent.m_useRoughnessMap},
+		{"m_roughness", materialComponent.m_roughness},
+		{"m_roughnessMapPath", materialComponent.m_roughnessMapPath}
 	};
 }
 
 inline void from_json(const nlohmann::json& json, MaterialComponent& materialComponent)
 {
+	json.at("m_useColorTexture").get_to(materialComponent.m_useColorTexture);
 	json.at("m_materialColor").get_to(materialComponent.m_materialColor);
+	json.at("m_materialColorTexturePath").get_to(materialComponent.m_materialColorTexturePath);
+
+	json.at("m_useMetallicMap").get_to(materialComponent.m_useMetallicMap);
 	json.at("m_metallic").get_to(materialComponent.m_metallic);
+	json.at("m_metallicMapPath").get_to(materialComponent.m_metallicMapPath);
+
+	json.at("m_useRoughnessMap").get_to(materialComponent.m_useRoughnessMap);
 	json.at("m_roughness").get_to(materialComponent.m_roughness);
+	json.at("m_roughnessMapPath").get_to(materialComponent.m_roughnessMapPath);
 }
 
 // OpenGLSettingsComponent

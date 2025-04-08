@@ -171,7 +171,6 @@ void SceneViewCamera::HandleKeyEvent(int key, int action)
 
 void SceneViewCamera::HandleCursorPosEvent(double xpos, double ypos, double deltaX, double deltaY)
 {
-	// TODO: Rotate Camera
 	if (!m_inputManager->IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
 	{
 		return;
@@ -183,7 +182,12 @@ void SceneViewCamera::HandleCursorPosEvent(double xpos, double ypos, double delt
 
 	glm::mat4 rotationMatrix = rotate(rotate(glm::mat4(1.0f), upRotation, m_up), rightRotation, right);
 	m_look = glm::vec3(rotationMatrix * glm::vec4(m_look, 0.0f));
+
 	UpdateViewMatrix();
+	if (m_movementDirection.GetValue() != glm::vec3(0))
+	{
+		m_movementDirection.MarkDirty();
+	}
 }
 
 void SceneViewCamera::HandleMouseButtonEvent(int button, int action)

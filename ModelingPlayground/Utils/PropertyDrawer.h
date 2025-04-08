@@ -8,6 +8,8 @@
 #include "imgui.h"
 #include "EnumLabels/EnumLabel.h"
 
+class OpenGLTextureCache;
+
 class PropertyDrawer
 {
 public:
@@ -65,4 +67,8 @@ public:
 		}
 		return false;
 	}
+
+	static bool DrawTextureCacheCombo(const char* propertyName,
+	                                  const std::shared_ptr<OpenGLTextureCache>& openGLTextureCache,
+	                                  std::string& currentValue);
 };

@@ -39,9 +39,18 @@ layout (std140, binding = 0) uniform LightsBlock
 };
 
 uniform vec3 ambientColor;
-uniform vec4 materialColor = vec4(1, 0, 0, 1);
+
+uniform bool useMaterialTexture;
+uniform vec4 materialColor;
+uniform sampler2D materialTexture;
+
+uniform bool useRoughnessMap;
 uniform float roughness;
+uniform sampler2D roughnessMap;
+
+uniform bool useMetallicMap;
 uniform float metallic;
+uniform sampler2D metallicMap;
 
 uniform vec3 cameraPosition;
 
@@ -56,6 +65,27 @@ struct LightData {
     vec3 H;
     vec3 radiance;
 };
+
+vec4 GetMaterialColorValue(){
+    if(!useMaterialTexture){
+        return materialColor;
+    }
+    return texture(materialTexture, vertexTexCoord);
+}
+
+float GetRoughnessValue(){
+    if(!useRoughnessMap){
+        return roughness;
+    }
+    return texture(roughnessMap, vertexTexCoord).r;
+}
+
+float GetMetallicValue(){
+    if(!useMetallicMap){
+        return metallic;
+    }
+    return texture(metallicMap, vertexTexCoord).r;
+}
 
 float GetOmnidirectionalShadowFactor(int lightIndex){
     vec3 lightPosition = vec3(lights[lightIndex].positionX, lights[lightIndex].positionY, lights[lightIndex].positionZ);
@@ -157,16 +187,16 @@ LightData getSpotLightData(int lightIndex, vec3 N, vec3 V){
     return lightData;
 }
 
-float distributionGGX(float NdotH){
-    float a = roughness * roughness;
+float distributionGGX(float roughnessValue, float NdotH){
+    float a = roughnessValue * roughnessValue;
     float a2 = a * a;
     float denom = NdotH * NdotH * (a2 - 1.0) + 1.0;
     denom = PI * denom * denom;
     return a2 / max(denom, 0.0001);
 }
 
-float geometrySmith(float NdotV, float NdotL){
-    float r = roughness + 1.0;
+float geometrySmith(float roughnessValue, float NdotV, float NdotL){
+    float r = roughnessValue + 1.0;
     float k = (r * r) / 8.0;
     float ggx1 = NdotV / (NdotV * (1.0 - k) + k);
     float ggx2 = NdotL / (NdotL * (1.0 - k) + k);
@@ -177,7 +207,7 @@ vec3 fresnelSchlick(float HdotV, vec3 baseReflectivity){
     return baseReflectivity + (1.0 - baseReflectivity) * pow(1.0 - HdotV, 5.0);
 }
 
-vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity, vec3 objectColor){
+vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity, vec3 materialColorValue, float roughnessValue, float metallicValue){
     float shadowFactor = GetShadowFactor(lightIndex);
     if(shadowFactor == 0){
         return vec3(0);
@@ -200,8 +230,8 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity,
     float HdotV = max(dot(lightData.H, V), 0.0);
     float NdotH = max(dot(N, lightData.H), 0.0);
     
-    float D = distributionGGX(NdotH);
-    float G = geometrySmith(NdotV, NdotL);
+    float D = distributionGGX(roughnessValue, NdotH);
+    float G = geometrySmith(roughnessValue, NdotV, NdotL);
     vec3 F = fresnelSchlick(HdotV, baseReflectivity);
     
     vec3 specular = D * G * F;
@@ -209,13 +239,9 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity,
     
     vec3 kD = vec3(1.0) - F;
     
-    kD *= 1.0 - metallic;
+    kD *= 1.0 - metallicValue;
     
-    return (kD * objectColor / PI + specular) * lightData.radiance * NdotL * shadowFactor;
-}
-
-vec3 GetObjectColor(){
-    return materialColor.xyz;
+    return (kD * materialColorValue / PI + specular) * lightData.radiance * NdotL * shadowFactor;
 }
 
 float GetObjectTransparency(){
@@ -227,18 +253,20 @@ void main()
     vec3 normal = normalize(vertexNormal);
     vec3 toCamera = normalize(cameraPosition - vertexWorldPosition);
     
-    vec3 objectColor = GetObjectColor();
+    vec4 materialColorValue = GetMaterialColorValue();
+    float roughnessValue = GetRoughnessValue();
+    float metallicValue = GetMetallicValue();
     
-    vec3 baseReflectivity = mix(vec3(0.04), objectColor, metallic);
+    vec3 baseReflectivity = mix(vec3(0.04), materialColorValue.xyz, metallicValue);
     
     vec3 Lo = vec3(0.0);
     
     for(int i = 0; i<lightCount; i++){
-        Lo += getLightContribution(i, normal, toCamera, baseReflectivity, objectColor);
+        Lo += getLightContribution(i, normal, toCamera, baseReflectivity, materialColorValue.xyz, roughnessValue, metallicValue);
     }
 
     // Add ambient light
-    vec3 ambient = ambientColor * objectColor;
+    vec3 ambient = ambientColor * materialColorValue.xyz;
     
     vec3 color = ambient + Lo;
     

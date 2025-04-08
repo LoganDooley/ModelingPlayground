@@ -24,6 +24,11 @@ void OpenGLUniformVariable::SetValue(unsigned int uniformValue) const
 	glProgramUniform1ui(m_programId, m_uniformLocation, uniformValue);
 }
 
+void OpenGLUniformVariable::SetValue(GLuint64 uniformValue) const
+{
+	glProgramUniformHandleui64ARB(m_programId, m_uniformLocation, uniformValue);
+}
+
 void OpenGLUniformVariable::SetValue(float uniformValue) const
 {
 	glProgramUniform1f(m_programId, m_uniformLocation, uniformValue);

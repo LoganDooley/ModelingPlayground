@@ -43,6 +43,11 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 		{
 			primitiveComponent->SetPrimitiveManager(openGLRenderer->GetOpenGLPrimitiveManager());
 		}
+		if (std::shared_ptr<MaterialComponent> materialComponent = node->GetObject().GetFirstComponentOfType<
+			MaterialComponent>())
+		{
+			materialComponent->SetTextureCache(openGLRenderer->GetOpenGLTextureCache());
+		}
 	});
 	sceneHierarchy->SetFilePath(sceneFilePath);
 	return true;

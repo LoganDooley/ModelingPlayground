@@ -1,5 +1,9 @@
 ﻿#include "PropertyDrawer.h"
 
+#include "../../../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/tinyfiledialogs/tinyfiledialogs.h"
+#include "../OpenGLHelpers/OpenGLTexture.h"
+#include "../OpenGLHelpers/OpenGLTextureCache.h"
+
 bool PropertyDrawer::DrawFloatDrag(const std::string& propertyName, float& floatValue, float vSpeed, float vMin,
                                    float vMax, const char* format)
 {
@@ -149,4 +153,62 @@ bool PropertyDrawer::DrawCombo(const char* propertyName, std::vector<std::string
 		return true;
 	}
 	return false;
+}
+
+bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
+                                           const std::shared_ptr<OpenGLTextureCache>& openGLTextureCache,
+                                           std::string& currentValue)
+{
+	bool selectedTextureChanged = false;
+	const std::unordered_map<std::string, std::pair<std::shared_ptr<OpenGLTexture>, int>>& openGLTextures =
+		openGLTextureCache->
+		GetAllTextures();
+	if (ImGui::BeginCombo("##texture", currentValue.c_str()))
+	{
+		for (const auto& [textureKey, texture] : openGLTextures)
+		{
+			bool selected = currentValue == textureKey;
+			std::string label = std::string("##") + textureKey;
+			if (ImGui::Selectable(label.c_str(), selected) && currentValue != textureKey)
+			{
+				if (!currentValue.empty())
+				{
+					openGLTextureCache->DecrementTextureUsage(currentValue);
+				}
+				currentValue = textureKey;
+				openGLTextureCache->IncrementTextureUsage(currentValue);
+			}
+			ImGui::SameLine();
+			ImGui::Image(texture.first->GetTextureId(), ImVec2(50, 50), ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::SameLine();
+			ImGui::Text("%s", textureKey.c_str());
+			if (selected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	if (ImGui::ArrowButton("##r", ImGuiDir_Right))
+	{
+		// open file dialog and add texture
+		const char* lFilterPatterns[2] = {"*.png", "*.jpg"};
+		const char* filePath = tinyfd_openFileDialog(
+			"Select an image to load",
+			"",
+			2,
+			lFilterPatterns,
+			"Image Files",
+			0
+		);
+		if (filePath != nullptr)
+		{
+			openGLTextureCache->LoadTexture(filePath);
+		}
+	}
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+	ImGui::Text("%s", propertyName);
+
+	return true;
 }

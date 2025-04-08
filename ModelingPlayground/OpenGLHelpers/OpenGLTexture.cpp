@@ -46,25 +46,29 @@ OpenGLTexture::OpenGLTexture(unsigned int width, unsigned int height, GLint inte
 	m_textureHandle = glGetTextureHandleARB(m_textureId);
 }
 
-OpenGLTexture::OpenGLTexture(const std::string& fileName)
+OpenGLTexture::OpenGLTexture(const std::string& fileName):
+	m_textureId(0),
+	m_textureHandle(0),
+	m_textureTarget(GL_TEXTURE_2D)
 {
 	glGenTextures(1, &m_textureId);
 	std::unordered_map<int, GLenum> channelsToFormat = {
 		{1, GL_RED},
 		{2, GL_RG},
 		{3, GL_RGB},
-		{4, GL_RGB}
+		{4, GL_RGBA}
 	};
 	std::unordered_map<int, GLint> channelsToInternalFormat = {
 		{1, GL_RED},
 		{2, GL_RG},
 		{3, GL_RGB},
-		{4, GL_RGB}
+		{4, GL_RGBA}
 	};
 
 	int width;
 	int height;
 	int components;
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char* image = stbi_load(fileName.c_str(), &width, &height, &components, STBI_default);
 
 	if (image == nullptr)
@@ -88,6 +92,8 @@ OpenGLTexture::OpenGLTexture(const std::string& fileName)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	Unbind();
 	stbi_image_free(image);
+
+	m_textureHandle = glGetTextureHandleARB(m_textureId);
 }
 
 OpenGLTexture::~OpenGLTexture()
