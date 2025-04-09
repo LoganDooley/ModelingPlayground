@@ -22,6 +22,11 @@ void SceneNodeGenerator::SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openG
 	m_openGLRenderer = openGLRenderer;
 }
 
+void SceneNodeGenerator::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy)
+{
+	m_sceneHierarchy = sceneHierarchy;
+}
+
 std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
 	SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent)
 {
@@ -52,6 +57,8 @@ std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
 	sceneNode->SetParent(parent);
 
 	sceneNode->RegisterTransformModelMatrix();
+
+	m_sceneHierarchy->OnSceneNodeAdded(sceneNode);
 
 	return sceneNode;
 }

@@ -12,7 +12,8 @@ HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::sha
 	m_sceneNodeGenerator(std::make_shared<SceneNodeGenerator>()),
 	m_openGLRenderer(openGLRenderer)
 {
-	m_sceneNodeGenerator->SetOpenGLRenderer(openGLRenderer);
+	m_sceneNodeGenerator->SetOpenGLRenderer(m_openGLRenderer);
+	m_sceneNodeGenerator->SetSceneHierarchy(m_sceneHierarchy);
 }
 
 void HierarchyWindow::Render()

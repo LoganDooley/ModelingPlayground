@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+class SceneHierarchy;
 class OpenGLRenderer;
 class SceneNode;
 class Object;
@@ -18,6 +19,7 @@ public:
 	SceneNodeGenerator();
 
 	void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
+	void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
 
 	std::shared_ptr<SceneNode> CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType,
 	                                                        const std::shared_ptr<SceneNode>& parent);
@@ -34,4 +36,5 @@ private:
 	static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
 
 	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 };

@@ -72,7 +72,6 @@ void OpenGLLightContainer::SetAllShadowMapsDirty() const
 
 void OpenGLLightContainer::UpdateDirtyShadowMaps(const OpenGLRenderer* openGLRenderer) const
 {
-	SetAllShadowMapsDirty();
 	for (const auto& light : m_lights)
 	{
 		light->TryUpdateShadowMap(openGLRenderer);

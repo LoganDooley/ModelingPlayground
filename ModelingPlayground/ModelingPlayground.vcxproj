@@ -1,433 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <ItemGroup Label="ProjectConfigurations">
-        <ProjectConfiguration Include="Debug|x64">
-            <Configuration>Debug</Configuration>
-            <Platform>x64</Platform>
-        </ProjectConfiguration>
-        <ProjectConfiguration Include="Release|x64">
-            <Configuration>Release</Configuration>
-            <Platform>x64</Platform>
-        </ProjectConfiguration>
-        <ProjectConfiguration Include="UnitTesting|x64">
-            <Configuration>UnitTesting</Configuration>
-            <Platform>x64</Platform>
-        </ProjectConfiguration>
-    </ItemGroup>
-    <PropertyGroup Label="Globals">
-        <ProjectGuid>{410CA1C1-13F8-4167-9589-CDEC670130AA}</ProjectGuid>
-        <RootNamespace>ModelingPlayground</RootNamespace>
-        <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-        <ConfigurationType>Application</ConfigurationType>
-        <UseDebugLibraries>true</UseDebugLibraries>
-        <CharacterSet>MultiByte</CharacterSet>
-        <PlatformToolset>v143</PlatformToolset>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'" Label="Configuration">
-        <ConfigurationType>Application</ConfigurationType>
-        <UseDebugLibraries>true</UseDebugLibraries>
-        <CharacterSet>MultiByte</CharacterSet>
-        <PlatformToolset>v143</PlatformToolset>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-        <ConfigurationType>Application</ConfigurationType>
-        <UseDebugLibraries>false</UseDebugLibraries>
-        <WholeProgramOptimization>true</WholeProgramOptimization>
-        <CharacterSet>MultiByte</CharacterSet>
-        <PlatformToolset>v143</PlatformToolset>
-    </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
-    <ImportGroup Label="ExtensionSettings">
-        <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.6.props"/>
-    </ImportGroup>
-    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
-    </ImportGroup>
-    <ImportGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'" Label="PropertySheets">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
-    </ImportGroup>
-    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
-    </ImportGroup>
-    <PropertyGroup Label="UserMacros"/>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-        <LinkIncremental>true</LinkIncremental>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'">
-        <LinkIncremental>true</LinkIncremental>
-    </PropertyGroup>
-    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-        <ClCompile>
-            <WarningLevel>Level3</WarningLevel>
-            <Optimization>Disabled</Optimization>
-            <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <LanguageStandard>stdcpp20</LanguageStandard>
-            <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-        </ClCompile>
-        <Link>
-            <GenerateDebugInformation>true</GenerateDebugInformation>
-            <SubSystem>Console</SubSystem>
-            <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-            <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\lib;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-        </Link>
-        <CudaCompile>
-            <TargetMachinePlatform>64</TargetMachinePlatform>
-        </CudaCompile>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'">
-        <ClCompile>
-            <WarningLevel>Level3</WarningLevel>
-            <Optimization>Disabled</Optimization>
-            <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <LanguageStandard>stdcpp20</LanguageStandard>
-            <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-        </ClCompile>
-        <Link>
-            <GenerateDebugInformation>true</GenerateDebugInformation>
-            <SubSystem>Console</SubSystem>
-            <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-            <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-        </Link>
-        <CudaCompile>
-            <TargetMachinePlatform>64</TargetMachinePlatform>
-        </CudaCompile>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-        <ClCompile>
-            <WarningLevel>Level3</WarningLevel>
-            <Optimization>MaxSpeed</Optimization>
-            <FunctionLevelLinking>true</FunctionLevelLinking>
-            <IntrinsicFunctions>true</IntrinsicFunctions>
-            <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <LanguageStandard>stdcpp20</LanguageStandard>
-            <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-        </ClCompile>
-        <Link>
-            <GenerateDebugInformation>true</GenerateDebugInformation>
-            <EnableCOMDATFolding>true</EnableCOMDATFolding>
-            <OptimizeReferences>true</OptimizeReferences>
-            <SubSystem>Console</SubSystem>
-            <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-            <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-        </Link>
-        <CudaCompile>
-            <TargetMachinePlatform>64</TargetMachinePlatform>
-        </CudaCompile>
-    </ItemDefinitionGroup>
-    <ItemGroup>
-        <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\src\glad.c"/>
-        <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.c"/>
-        <ClCompile Include="Application\ApplicationManager.cpp"/>
-        <ClCompile Include="Application\InputManager.cpp"/>
-        <ClCompile Include="Application\WindowManager.cpp"/>
-        <ClCompile Include="Application\GlfwWindow.cpp"/>
-        <ClCompile Include="Application\Window\HierarchyWindow.cpp"/>
-        <ClCompile Include="Application\Window\InspectorWindow.cpp"/>
-        <ClCompile Include="Application\Window\SceneViewCamera.cpp"/>
-        <ClCompile Include="Application\Window\SceneViewWindow.cpp"/>
-        <ClCompile Include="Libraries\catch\catch_amalgamated.cpp">
-            <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-            <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-        </ClCompile>
-        <ClCompile Include="Libraries\glad\src\glad.c"/>
-        <ClCompile Include="Libraries\imgui-docking\backends\imgui_impl_glfw.cpp"/>
-        <ClCompile Include="Libraries\imgui-docking\backends\imgui_impl_opengl3.cpp"/>
-        <ClCompile Include="Libraries\imgui-docking\imgui.cpp"/>
-        <ClCompile Include="Libraries\imgui-docking\imgui_demo.cpp"/>
-        <ClCompile Include="Libraries\imgui-docking\imgui_draw.cpp"/>
-        <ClCompile Include="Libraries\imgui-docking\imgui_tables.cpp"/>
-        <ClCompile Include="Libraries\imgui-docking\imgui_widgets.cpp"/>
-        <ClCompile Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.cpp"/>
-        <ClCompile Include="Libraries\tinyfiledialogs\tinyfiledialogs.c"/>
-        <ClCompile Include="main.cpp">
-            <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'">true</ExcludedFromBuild>
-        </ClCompile>
-        <ClCompile Include="OpenGLHelpers\Lights\OpenGLDirectionalLight.cpp"/>
-        <ClCompile Include="OpenGLHelpers\Lights\OpenGLLight.cpp">
-            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-            <Optimization>Disabled</Optimization>
-            <SupportJustMyCode>true</SupportJustMyCode>
-            <AssemblerOutput>NoListing</AssemblerOutput>
-            <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-            <BrowseInformation>false</BrowseInformation>
-            <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-            <CompileAs>Default</CompileAs>
-            <ConformanceMode>Default</ConformanceMode>
-            <DiagnosticsFormat>Column</DiagnosticsFormat>
-            <DisableLanguageExtensions>false</DisableLanguageExtensions>
-            <ErrorReporting>Prompt</ErrorReporting>
-            <ExpandAttributedSource>false</ExpandAttributedSource>
-            <ExceptionHandling>Sync</ExceptionHandling>
-            <EnableASAN>false</EnableASAN>
-            <EnableFuzzer>false</EnableFuzzer>
-            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-            <EnableVectorLength>NotSet</EnableVectorLength>
-            <FloatingPointModel>Precise</FloatingPointModel>
-            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-            <GenerateModuleDependencies>false</GenerateModuleDependencies>
-            <GenerateSourceDependencies>false</GenerateSourceDependencies>
-            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-            <IntrinsicFunctions>false</IntrinsicFunctions>
-            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-            <LanguageStandard>stdcpp20</LanguageStandard>
-            <LanguageStandard_C>Default</LanguageStandard_C>
-            <MinimalRebuild>false</MinimalRebuild>
-            <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-            <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-            <OmitDefaultLibName>false</OmitDefaultLibName>
-            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-            <WholeProgramOptimization>false</WholeProgramOptimization>
-            <ObjectFileName>x64\Debug\</ObjectFileName>
-            <CallingConvention>Cdecl</CallingConvention>
-            <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-            <PrecompiledHeader>NotUsing</PrecompiledHeader>
-            <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-            <PrecompiledHeaderOutputFile>x64\Debug\ModelingPlayground.pch</PrecompiledHeaderOutputFile>
-            <PreprocessToFile>false</PreprocessToFile>
-            <PreprocessKeepComments>false</PreprocessKeepComments>
-            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-            <ShowIncludes>false</ShowIncludes>
-            <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-            <SuppressStartupBanner>true</SuppressStartupBanner>
-            <BufferSecurityCheck>true</BufferSecurityCheck>
-            <SmallerTypeCheck>false</SmallerTypeCheck>
-            <SpectreMitigation>false</SpectreMitigation>
-            <StructMemberAlignment>Default</StructMemberAlignment>
-            <TrackerLogDirectory>x64\Debug\Modeling.410CA1C1.tlog\</TrackerLogDirectory>
-            <TranslateIncludes>false</TranslateIncludes>
-            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-            <TreatWarningAsError>false</TreatWarningAsError>
-            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-            <UseFullPaths>true</UseFullPaths>
-            <WarningLevel>Level3</WarningLevel>
-            <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-            <IntelJCCErratum>false</IntelJCCErratum>
-            <BuildStlModules>false</BuildStlModules>
-            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-            <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
-            <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include</AdditionalIncludeDirectories>
-            <LinkCompiled>true</LinkCompiled>
-        </ClCompile>
-        <ClCompile Include="OpenGLHelpers\Lights\OpenGLPointLight.cpp"/>
-        <ClCompile Include="OpenGLHelpers\Lights\OpenGLSpotLight.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLFramebuffer.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLLightContainer.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLPrimitive.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLPrimitiveManager.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLRenderbuffer.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLRenderer.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLShader.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLTexture.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLTextureCache.cpp"/>
-        <ClCompile Include="OpenGLHelpers\OpenGLUniformVariable.cpp"/>
-        <ClCompile Include="OpenGLHelpers\ShadowMaps\OmnidirectionalLightShadowMap.cpp"/>
-        <ClCompile Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.cpp"/>
-        <ClCompile Include="Scene\Components\OpenGLSettingsComponent.cpp"/>
-        <ClCompile Include="Scene\Components\DirectionalLightComponent.cpp"/>
-        <ClCompile Include="Scene\Components\MaterialComponent.cpp"/>
-        <ClCompile Include="Scene\Components\PointLightComponent.cpp"/>
-        <ClCompile Include="Scene\Components\PrimitiveComponent.cpp"/>
-        <ClCompile Include="Scene\Components\SpotLightComponent.cpp"/>
-        <ClCompile Include="Scene\Components\TransformComponent.cpp"/>
-        <ClCompile Include="Scene\Object.cpp"/>
-        <ClCompile Include="Scene\SceneHierarchy.cpp"/>
-        <ClCompile Include="Scene\SceneNode\SceneNode.cpp"/>
-        <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp"/>
-        <ClCompile Include="Serialization\Serializers.h">
-            <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-            <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-            <Optimization>Disabled</Optimization>
-            <SupportJustMyCode>true</SupportJustMyCode>
-            <AssemblerOutput>NoListing</AssemblerOutput>
-            <AssemblerListingLocation>x64\UnitTesting\</AssemblerListingLocation>
-            <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-            <BrowseInformation>false</BrowseInformation>
-            <BrowseInformationFile>x64\UnitTesting\</BrowseInformationFile>
-            <CompileAs>Default</CompileAs>
-            <ConformanceMode>Default</ConformanceMode>
-            <DiagnosticsFormat>Column</DiagnosticsFormat>
-            <DisableLanguageExtensions>false</DisableLanguageExtensions>
-            <ErrorReporting>Prompt</ErrorReporting>
-            <ExpandAttributedSource>false</ExpandAttributedSource>
-            <ExceptionHandling>Sync</ExceptionHandling>
-            <EnableASAN>false</EnableASAN>
-            <EnableFuzzer>false</EnableFuzzer>
-            <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-            <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-            <EnableVectorLength>NotSet</EnableVectorLength>
-            <FloatingPointModel>Precise</FloatingPointModel>
-            <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-            <GenerateModuleDependencies>false</GenerateModuleDependencies>
-            <GenerateSourceDependencies>false</GenerateSourceDependencies>
-            <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-            <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-            <IntrinsicFunctions>false</IntrinsicFunctions>
-            <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-            <LanguageStandard>stdcpp20</LanguageStandard>
-            <LanguageStandard_C>Default</LanguageStandard_C>
-            <MinimalRebuild>false</MinimalRebuild>
-            <ModuleDependenciesFile>x64\UnitTesting\</ModuleDependenciesFile>
-            <ModuleOutputFile>x64\UnitTesting\</ModuleOutputFile>
-            <OmitDefaultLibName>false</OmitDefaultLibName>
-            <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-            <WholeProgramOptimization>false</WholeProgramOptimization>
-            <ObjectFileName>x64\UnitTesting\</ObjectFileName>
-            <CallingConvention>Cdecl</CallingConvention>
-            <ProgramDataBaseFileName>x64\UnitTesting\vc143.pdb</ProgramDataBaseFileName>
-            <PrecompiledHeader>NotUsing</PrecompiledHeader>
-            <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-            <PrecompiledHeaderOutputFile>x64\UnitTesting\ModelingPlayground.pch</PrecompiledHeaderOutputFile>
-            <PreprocessToFile>false</PreprocessToFile>
-            <PreprocessKeepComments>false</PreprocessKeepComments>
-            <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-            <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-            <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-            <ShowIncludes>false</ShowIncludes>
-            <SourceDependenciesFile>x64\UnitTesting\</SourceDependenciesFile>
-            <SuppressStartupBanner>true</SuppressStartupBanner>
-            <BufferSecurityCheck>true</BufferSecurityCheck>
-            <SmallerTypeCheck>false</SmallerTypeCheck>
-            <SpectreMitigation>false</SpectreMitigation>
-            <StructMemberAlignment>Default</StructMemberAlignment>
-            <TrackerLogDirectory>x64\UnitTesting\Modeling.410CA1C1.tlog\</TrackerLogDirectory>
-            <TranslateIncludes>false</TranslateIncludes>
-            <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-            <TreatWarningAsError>false</TreatWarningAsError>
-            <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-            <UseFullPaths>true</UseFullPaths>
-            <WarningLevel>Level3</WarningLevel>
-            <XMLDocumentationFileName>x64\UnitTesting\</XMLDocumentationFileName>
-            <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-            <IntelJCCErratum>false</IntelJCCErratum>
-            <BuildStlModules>false</BuildStlModules>
-            <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-            <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-            <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-            <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-            <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;_MBCS;</PreprocessorDefinitions>
-            <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include</AdditionalIncludeDirectories>
-            <LinkCompiled>true</LinkCompiled>
-        </ClCompile>
-        <ClCompile Include="UnitTests\Serialization\SerializationTests.cpp">
-            <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-            <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-        </ClCompile>
-        <ClCompile Include="Utils\ModelLoader.cpp"/>
-        <ClCompile Include="Utils\PrimitiveGenerator.cpp"/>
-        <ClCompile Include="Utils\PropertyDrawer.cpp"/>
-        <ClCompile Include="Utils\SceneLoader.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.h"/>
-        <ClInclude Include="Application\ApplicationManager.h"/>
-        <ClInclude Include="Application\InputManager.h"/>
-        <ClInclude Include="Application\ShaderLoader.h"/>
-        <ClInclude Include="Application\WindowManager.h"/>
-        <ClInclude Include="Application\GlfwWindow.h"/>
-        <ClInclude Include="Application\Window\HierarchyWindow.h"/>
-        <ClInclude Include="Application\Window\InspectorWindow.h"/>
-        <ClInclude Include="Application\Window\SceneViewCamera.h"/>
-        <ClInclude Include="Application\Window\SceneViewWindow.h"/>
-        <ClInclude Include="Application\Window\Window.h"/>
-        <ClInclude Include="Libraries\catch\catch_amalgamated.hpp"/>
-        <ClInclude Include="Libraries\glad\include\glad\glad.h"/>
-        <ClInclude Include="Libraries\glad\include\KHR\khrplatform.h"/>
-        <ClInclude Include="Libraries\imgui-docking\backends\imgui_impl_glfw.h"/>
-        <ClInclude Include="Libraries\imgui-docking\backends\imgui_impl_opengl3.h"/>
-        <ClInclude Include="Libraries\imgui-docking\imconfig.h"/>
-        <ClInclude Include="Libraries\imgui-docking\imgui.h"/>
-        <ClInclude Include="Libraries\imgui-docking\imgui_internal.h"/>
-        <ClInclude Include="Libraries\imgui-docking\imstb_rectpack.h"/>
-        <ClInclude Include="Libraries\imgui-docking\imstb_textedit.h"/>
-        <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h"/>
-        <ClInclude Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.h"/>
-        <ClInclude Include="Libraries\stb\stb_image.h"/>
-        <ClInclude Include="Libraries\stb\stb_image_write.h"/>
-        <ClInclude Include="Libraries\tinyfiledialogs\tinyfiledialogs.h"/>
-        <ClInclude Include="Libraries\tinyobjloader\tiny_obj_loader.h"/>
-        <ClInclude Include="OpenGLHelpers\Lights\OpenGLDirectionalLight.h"/>
-        <ClInclude Include="OpenGLHelpers\Lights\OpenGLLight.h"/>
-        <ClInclude Include="OpenGLHelpers\Lights\OpenGLPointLight.h"/>
-        <ClInclude Include="OpenGLHelpers\Lights\OpenGLSpotLight.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLFramebuffer.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLLightContainer.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLPrimitive.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLPrimitiveManager.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLRenderbuffer.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLRenderer.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLShader.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLTexture.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLTextureCache.h"/>
-        <ClInclude Include="OpenGLHelpers\OpenGLUniformVariable.h"/>
-        <ClInclude Include="OpenGLHelpers\ShadowMaps\OmnidirectionalLightShadowMap.h"/>
-        <ClInclude Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.h"/>
-        <ClInclude Include="OpenGLHelpers\ShadowMaps\ShadowMap.h"/>
-        <ClInclude Include="Scene\Components\ComponentIncludes.h"/>
-        <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h"/>
-        <ClInclude Include="Scene\Components\Component.h"/>
-        <ClInclude Include="Scene\Components\DirectionalLightComponent.h"/>
-        <ClInclude Include="Scene\Components\MaterialComponent.h"/>
-        <ClInclude Include="Scene\Components\PointLightComponent.h"/>
-        <ClInclude Include="Scene\Components\PrimitiveComponent.h"/>
-        <ClInclude Include="Scene\Components\SpotLightComponent.h"/>
-        <ClInclude Include="Scene\Components\TransformComponent.h"/>
-        <ClInclude Include="Scene\Object.h"/>
-        <ClInclude Include="Scene\SceneHierarchy.h"/>
-        <ClInclude Include="Scene\SceneNode\SceneNode.h"/>
-        <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h"/>
-        <ClInclude Include="Serialization\ComponentSerializer.h"/>
-        <ClInclude Include="Serialization\DataBindingSerializer.h"/>
-        <ClInclude Include="Serialization\GLMSerializers.h"/>
-        <ClInclude Include="Utils\LazyValue.h"/>
-        <ClInclude Include="Utils\EnumLabels\EnumLabel.h"/>
-        <ClInclude Include="Utils\ModelLoader.h"/>
-        <ClInclude Include="Utils\PrimitiveGenerator.h"/>
-        <ClInclude Include="Utils\PropertyDrawer.h"/>
-        <ClInclude Include="Utils\SceneLoader.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Natvis Include="Libraries\imgui-docking\misc\debuggers\imgui.natvis"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="Serialization\SharedPointerSerializer.h"/>
-        <Content Include="Shaders\default.frag">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Shaders\default.vert">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Shaders\depth.frag">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Shaders\depth.vert">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Shaders\omnidirectionalDepth.frag"/>
-        <Content Include="Shaders\omnidirectionalDepth.geom"/>
-        <Content Include="Shaders\omnidirectionalDepth.vert"/>
-        <Content Include="Utils\DataBinding.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Resources\"/>
-    </ItemGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
-    <ImportGroup Label="ExtensionTargets">
-        <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.6.targets"/>
-    </ImportGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="UnitTesting|x64">
+      <Configuration>UnitTesting</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{410CA1C1-13F8-4167-9589-CDEC670130AA}</ProjectGuid>
+    <RootNamespace>ModelingPlayground</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.6.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\lib;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\lib;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\glad\src\glad.c" />
+    <ClCompile Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.c" />
+    <ClCompile Include="Application\ApplicationManager.cpp" />
+    <ClCompile Include="Application\InputManager.cpp" />
+    <ClCompile Include="Application\WindowManager.cpp" />
+    <ClCompile Include="Application\GlfwWindow.cpp" />
+    <ClCompile Include="Application\Window\HierarchyWindow.cpp" />
+    <ClCompile Include="Application\Window\InspectorWindow.cpp" />
+    <ClCompile Include="Application\Window\SceneViewCamera.cpp" />
+    <ClCompile Include="Application\Window\SceneViewWindow.cpp" />
+    <ClCompile Include="Libraries\catch\catch_amalgamated.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Libraries\glad\src\glad.c" />
+    <ClCompile Include="Libraries\imgui-docking\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Libraries\imgui-docking\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Libraries\imgui-docking\imgui.cpp" />
+    <ClCompile Include="Libraries\imgui-docking\imgui_demo.cpp" />
+    <ClCompile Include="Libraries\imgui-docking\imgui_draw.cpp" />
+    <ClCompile Include="Libraries\imgui-docking\imgui_tables.cpp" />
+    <ClCompile Include="Libraries\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="Libraries\tinyfiledialogs\tinyfiledialogs.c" />
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='UnitTesting|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLDirectionalLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLPointLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\Lights\OpenGLSpotLight.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLFramebuffer.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLLightContainer.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLPrimitive.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLPrimitiveManager.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLRenderbuffer.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLRenderer.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLShader.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLTexture.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLTextureCache.cpp" />
+    <ClCompile Include="OpenGLHelpers\OpenGLUniformVariable.cpp" />
+    <ClCompile Include="OpenGLHelpers\ShadowMaps\OmnidirectionalLightShadowMap.cpp" />
+    <ClCompile Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.cpp" />
+    <ClCompile Include="Scene\Components\OpenGLSettingsComponent.cpp" />
+    <ClCompile Include="Scene\Components\DirectionalLightComponent.cpp" />
+    <ClCompile Include="Scene\Components\MaterialComponent.cpp" />
+    <ClCompile Include="Scene\Components\PointLightComponent.cpp" />
+    <ClCompile Include="Scene\Components\PrimitiveComponent.cpp" />
+    <ClCompile Include="Scene\Components\SpotLightComponent.cpp" />
+    <ClCompile Include="Scene\Components\TransformComponent.cpp" />
+    <ClCompile Include="Scene\Object.cpp" />
+    <ClCompile Include="Scene\SceneHierarchy.cpp" />
+    <ClCompile Include="Scene\SceneNode\SceneNode.cpp" />
+    <ClCompile Include="Scene\SceneNode\SceneNodeGenerator.cpp" />
+    <ClCompile Include="Serialization\Serializers.h" />
+    <ClCompile Include="UnitTests\Serialization\SerializationTests.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Utils\ModelLoader.cpp" />
+    <ClCompile Include="Utils\PrimitiveGenerator.cpp" />
+    <ClCompile Include="Utils\PropertyDrawer.cpp" />
+    <ClCompile Include="Utils\SceneLoader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ModelingEngine\ModelingEngine\ModelingEngine\Libraries\tinyfiledialogs\tinyfiledialogs.h" />
+    <ClInclude Include="Application\ApplicationManager.h" />
+    <ClInclude Include="Application\InputManager.h" />
+    <ClInclude Include="Application\ShaderLoader.h" />
+    <ClInclude Include="Application\WindowManager.h" />
+    <ClInclude Include="Application\GlfwWindow.h" />
+    <ClInclude Include="Application\Window\HierarchyWindow.h" />
+    <ClInclude Include="Application\Window\InspectorWindow.h" />
+    <ClInclude Include="Application\Window\SceneViewCamera.h" />
+    <ClInclude Include="Application\Window\SceneViewWindow.h" />
+    <ClInclude Include="Application\Window\Window.h" />
+    <ClInclude Include="Libraries\catch\catch_amalgamated.hpp" />
+    <ClInclude Include="Libraries\glad\include\glad\glad.h" />
+    <ClInclude Include="Libraries\glad\include\KHR\khrplatform.h" />
+    <ClInclude Include="Libraries\imgui-docking\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="Libraries\imgui-docking\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="Libraries\imgui-docking\imconfig.h" />
+    <ClInclude Include="Libraries\imgui-docking\imgui.h" />
+    <ClInclude Include="Libraries\imgui-docking\imgui_internal.h" />
+    <ClInclude Include="Libraries\imgui-docking\imstb_rectpack.h" />
+    <ClInclude Include="Libraries\imgui-docking\imstb_textedit.h" />
+    <ClInclude Include="Libraries\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="Libraries\imgui-docking\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Libraries\stb\stb_image.h" />
+    <ClInclude Include="Libraries\stb\stb_image_write.h" />
+    <ClInclude Include="Libraries\tinyfiledialogs\tinyfiledialogs.h" />
+    <ClInclude Include="Libraries\tinyobjloader\tiny_obj_loader.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLDirectionalLight.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLLight.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLPointLight.h" />
+    <ClInclude Include="OpenGLHelpers\Lights\OpenGLSpotLight.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLFramebuffer.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLLightContainer.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLPrimitive.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLPrimitiveManager.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLRenderbuffer.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLRenderer.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLShader.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLTexture.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLTextureCache.h" />
+    <ClInclude Include="OpenGLHelpers\OpenGLUniformVariable.h" />
+    <ClInclude Include="OpenGLHelpers\ShadowMaps\OmnidirectionalLightShadowMap.h" />
+    <ClInclude Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.h" />
+    <ClInclude Include="OpenGLHelpers\ShadowMaps\ShadowMap.h" />
+    <ClInclude Include="Scene\Components\ComponentIncludes.h" />
+    <ClInclude Include="Scene\Components\OpenGLSettingsComponent.h" />
+    <ClInclude Include="Scene\Components\Component.h" />
+    <ClInclude Include="Scene\Components\DirectionalLightComponent.h" />
+    <ClInclude Include="Scene\Components\MaterialComponent.h" />
+    <ClInclude Include="Scene\Components\PointLightComponent.h" />
+    <ClInclude Include="Scene\Components\PrimitiveComponent.h" />
+    <ClInclude Include="Scene\Components\SpotLightComponent.h" />
+    <ClInclude Include="Scene\Components\TransformComponent.h" />
+    <ClInclude Include="Scene\Object.h" />
+    <ClInclude Include="Scene\SceneHierarchy.h" />
+    <ClInclude Include="Scene\SceneNode\SceneNode.h" />
+    <ClInclude Include="Scene\SceneNode\SceneNodeGenerator.h" />
+    <ClInclude Include="Serialization\ComponentSerializer.h" />
+    <ClInclude Include="Serialization\DataBindingSerializer.h" />
+    <ClInclude Include="Serialization\GLMSerializers.h" />
+    <ClInclude Include="Utils\LazyValue.h" />
+    <ClInclude Include="Utils\EnumLabels\EnumLabel.h" />
+    <ClInclude Include="Utils\ModelLoader.h" />
+    <ClInclude Include="Utils\PrimitiveGenerator.h" />
+    <ClInclude Include="Utils\PropertyDrawer.h" />
+    <ClInclude Include="Utils\SceneLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Libraries\imgui-docking\misc\debuggers\imgui.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Libraries\imgui-docking\misc\debuggers\imgui.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Serialization\SharedPointerSerializer.h" />
+    <Content Include="Shaders\default.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\default.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\depth.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\depth.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\omnidirectionalDepth.frag" />
+    <Content Include="Shaders\omnidirectionalDepth.geom" />
+    <Content Include="Shaders\omnidirectionalDepth.vert" />
+    <Content Include="Utils\DataBinding.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.6.targets" />
+  </ImportGroup>
 </Project>
