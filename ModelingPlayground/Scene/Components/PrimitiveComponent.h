@@ -14,6 +14,7 @@ public:
 	void SetPrimitiveManager(std::shared_ptr<OpenGLPrimitiveManager> openGLPrimitiveManager);
 
 	void RenderInspector() override;
+	void SetPrimitiveName(const std::string& primitiveName);
 	std::string GetPrimitiveName() const;
 
 	friend void to_json(nlohmann::json& json, const PrimitiveComponent& primitiveComponent);

@@ -92,14 +92,14 @@ OpenGLPrimitive::OpenGLPrimitive(const std::vector<float>& vertices, GLsizei ver
 		return;
 	}
 
+	GLsizei vertexStride = hasTexCoords ? 8 * sizeof(float) : 6 * sizeof(float);
+
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
 
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_vertexCount * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-	GLsizei vertexStride = hasTexCoords ? 8 * sizeof(float) : 6 * sizeof(float);
+	glBufferData(GL_ARRAY_BUFFER, m_vertexCount * vertexStride, vertices.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, static_cast<void*>(nullptr));
 	glEnableVertexAttribArray(0);

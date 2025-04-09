@@ -17,6 +17,21 @@ TransformComponent::TransformComponent():
 	m_localXUnitVector(glm::vec3(1, 0, 0))
 
 {
+	m_position.Subscribe([this](const glm::vec3&, glm::vec3)
+	{
+		UpdateLocalModelMatrix();
+	});
+
+	m_rotation.Subscribe([this](const glm::vec3&, glm::vec3)
+	{
+		UpdateLocalModelMatrix();
+		UpdateLocalXUnitVector();
+	});
+
+	m_scale.Subscribe([this](const glm::vec3&, glm::vec3)
+	{
+		UpdateLocalModelMatrix();
+	});
 }
 
 void TransformComponent::RenderInspector()
@@ -25,10 +40,7 @@ void TransformComponent::RenderInspector()
 	if (ImGui::CollapsingHeader("Transform", transformHeaderFlags))
 	{
 		// Position
-		if (PropertyDrawer::DrawVec3fDrag("Position", m_position, 0.01f))
-		{
-			UpdateLocalModelMatrix();
-		}
+		PropertyDrawer::DrawVec3fDrag("Position", m_position, 0.01f);
 
 		// Rotation
 		if (PropertyDrawer::DrawVec3fDrag("Rotation", m_rotation, 1.0f))
@@ -38,16 +50,10 @@ void TransformComponent::RenderInspector()
 			rotationModulus.y = std::fmodf(rotationModulus.y, 360.0f);
 			rotationModulus.z = std::fmodf(rotationModulus.z, 360.0f);
 			m_rotation.SetAndNotify(rotationModulus);
-
-			UpdateLocalModelMatrix();
-			UpdateLocalXUnitVector();
 		}
 
 		// Scale
-		if (PropertyDrawer::DrawVec3fDrag("Scale", m_scale, 0.01f))
-		{
-			UpdateLocalModelMatrix();
-		}
+		PropertyDrawer::DrawVec3fDrag("Scale", m_scale, 0.01f);
 	}
 }
 
@@ -96,9 +102,19 @@ const glm::vec3& TransformComponent::GetRotation() const
 	return m_rotation.GetData();
 }
 
+DataBinding<glm::vec3>& TransformComponent::GetRotationDataBinding()
+{
+	return m_rotation;
+}
+
 const glm::vec3& TransformComponent::GetScale() const
 {
 	return m_scale.GetData();
+}
+
+DataBinding<glm::vec3>& TransformComponent::GetScaleDataBinding()
+{
+	return m_scale;
 }
 
 const glm::vec3& TransformComponent::GetLocalXUnitVector() const

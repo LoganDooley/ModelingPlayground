@@ -49,6 +49,11 @@ void PrimitiveComponent::RenderInspector()
 	}
 }
 
+void PrimitiveComponent::SetPrimitiveName(const std::string& primitiveName)
+{
+	m_primitiveName = primitiveName;
+}
+
 std::string PrimitiveComponent::GetPrimitiveName() const
 {
 	return m_primitiveName;

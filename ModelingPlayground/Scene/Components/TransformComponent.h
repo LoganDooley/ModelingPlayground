@@ -26,8 +26,10 @@ public:
 	DataBinding<glm::vec3>& GetPositionDataBinding();
 
 	const glm::vec3& GetRotation() const;
+	DataBinding<glm::vec3>& GetRotationDataBinding();
 
 	const glm::vec3& GetScale() const;
+	DataBinding<glm::vec3>& GetScaleDataBinding();
 
 	const glm::vec3& GetLocalXUnitVector() const;
 	DataBinding<glm::vec3>& GetLocalXUnitVectorDataBinding();

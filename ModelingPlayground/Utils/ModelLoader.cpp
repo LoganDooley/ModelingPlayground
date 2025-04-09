@@ -7,16 +7,19 @@
 #include <assimp/postprocess.h>>
 #include <assimp/scene.h>
 
+#include "../OpenGLHelpers/OpenGLRenderer.h"
 #include "../Scene/Object.h"
 #include "../Scene/Components/PrimitiveComponent.h"
 #include "../Scene/SceneNode/SceneNode.h"
 #include "../Scene/SceneNode/SceneNodeGenerator.h"
 
 void ModelLoader::LoadModel(const std::shared_ptr<SceneNode>& parentSceneNode, const std::string& filePath,
+                            const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
                             std::shared_ptr<SceneNodeGenerator> sceneNodeGenerator)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(
+		filePath, aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_Triangulate | aiProcess_FlipUVs);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -25,25 +28,36 @@ void ModelLoader::LoadModel(const std::shared_ptr<SceneNode>& parentSceneNode, c
 	}
 
 	// pair: aiNode, parent scene node
-	std::stack<std::pair<aiNode*, std::shared_ptr<SceneNode>>> nodeStack;
-	nodeStack.push({scene->mRootNode, parentSceneNode});
+	std::stack<std::tuple<aiNode*, std::shared_ptr<SceneNode>, std::string>> nodeStack;
+	nodeStack.push({scene->mRootNode, parentSceneNode, filePath});
 	while (!nodeStack.empty())
 	{
-		aiNode* nodeToProcess = nodeStack.top().first;
-		std::shared_ptr<SceneNode> parentSceneNode = nodeStack.top().second;
+		aiNode* nodeToProcess = std::get<0>(nodeStack.top());
+		std::shared_ptr<SceneNode> parentSceneNode = std::get<1>(nodeStack.top());
+		std::string primitiveNameBase = std::get<2>(nodeStack.top());
 		nodeStack.pop();
+
+		// Create transform node
+		aiVector3t<float> position;
+		aiVector3t<float> rotation;
+		aiVector3t<float> scale;
+		nodeToProcess->mTransformation.Decompose(scale, rotation, position);
+		std::shared_ptr<SceneNode> transformSceneNode = sceneNodeGenerator->CreateSceneNodeAndAddAsChild(
+			SceneNodeType::Transform, parentSceneNode);
+		std::shared_ptr<TransformComponent> transformComponent = transformSceneNode->GetObject().GetFirstComponentOfType
+			<TransformComponent>();
+		transformComponent->GetPositionDataBinding().SetAndNotify(glm::vec3(position.x, position.y, position.z));
+		transformComponent->GetRotationDataBinding().SetAndNotify(
+			degrees(glm::vec3(rotation.x, rotation.y, rotation.z)));
+		transformComponent->GetScaleDataBinding().SetAndNotify(glm::vec3(scale.x, scale.y, scale.z));
 
 		for (unsigned int i = 0; i < nodeToProcess->mNumMeshes; i++)
 		{
-			std::shared_ptr<SceneNode> childSceneNode = sceneNodeGenerator->CreateSceneNodeAndAddAsChild(
-				SceneNodeType::Primitive, parentSceneNode);
-			std::shared_ptr<PrimitiveComponent> primitiveComponent = childSceneNode->GetObject().GetFirstComponentOfType
-				<PrimitiveComponent>();
-
 			aiMesh* mesh = scene->mMeshes[nodeToProcess->mMeshes[i]];
 
 			// Vertices
 			bool hasTextureCoords = mesh->mTextureCoords[0] != nullptr;
+			hasTextureCoords = false;
 			std::vector<float> vertices;
 			unsigned int vertexSize = hasTextureCoords ? 8 : 6;
 			if (hasTextureCoords)
@@ -90,6 +104,22 @@ void ModelLoader::LoadModel(const std::shared_ptr<SceneNode>& parentSceneNode, c
 
 			auto openGLPrimitive = std::make_shared<OpenGLPrimitive>(vertices, mesh->mNumVertices, hasTextureCoords,
 			                                                         indices);
+			std::string primitiveName = primitiveNameBase + "|" + std::to_string(i);
+			openGLRenderer->GetOpenGLPrimitiveManager()->AddPrimitive(primitiveName,
+			                                                          openGLPrimitive);
+
+			std::shared_ptr<SceneNode> childSceneNode = sceneNodeGenerator->CreateSceneNodeAndAddAsChild(
+				SceneNodeType::Primitive, transformSceneNode);
+
+			std::shared_ptr<PrimitiveComponent> primitiveComponent = childSceneNode->GetObject().GetFirstComponentOfType
+				<PrimitiveComponent>();
+
+			primitiveComponent->SetPrimitiveName(primitiveName);
+		}
+
+		for (unsigned int i = 0; i < nodeToProcess->mNumChildren; i++)
+		{
+			nodeStack.push({nodeToProcess->mChildren[i], transformSceneNode, primitiveNameBase + "|0|" + std::to_string(i)});
 		}
 	}
 }
