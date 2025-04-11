@@ -28,24 +28,6 @@ void PrimitiveComponent::RenderInspector()
 	if (ImGui::CollapsingHeader("Mesh", meshHeaderFlags))
 	{
 		PropertyDrawer::DrawCombo("Primitive Type", m_openGLPrimitiveManager->GetPrimitiveNames(), m_primitiveName);
-
-		if (ImGui::Button("Use Custom Obj"))
-		{
-			const char* lFilterPatterns[1] = {"*.obj"};
-			const char* filePath = tinyfd_openFileDialog(
-				"Select an obj file to use",
-				"",
-				1,
-				lFilterPatterns,
-				".obj",
-				0
-			);
-			// If user actually selected a file
-			if (filePath != nullptr)
-			{
-				m_primitiveName = m_openGLPrimitiveManager->LoadPrimitive(filePath);
-			}
-		}
 	}
 }
 

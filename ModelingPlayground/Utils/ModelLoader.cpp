@@ -84,8 +84,13 @@ void ModelLoader::AddPrimitiveNodes(aiNode* node, const aiScene* scene, glm::vec
 
 		ProcessMesh(mesh, vertices, indices, hasTexCoords);
 
-		auto openGLPrimitive = std::make_shared<OpenGLPrimitive>(vertices, mesh->mNumVertices, hasTexCoords,
-		                                                         indices);
+		std::vector<VertexAttribute> vertexAttributes = {VertexAttribute::Position, VertexAttribute::Normal};
+		if (hasTexCoords)
+		{
+			vertexAttributes.push_back(VertexAttribute::UV);
+		}
+
+		auto openGLPrimitive = std::make_shared<OpenGLPrimitive>(vertices, indices, vertexAttributes);
 		std::string primitiveName = primitiveNameBase + "|" + std::to_string(i);
 		openGLRenderer->GetOpenGLPrimitiveManager()->AddPrimitive(primitiveName,
 		                                                          openGLPrimitive);

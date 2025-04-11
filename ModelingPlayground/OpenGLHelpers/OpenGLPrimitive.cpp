@@ -2,89 +2,21 @@
 
 #include <iostream>
 
-OpenGLVertex::OpenGLVertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoords, bool hasTexCoords):
-	m_hasTexCoords(hasTexCoords)
-{
-	m_vertexData.push_back(position.x);
-	m_vertexData.push_back(position.y);
-	m_vertexData.push_back(position.z);
-
-	m_vertexData.push_back(normal.x);
-	m_vertexData.push_back(normal.y);
-	m_vertexData.push_back(normal.z);
-
-	if (m_hasTexCoords)
-	{
-		m_vertexData.push_back(texCoords.x);
-		m_vertexData.push_back(texCoords.y);
-	}
-}
-
-std::vector<float> OpenGLVertex::GetVertexData() const
-{
-	return m_vertexData;
-}
-
-bool OpenGLVertex::HasTexCoords() const
-{
-	return m_hasTexCoords;
-}
-
-OpenGLPrimitive::OpenGLPrimitive(const std::vector<OpenGLVertex>& vertices, const std::vector<int>& indices):
+OpenGLPrimitive::OpenGLPrimitive():
 	m_vbo(-1),
 	m_vao(-1),
-	m_ebo(-1),
-	m_vertexCount(vertices.size()),
-	m_indexCount(indices.size())
+	m_ebo(-1)
 {
-	if (vertices.empty())
-	{
-		std::cout << "OpenGLPrimitive: Created with no vertices!\n";
-		return;
-	}
-
-	std::vector<float> vertexData = vertices[0].GetVertexData();
-	size_t vertexMemorySize = vertexData.size() * sizeof(float);
-	for (int i = 1; i < m_vertexCount; i++)
-	{
-		std::vector<float> individualData = vertices[i].GetVertexData();
-		vertexData.insert(vertexData.end(), individualData.begin(), individualData.end());
-	}
-
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
-
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_vertexCount * vertexMemorySize, vertexData.data(), GL_STATIC_DRAW);
-
-	GLsizei vertexStride = vertices[0].HasTexCoords() ? 8 * sizeof(float) : 6 * sizeof(float);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, static_cast<void*>(nullptr));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexStride, (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	if (vertices[0].HasTexCoords())
-	{
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertexStride, (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
-	}
-
-	if (m_indexCount > 0)
-	{
-		glGenBuffers(1, &m_ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * sizeof(int), indices.data(), GL_STATIC_DRAW);
-	}
 }
 
-OpenGLPrimitive::OpenGLPrimitive(const std::vector<float>& vertices, GLsizei vertexCount, bool hasTexCoords,
-                                 const std::vector<int>& indices):
+OpenGLPrimitive::OpenGLPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices,
+                                 const std::vector<VertexAttribute>& vertexAttributeLayout):
 	m_vbo(0),
 	m_vao(0),
 	m_ebo(0),
-	m_vertexCount(vertexCount),
-	m_indexCount(indices.size())
+	m_vertexAttributeLayout(vertexAttributeLayout),
+	m_vertices(vertices),
+	m_indices(indices)
 {
 	if (vertices.empty())
 	{
@@ -92,31 +24,19 @@ OpenGLPrimitive::OpenGLPrimitive(const std::vector<float>& vertices, GLsizei ver
 		return;
 	}
 
-	GLsizei vertexStride = hasTexCoords ? 8 * sizeof(float) : 6 * sizeof(float);
-
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
-
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_vertexCount * vertexStride, vertices.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, static_cast<void*>(nullptr));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexStride, (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	if (hasTexCoords)
+	if (indices.empty())
 	{
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertexStride, (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
+		std::cout << "OpenGLPrimitive: Created with no indices!\n";
+		return;
 	}
 
-	if (m_indexCount > 0)
+	if (!IsVertexAttributeLayoutSupported())
 	{
-		glGenBuffers(1, &m_ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * sizeof(int), indices.data(), GL_STATIC_DRAW);
+		std::cout << "OpenGLPrimitive: Vertex layout is not supported!\n";
+		return;
 	}
+
+	CreateOpenGLObjects();
 }
 
 OpenGLPrimitive::~OpenGLPrimitive()
@@ -135,17 +55,63 @@ OpenGLPrimitive::~OpenGLPrimitive()
 	}
 }
 
+void OpenGLPrimitive::CreateOpenGLObjects()
+{
+	int vertexLength = 0;
+	for (auto vertexAttribute : m_vertexAttributeLayout)
+	{
+		switch (vertexAttribute)
+		{
+		case VertexAttribute::Position:
+		case VertexAttribute::Normal:
+			vertexLength += 3;
+			break;
+		case VertexAttribute::UV:
+			vertexLength += 2;
+			break;
+		}
+	}
+
+	GLsizei vertexStride = vertexLength * sizeof(float);
+
+	glGenVertexArrays(1, &m_vao);
+	glBindVertexArray(m_vao);
+
+	glGenBuffers(1, &m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(float), m_vertices.data(), GL_STATIC_DRAW);
+
+	size_t attributeOffset = 0;
+
+	for (unsigned int i = 0; i < m_vertexAttributeLayout.size(); i++)
+	{
+		glVertexAttribPointer(i, GetSize(m_vertexAttributeLayout[i]), GL_FLOAT, GL_FALSE, vertexStride,
+		                      (void*)attributeOffset);
+		glEnableVertexAttribArray(i);
+	}
+
+	glGenBuffers(1, &m_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(int), m_indices.data(), GL_STATIC_DRAW);
+}
+
 void OpenGLPrimitive::Draw() const
 {
-	if (m_indexCount > 0)
+	glBindVertexArray(m_vao);
+	glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+}
+
+bool OpenGLPrimitive::IsVertexAttributeLayoutSupported() const
+{
+	if (m_vertexAttributeLayout == std::vector{VertexAttribute::Position, VertexAttribute::Normal})
 	{
-		// Uses index buffer
-		glBindVertexArray(m_vao);
-		glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
+		return true;
 	}
-	else
+
+	if (m_vertexAttributeLayout == std::vector{VertexAttribute::Position, VertexAttribute::Normal, VertexAttribute::UV})
 	{
-		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLES, 0, m_vertexCount);
+		return true;
 	}
+
+	return false;
 }

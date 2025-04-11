@@ -1,37 +1,53 @@
 ﻿#pragma once
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 
 #include "glad/glad.h"
 
-class OpenGLVertex
+#include "../nlohmann/json_fwd.hpp"
+
+enum class VertexAttribute : int
 {
-public:
-	OpenGLVertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoords, bool hasTexCoords);
-
-	std::vector<float> GetVertexData() const;
-	bool HasTexCoords() const;
-
-private:
-	std::vector<float> m_vertexData;
-	bool m_hasTexCoords;
+	Position = 0,
+	Normal = 1,
+	UV = 2
 };
 
-// Wrapper class used to store object geometry. Including Position, Normals, and UVs
+inline int GetSize(VertexAttribute vertexAttribute)
+{
+	switch (vertexAttribute)
+	{
+	case VertexAttribute::Position:
+	case VertexAttribute::Normal:
+		return 3;
+	case VertexAttribute::UV:
+		return 2;
+	}
+
+	return 0;
+}
+
+// Wrapper class used to store object geometry
 class OpenGLPrimitive
 {
 public:
-	OpenGLPrimitive(const std::vector<OpenGLVertex>& vertices, const std::vector<int>& indices = {});
-	OpenGLPrimitive(const std::vector<float>& vertices, GLsizei vertexCount, bool hasTexCoords,
-	                const std::vector<int>& indices = {});
+	OpenGLPrimitive();
+	OpenGLPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices,
+	                const std::vector<VertexAttribute>& vertexAttributeLayout);
 	~OpenGLPrimitive();
 
+	void CreateOpenGLObjects();
 	void Draw() const;
 
+	friend void to_json(nlohmann::json& json, const OpenGLPrimitive& openGLPrimitive);
+	friend void from_json(const nlohmann::json& json, OpenGLPrimitive& openGLPrimitive);
+
 private:
+	bool IsVertexAttributeLayoutSupported() const;
+
 	GLuint m_vbo;
 	GLuint m_vao;
 	GLuint m_ebo;
-	GLsizei m_vertexCount;
-	GLsizei m_indexCount;
+
+	std::vector<VertexAttribute> m_vertexAttributeLayout;
+	std::vector<float> m_vertices;
+	std::vector<int> m_indices;
 };

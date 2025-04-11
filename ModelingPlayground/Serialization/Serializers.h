@@ -9,6 +9,7 @@
 #include "ComponentSerializer.h"
 #include "DataBindingSerializer.h"
 #include "GLMSerializers.h"
+#include "PrimitiveSerializers.h"
 #include "SharedPointerSerializer.h"
 
 #include <memory>

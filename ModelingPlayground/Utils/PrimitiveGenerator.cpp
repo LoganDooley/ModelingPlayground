@@ -4,7 +4,7 @@
 #include <glm/geometric.hpp>
 #include <glm/ext/scalar_constants.hpp>
 
-std::pair<std::vector<OpenGLVertex>, std::vector<int>> PrimitiveGenerator::GenerateSphere(int latitudinalResolution,
+std::pair<std::vector<float>, std::vector<int>> PrimitiveGenerator::GenerateSphere(int latitudinalResolution,
 	int longitudinalResolution)
 {
 	if (latitudinalResolution < 3)
@@ -23,7 +23,7 @@ std::pair<std::vector<OpenGLVertex>, std::vector<int>> PrimitiveGenerator::Gener
 		longitudinalResolution = 2;
 	}
 
-	std::vector<OpenGLVertex> vertices;
+	std::vector<float> vertices;
 	std::vector<int> indices;
 
 	// First generate vertices
@@ -38,9 +38,10 @@ std::pair<std::vector<OpenGLVertex>, std::vector<int>> PrimitiveGenerator::Gener
 			float theta = 2 * glm::pi<float>() * (static_cast<float>(longitudeIndex) / static_cast<float>(
 				longitudinalResolution));
 			glm::vec3 position = SphericalToCartesian(phi, theta, 0.5f);
+			glm::vec3 normal = normalize(position);
 			float u = static_cast<float>(latitudeIndex) / static_cast<float>(latitudinalResolution);
 			float v = static_cast<float>(longitudeIndex) / static_cast<float>(longitudinalResolution);
-			vertices.emplace_back(position, normalize(position), glm::vec2(u, v), true);
+			EmplaceVertex(vertices, position, normal, glm::vec2(u, v));
 		}
 	}
 
@@ -91,18 +92,19 @@ std::pair<std::vector<OpenGLVertex>, std::vector<int>> PrimitiveGenerator::Gener
 	return {vertices, indices};
 }
 
-std::vector<OpenGLVertex> PrimitiveGenerator::GenerateCube()
+std::pair<std::vector<float>, std::vector<int>> PrimitiveGenerator::GenerateCube()
 {
-	std::vector<OpenGLVertex> vertices;
+	std::vector<float> vertices;
+	std::vector<int> indices;
 
-	GenerateCubeFace(vertices, glm::vec3(1, 0, 0));
-	GenerateCubeFace(vertices, glm::vec3(-1, 0, 0));
-	GenerateCubeFace(vertices, glm::vec3(0, 1, 0));
-	GenerateCubeFace(vertices, glm::vec3(0, -1, 0));
-	GenerateCubeFace(vertices, glm::vec3(0, 0, 1));
-	GenerateCubeFace(vertices, glm::vec3(0, 0, -1));
+	GenerateCubeFace(vertices, indices, glm::vec3(1, 0, 0));
+	GenerateCubeFace(vertices, indices, glm::vec3(-1, 0, 0));
+	GenerateCubeFace(vertices, indices, glm::vec3(0, 1, 0));
+	GenerateCubeFace(vertices, indices, glm::vec3(0, -1, 0));
+	GenerateCubeFace(vertices, indices, glm::vec3(0, 0, 1));
+	GenerateCubeFace(vertices, indices, glm::vec3(0, 0, -1));
 
-	return vertices;
+	return {vertices, indices};
 }
 
 glm::vec3 PrimitiveGenerator::SphericalToCartesian(float phi, float theta, float r)
@@ -120,7 +122,7 @@ int PrimitiveGenerator::GetSphereVertexIndex(int latitudeIndex, int longitudeInd
 	return longitudeIndex + latitudeIndex * (latitudinalResolution + 1);
 }
 
-void PrimitiveGenerator::GenerateCubeFace(std::vector<OpenGLVertex>& vertices, glm::vec3 faceNormal)
+void PrimitiveGenerator::GenerateCubeFace(std::vector<float>& vertices, std::vector<int>& indices, glm::vec3 faceNormal)
 {
 	int indexA;
 	int indexB;
@@ -172,11 +174,31 @@ void PrimitiveGenerator::GenerateCubeFace(std::vector<OpenGLVertex>& vertices, g
 	v3[indexA] = -0.5;
 	v3[indexB] = 0.5;
 
-	vertices.emplace_back(v0, faceNormal, glm::vec2(1, 0), true);
-	vertices.emplace_back(v3, faceNormal, glm::vec2(1, 1), true);
-	vertices.emplace_back(v1, faceNormal, glm::vec2(0, 0), true);
+	int vertexCount = vertices.size() / 8;
 
-	vertices.emplace_back(v1, faceNormal, glm::vec2(0, 0), true);
-	vertices.emplace_back(v3, faceNormal, glm::vec2(1, 1), true);
-	vertices.emplace_back(v2, faceNormal, glm::vec2(0, 1), true);
+	EmplaceVertex(vertices, v0, faceNormal, glm::vec2(1, 0));
+	EmplaceVertex(vertices, v1, faceNormal, glm::vec2(0, 0));
+	EmplaceVertex(vertices, v2, faceNormal, glm::vec2(0, 1));
+	EmplaceVertex(vertices, v3, faceNormal, glm::vec2(1, 1));
+
+	indices.emplace_back(vertexCount);
+	indices.emplace_back(vertexCount + 3);
+	indices.emplace_back(vertexCount + 1);
+
+	indices.emplace_back(vertexCount + 1);
+	indices.emplace_back(vertexCount + 3);
+	indices.emplace_back(vertexCount + 2);
+}
+
+void PrimitiveGenerator::EmplaceVertex(std::vector<float>& vertices, glm::vec3 position, glm::vec3 normal,
+                                       glm::vec2 uv)
+{
+	vertices.emplace_back(position.x);
+	vertices.emplace_back(position.y);
+	vertices.emplace_back(position.z);
+	vertices.emplace_back(normal.x);
+	vertices.emplace_back(normal.y);
+	vertices.emplace_back(normal.z);
+	vertices.emplace_back(uv.x);
+	vertices.emplace_back(uv.y);
 }
