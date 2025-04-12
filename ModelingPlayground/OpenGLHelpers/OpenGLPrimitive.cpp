@@ -88,6 +88,7 @@ void OpenGLPrimitive::CreateOpenGLObjects()
 		glVertexAttribPointer(i, GetSize(m_vertexAttributeLayout[i]), GL_FLOAT, GL_FALSE, vertexStride,
 		                      (void*)attributeOffset);
 		glEnableVertexAttribArray(i);
+		attributeOffset += GetSize(m_vertexAttributeLayout[i]) * sizeof(float);
 	}
 
 	glGenBuffers(1, &m_ebo);
@@ -103,15 +104,25 @@ void OpenGLPrimitive::Draw() const
 
 bool OpenGLPrimitive::IsVertexAttributeLayoutSupported() const
 {
-	if (m_vertexAttributeLayout == std::vector{VertexAttribute::Position, VertexAttribute::Normal})
+	if (m_vertexAttributeLayout.size() >= 2)
 	{
-		return true;
+		if (m_vertexAttributeLayout[0] != VertexAttribute::Position)
+		{
+			return false;
+		}
+		if (m_vertexAttributeLayout[1] != VertexAttribute::Normal)
+		{
+			return false;
+		}
+		if (m_vertexAttributeLayout.size() >= 3 && m_vertexAttributeLayout[2] != VertexAttribute::UV)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
 	}
 
-	if (m_vertexAttributeLayout == std::vector{VertexAttribute::Position, VertexAttribute::Normal, VertexAttribute::UV})
-	{
-		return true;
-	}
-
-	return false;
+	return true;
 }

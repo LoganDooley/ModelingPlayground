@@ -163,7 +163,9 @@ bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
 	const std::unordered_map<std::string, std::pair<std::shared_ptr<OpenGLTexture>, int>>& openGLTextures =
 		openGLTextureCache->
 		GetAllTextures();
-	if (ImGui::BeginCombo("##texture", currentValue.c_str()))
+	std::string comboBoxName = "##" + std::string(propertyName);
+	std::string addTextureButtonName = "##textureButton" + std::string(propertyName);
+	if (ImGui::BeginCombo(comboBoxName.c_str(), currentValue.c_str()))
 	{
 		for (const auto& [textureKey, texture] : openGLTextures)
 		{
@@ -190,7 +192,7 @@ bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
 		ImGui::EndCombo();
 	}
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-	if (ImGui::ArrowButton("##r", ImGuiDir_Right))
+	if (ImGui::ArrowButton(addTextureButtonName.c_str(), ImGuiDir_Right))
 	{
 		// open file dialog and add texture
 		const char* lFilterPatterns[2] = {"*.png", "*.jpg"};

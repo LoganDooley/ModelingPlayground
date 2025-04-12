@@ -14,6 +14,8 @@
 
 #include <memory>
 
+#include "../OpenGLHelpers/OpenGLTextureCache.h"
+
 // DirectionalLightComponent
 inline void to_json(nlohmann::json& json, const DirectionalLightComponent& directionalLightComponent)
 {
@@ -187,4 +189,30 @@ inline void to_json(nlohmann::json& json, const SceneHierarchy& sceneHierarchy)
 inline void from_json(const nlohmann::json& json, SceneHierarchy& sceneHierarchy)
 {
 	json.at("m_rootSceneNode").get_to(sceneHierarchy.m_rootSceneNode);
+}
+
+// Texture Cache
+
+inline void to_json(nlohmann::json& json, const OpenGLTextureCache& openGLTextureCache)
+{
+	std::vector<std::string> textures;
+	for (const auto& key : openGLTextureCache.m_textureCache | std::views::keys)
+	{
+		textures.emplace_back(key);
+	}
+
+	json = {
+		{"m_textures", textures}
+	};
+}
+
+inline void from_json(const nlohmann::json& json, OpenGLTextureCache& openGLTextureCache)
+{
+	std::vector<std::string> textures;
+	json.at("m_textures").get_to(textures);
+
+	for (const auto& texture : textures)
+	{
+		openGLTextureCache.LoadTexture(texture);
+	}
 }

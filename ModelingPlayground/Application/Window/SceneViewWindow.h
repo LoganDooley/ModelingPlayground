@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <glm/fwd.hpp>
 
 #include "Window.h"
 
