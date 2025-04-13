@@ -21,7 +21,8 @@ public:
 	                                                               const std::shared_ptr<OpenGLRenderer>&
 	                                                               openGLRenderer,
 	                                                               const std::shared_ptr<SceneHierarchy>&
-	                                                               sceneHierarchy);
+	                                                               sceneHierarchy,
+	                                                               std::string sceneNodeName = "");
 	static std::vector<SceneNodeType> GetSceneNodeTypes();
 	static std::string GetSceneNodeTypeName(SceneNodeType sceneNodeType);
 
@@ -32,5 +33,6 @@ private:
 	static void InitializeSpotLightObject(Object& object);
 	static void InitializeTransformObject(Object& object);
 
-	static std::string GetDefaultSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent);
+	static std::string GetSceneNodeName(SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent,
+	                                    std::string desiredSceneNodeName = "");
 };

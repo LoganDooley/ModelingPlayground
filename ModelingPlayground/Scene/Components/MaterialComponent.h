@@ -22,14 +22,17 @@ public:
 	bool GetUseColorTexture() const;
 	glm::vec4 GetMaterialColor() const;
 	GLuint64 GetMaterialTexture() const;
+	void SetMaterialTexture(const std::string& materialTexture, bool setUseColorTexture = true);
 
 	bool GetUseMetallicMap() const;
 	float GetMetallic() const;
 	GLuint64 GetMetallicMap() const;
+	void SetMetallicMap(const std::string& metallicMap, bool setUseMetallicMap = true);
 
 	bool GetUseRoughnessMap() const;
 	float GetRoughness() const;
 	GLuint64 GetRoughnessMap() const;
+	void SetRoughnessMap(const std::string& roughnessMap, bool setUseRoughnessMap = true);
 
 	friend void to_json(nlohmann::json& json, const MaterialComponent& materialComponent);
 	friend void from_json(const nlohmann::json& json, MaterialComponent& materialComponent);

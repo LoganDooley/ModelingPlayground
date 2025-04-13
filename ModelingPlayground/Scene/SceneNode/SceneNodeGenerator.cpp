@@ -16,9 +16,10 @@
 std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
 	SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent,
 	const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
-	const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
+	const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
+	std::string sceneNodeName)
 {
-	auto sceneNode = std::make_shared<SceneNode>(GetDefaultSceneNodeName(sceneNodeType, parent));
+	auto sceneNode = std::make_shared<SceneNode>(GetSceneNodeName(sceneNodeType, parent));
 	switch (sceneNodeType)
 	{
 	case SceneNodeType::Primitive:
@@ -111,28 +112,33 @@ void SceneNodeGenerator::InitializeTransformObject(Object& object)
 	object.AddComponent<TransformComponent>();
 }
 
-std::string SceneNodeGenerator::GetDefaultSceneNodeName(SceneNodeType sceneNodeType,
-                                                        const std::shared_ptr<SceneNode>& parent)
+std::string SceneNodeGenerator::GetSceneNodeName(SceneNodeType sceneNodeType,
+                                                 const std::shared_ptr<SceneNode>& parent,
+                                                 std::string desiredSceneNodeName)
 {
-	std::string baseName;
-	switch (sceneNodeType)
+	std::string baseName = desiredSceneNodeName;
+	if (desiredSceneNodeName.empty())
 	{
-	case SceneNodeType::Primitive:
-		baseName = "Primitive";
-		break;
-	case SceneNodeType::DirectionalLight:
-		baseName = "DirectionalLight";
-		break;
-	case SceneNodeType::PointLight:
-		baseName = "PointLight";
-		break;
-	case SceneNodeType::SpotLight:
-		baseName = "SpotLight";
-		break;
-	case SceneNodeType::Transform:
-		baseName = "Transform";
-		break;
+		switch (sceneNodeType)
+		{
+		case SceneNodeType::Primitive:
+			baseName = "Primitive";
+			break;
+		case SceneNodeType::DirectionalLight:
+			baseName = "DirectionalLight";
+			break;
+		case SceneNodeType::PointLight:
+			baseName = "PointLight";
+			break;
+		case SceneNodeType::SpotLight:
+			baseName = "SpotLight";
+			break;
+		case SceneNodeType::Transform:
+			baseName = "Transform";
+			break;
+		}
 	}
+
 	std::unordered_set<std::string> takenNames;
 	for (const std::shared_ptr<SceneNode>& child : parent->GetChildren())
 	{

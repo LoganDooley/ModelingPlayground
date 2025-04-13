@@ -103,6 +103,11 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 	newSceneHierarchy.SetRootSceneNode(rootSceneNode);
 	*sceneHierarchy = std::move(newSceneHierarchy);
 
+	// Process materials
+	std::size_t found = std::string(sceneFilePath).find_last_of("/\\");
+	std::string sceneFileDirectory = std::string(sceneFilePath).substr(0, found + 1);
+	ProcessMaterials(scene, openGLRenderer, sceneFileDirectory);
+
 	// Process nodes for primitives
 	std::stack<std::tuple<aiNode*, std::shared_ptr<SceneNode>, std::string>> nodeStack;
 	nodeStack.push({scene->mRootNode, sceneHierarchy->GetRootSceneNode(), sceneFilePath});
@@ -113,7 +118,8 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 		std::string primitiveNameBase = std::get<2>(nodeStack.top());
 		nodeStack.pop();
 
-		ProcessNodeForPrimitives(nodeToProcess, scene, parent, primitiveNameBase, openGLRenderer, sceneHierarchy);
+		ProcessNodeForPrimitives(nodeToProcess, scene, parent, primitiveNameBase, openGLRenderer, sceneHierarchy,
+		                         sceneFileDirectory);
 
 		std::shared_ptr<SceneNode> newParent = parent->HasChildren() ? parent->GetChildren().front() : parent;
 		for (unsigned int i = 0; i < nodeToProcess->mNumChildren; i++)
@@ -162,7 +168,8 @@ void SceneLoader::ProcessNodeForPrimitives(aiNode* node, const aiScene* scene,
                                            const std::shared_ptr<SceneNode>& parentSceneNode,
                                            const std::string& primitiveNameBase,
                                            const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
-                                           const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
+                                           const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
+                                           const std::string& sceneFileDirectory)
 {
 	// Create transform node
 	aiVector3t<float> position;
@@ -172,14 +179,15 @@ void SceneLoader::ProcessNodeForPrimitives(aiNode* node, const aiScene* scene,
 
 	AddPrimitiveNodes(node, scene, glm::vec3(position.x, position.y, position.z),
 	                  degrees(glm::vec3(rotation.x, rotation.y, rotation.z)), glm::vec3(scale.x, scale.y, scale.z),
-	                  parentSceneNode, primitiveNameBase, openGLRenderer, sceneHierarchy);
+	                  parentSceneNode, primitiveNameBase, openGLRenderer, sceneHierarchy, sceneFileDirectory);
 }
 
 void SceneLoader::AddPrimitiveNodes(aiNode* node, const aiScene* scene, glm::vec3 position, glm::vec3 rotation,
                                     glm::vec3 scale, const std::shared_ptr<SceneNode>& parentSceneNode,
                                     const std::string& primitiveNameBase,
                                     const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
-                                    const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
+                                    const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
+                                    const std::string& sceneFileDirectory)
 {
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
@@ -203,7 +211,7 @@ void SceneLoader::AddPrimitiveNodes(aiNode* node, const aiScene* scene, glm::vec
 		                                                          openGLPrimitive);
 
 		std::shared_ptr<SceneNode> childSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
-			SceneNodeType::Primitive, parentSceneNode, openGLRenderer, sceneHierarchy);
+			SceneNodeType::Primitive, parentSceneNode, openGLRenderer, sceneHierarchy, mesh->mName.C_Str());
 
 		// Set up primitive component
 		std::shared_ptr<PrimitiveComponent> primitiveComponent = childSceneNode->GetObject().GetFirstComponentOfType
@@ -217,6 +225,30 @@ void SceneLoader::AddPrimitiveNodes(aiNode* node, const aiScene* scene, glm::vec
 		transformComponent->GetRotationDataBinding().SetAndNotify(
 			degrees(glm::vec3(rotation.x, rotation.y, rotation.z)));
 		transformComponent->GetScaleDataBinding().SetAndNotify(glm::vec3(scale.x, scale.y, scale.z));
+
+		// Set up material component
+		aiMaterial* meshMaterial = scene->mMaterials[mesh->mMaterialIndex];
+		if (meshMaterial->GetTextureCount(aiTextureType_BASE_COLOR) > 0)
+		{
+			aiString baseColorMaterial;
+			meshMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &baseColorMaterial);
+			childSceneNode->GetObject().GetFirstComponentOfType<MaterialComponent>()->SetMaterialTexture(
+				sceneFileDirectory + std::string(baseColorMaterial.C_Str()));
+		}
+		if (meshMaterial->GetTextureCount(aiTextureType_METALNESS) > 0)
+		{
+			aiString metallicMap;
+			meshMaterial->GetTexture(aiTextureType_METALNESS, 0, &metallicMap);
+			childSceneNode->GetObject().GetFirstComponentOfType<MaterialComponent>()->SetMetallicMap(
+				sceneFileDirectory + std::string(metallicMap.C_Str()));
+		}
+		if (meshMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS) > 0)
+		{
+			aiString roughnessMap;
+			meshMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughnessMap);
+			childSceneNode->GetObject().GetFirstComponentOfType<MaterialComponent>()->SetRoughnessMap(
+				sceneFileDirectory + std::string(roughnessMap.C_Str()));
+		}
 	}
 }
 
@@ -312,6 +344,36 @@ void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<Open
 		default:
 			std::cout << "ModelLoader|ProcessLights: Model contains unsupported light type, skipping\n";
 			break;
+		}
+	}
+}
+
+void SceneLoader::ProcessMaterials(const aiScene* scene, const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+                                   const std::string& sceneFileDirectory)
+{
+	for (unsigned int i = 0; i < scene->mNumMaterials; i++)
+	{
+		aiMaterial* material = scene->mMaterials[i];
+		for (unsigned int j = 0; j < material->GetTextureCount(aiTextureType_BASE_COLOR); j++)
+		{
+			aiString relativePath;
+			material->GetTexture(aiTextureType_BASE_COLOR, j, &relativePath);
+			std::string filePath = sceneFileDirectory + std::string(relativePath.C_Str());
+			openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
+		}
+		for (unsigned int j = 0; j < material->GetTextureCount(aiTextureType_METALNESS); j++)
+		{
+			aiString relativePath;
+			material->GetTexture(aiTextureType_METALNESS, j, &relativePath);
+			std::string filePath = sceneFileDirectory + std::string(relativePath.C_Str());
+			openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
+		}
+		for (unsigned int j = 0; j < material->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS); j++)
+		{
+			aiString relativePath;
+			material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, j, &relativePath);
+			std::string filePath = sceneFileDirectory + std::string(relativePath.C_Str());
+			openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
 		}
 	}
 }

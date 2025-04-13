@@ -148,6 +148,17 @@ GLuint64 MaterialComponent::GetMaterialTexture() const
 	return m_openGLRenderer->GetOpenGLTextureCache()->GetTexture(m_materialColorTexturePath)->GetTextureHandle();
 }
 
+void MaterialComponent::SetMaterialTexture(const std::string& materialTexture, bool setUseColorTexture)
+{
+	m_materialColorTexturePath = materialTexture;
+
+	if (setUseColorTexture)
+	{
+		m_useColorTexture = true;
+		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_materialColorTexturePath);
+	}
+}
+
 bool MaterialComponent::GetUseMetallicMap() const
 {
 	return m_useMetallicMap && !m_metallicMapPath.empty();
@@ -163,6 +174,17 @@ GLuint64 MaterialComponent::GetMetallicMap() const
 	return m_openGLRenderer->GetOpenGLTextureCache()->GetTexture(m_metallicMapPath)->GetTextureHandle();
 }
 
+void MaterialComponent::SetMetallicMap(const std::string& metallicMap, bool setUseMetallicMap)
+{
+	m_metallicMapPath = metallicMap;
+
+	if (setUseMetallicMap)
+	{
+		m_useMetallicMap = true;
+		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_metallicMapPath);
+	}
+}
+
 bool MaterialComponent::GetUseRoughnessMap() const
 {
 	return m_useRoughnessMap && !m_roughnessMapPath.empty();
@@ -176,4 +198,15 @@ float MaterialComponent::GetRoughness() const
 GLuint64 MaterialComponent::GetRoughnessMap() const
 {
 	return m_openGLRenderer->GetOpenGLTextureCache()->GetTexture(m_roughnessMapPath)->GetTextureHandle();
+}
+
+void MaterialComponent::SetRoughnessMap(const std::string& roughnessMap, bool setUseRoughnessMap)
+{
+	m_roughnessMapPath = roughnessMap;
+
+	if (setUseRoughnessMap)
+	{
+		m_useRoughnessMap = true;
+		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_roughnessMapPath);
+	}
 }
