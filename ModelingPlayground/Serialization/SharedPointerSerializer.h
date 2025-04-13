@@ -32,4 +32,33 @@ NLOHMANN_JSON_NAMESPACE_BEGIN
 		}
 	};
 
+	// Unique Pointers
+	template <typename T>
+	struct adl_serializer<std::unique_ptr<T>>
+	{
+		static void to_json(json& json, const std::unique_ptr<T>& pointer)
+		{
+			if (pointer)
+			{
+				json = *pointer;
+			}
+			else
+			{
+				json = nullptr;
+			}
+		}
+
+		static void from_json(const json& json, std::unique_ptr<T>& pointer)
+		{
+			if (json.is_null())
+			{
+				pointer = nullptr;
+			}
+			else
+			{
+				pointer.reset(new T(json.get<T>()));
+			}
+		}
+	};
+
 NLOHMANN_JSON_NAMESPACE_END

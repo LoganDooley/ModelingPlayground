@@ -6,6 +6,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
+#include "OpenGLPrimitiveManager.h"
 #include "OpenGLTextureCache.h"
 #include "../../Scene/Object.h"
 #include "../../Scene/Components/MaterialComponent.h"
@@ -19,9 +20,9 @@ OpenGLRenderer::OpenGLRenderer():
 	m_depthShader(std::make_shared<OpenGLShader>()),
 	m_omnidirectionalDepthShader(std::make_shared<OpenGLShader>()),
 	m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
-	m_openGLPrimitiveManager(std::make_shared<OpenGLPrimitiveManager>()),
+	m_openGLPrimitiveManager(std::make_unique<OpenGLPrimitiveManager>()),
 	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>()),
-	m_openGLTextureCache(std::make_shared<OpenGLTextureCache>())
+	m_openGLTextureCache(std::make_unique<OpenGLTextureCache>())
 {
 }
 
@@ -153,6 +154,16 @@ void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHier
 	});
 }
 
+void OpenGLRenderer::ResetOpenGLPrimitiveManager(OpenGLPrimitiveManager* openGLPrimitiveManager)
+{
+	m_openGLPrimitiveManager.reset(openGLPrimitiveManager);
+}
+
+void OpenGLRenderer::ResetOpenGLTextureCache(OpenGLTextureCache* openGLTextureCache)
+{
+	m_openGLTextureCache.reset(openGLTextureCache);
+}
+
 void OpenGLRenderer::Render() const
 {
 	m_openGLLightContainer->UpdateDirtyShadowMaps(this);
@@ -248,12 +259,12 @@ void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& a
 	}
 }
 
-std::shared_ptr<OpenGLPrimitiveManager> OpenGLRenderer::GetOpenGLPrimitiveManager() const
+const std::unique_ptr<OpenGLPrimitiveManager>& OpenGLRenderer::GetOpenGLPrimitiveManager() const
 {
 	return m_openGLPrimitiveManager;
 }
 
-std::shared_ptr<OpenGLTextureCache> OpenGLRenderer::GetOpenGLTextureCache() const
+const std::unique_ptr<OpenGLTextureCache>& OpenGLRenderer::GetOpenGLTextureCache() const
 {
 	return m_openGLTextureCache;
 }

@@ -22,6 +22,13 @@ void OpenGLLightContainer::Initialize(std::shared_ptr<OpenGLShader> defaultShade
 	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
 }
 
+void OpenGLLightContainer::Reset()
+{
+	m_lights.clear();
+
+	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
+}
+
 void OpenGLLightContainer::SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
 {
 	m_lights.clear();
@@ -53,13 +60,6 @@ bool OpenGLLightContainer::TryAddLight(const std::shared_ptr<SceneNode>& lightSc
 		return AddLightInternal(lightSceneNode, lightType);
 	}
 	return false;
-}
-
-void OpenGLLightContainer::ClearLights()
-{
-	m_lights.clear();
-
-	m_defaultShader->SetUniformBufferObjectSubData(m_lightsBlockName, m_lightCountOffset, 0);
 }
 
 void OpenGLLightContainer::SetAllShadowMapsDirty() const

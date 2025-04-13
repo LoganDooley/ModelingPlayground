@@ -18,6 +18,8 @@ inline void from_json(const nlohmann::json& json, OpenGLPrimitive& openGLPrimiti
 	json.at("m_vertexAttributeLayout").get_to(openGLPrimitive.m_vertexAttributeLayout);
 	json.at("m_vertices").get_to(openGLPrimitive.m_vertices);
 	json.at("m_indices").get_to(openGLPrimitive.m_indices);
+
+	openGLPrimitive.CreateOpenGLObjects();
 }
 
 inline void to_json(nlohmann::json& json, const OpenGLPrimitiveManager& openGLPrimitiveManager)

@@ -1,10 +1,11 @@
 ﻿#pragma once
 
 #include "OpenGLLightContainer.h"
-#include "OpenGLPrimitiveManager.h"
 #include "../Scene/SceneHierarchy.h"
 
-class OpenGLTextureCache;
+#include "../OpenGLHelpers/OpenGLTextureCache.h"
+#include "../OpenGLHelpers/OpenGLPrimitiveManager.h"
+
 class MaterialComponent;
 class PrimitiveComponent;
 class TransformComponent;
@@ -19,14 +20,17 @@ public:
 	void Initialize();
 
 	void SetCamera(std::shared_ptr<SceneViewCamera> camera);
+
 	void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
+	void ResetOpenGLPrimitiveManager(OpenGLPrimitiveManager* openGLPrimitiveManager);
+	void ResetOpenGLTextureCache(OpenGLTextureCache* openGLTextureCache);
 
 	void Render() const;
 
 	void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const;
 	void RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const;
-	std::shared_ptr<OpenGLPrimitiveManager> GetOpenGLPrimitiveManager() const;
-	std::shared_ptr<OpenGLTextureCache> GetOpenGLTextureCache() const;
+	const std::unique_ptr<OpenGLPrimitiveManager>& GetOpenGLPrimitiveManager() const;
+	const std::unique_ptr<OpenGLTextureCache>& GetOpenGLTextureCache() const;
 
 private:
 	void ClearCameraFramebuffer() const;
@@ -46,7 +50,8 @@ private:
 	std::shared_ptr<OpenGLShader> m_omnidirectionalDepthShader;
 	std::shared_ptr<SceneViewCamera> m_camera;
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
-	std::shared_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
+
+	std::unique_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
 	std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
-	std::shared_ptr<OpenGLTextureCache> m_openGLTextureCache;
+	std::unique_ptr<OpenGLTextureCache> m_openGLTextureCache;
 };

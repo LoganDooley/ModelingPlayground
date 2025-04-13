@@ -95,8 +95,8 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
 void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
 {
 	object.AddComponent<TransformComponent>();
-	object.AddComponent<PrimitiveComponent>(m_openGLRenderer->GetOpenGLPrimitiveManager());
-	object.AddComponent<MaterialComponent>(m_openGLRenderer->GetOpenGLTextureCache());
+	object.AddComponent<PrimitiveComponent>(m_openGLRenderer);
+	object.AddComponent<MaterialComponent>(m_openGLRenderer);
 }
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)

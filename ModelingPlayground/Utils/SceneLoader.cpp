@@ -15,6 +15,12 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 		auto rootSceneNode = std::make_shared<SceneNode>("World");
 		rootSceneNode->GetObject().AddComponent<OpenGLSettingsComponent>();
 		sceneHierarchy->SetRootSceneNode(rootSceneNode);
+
+		// Update opengl helpers
+		auto openGLPrimitiveManager = new OpenGLPrimitiveManager();
+		openGLPrimitiveManager->GeneratePrimitives(10, 10);
+		openGLRenderer->ResetOpenGLPrimitiveManager(openGLPrimitiveManager);
+		openGLRenderer->ResetOpenGLTextureCache(new OpenGLTextureCache());
 		openGLRenderer->SetSceneHierarchy(sceneHierarchy);
 		return true;
 	}
@@ -28,9 +34,19 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 	}
 
 	nlohmann::json sceneJson = nlohmann::json::parse(file);
-	SceneHierarchy newSceneHierarchy = sceneJson;
+	SceneHierarchy newSceneHierarchy;
+	OpenGLPrimitiveManager* newOpenGLPrimitiveManager = new OpenGLPrimitiveManager();
+	OpenGLTextureCache* newOpenGLTextureCache = new OpenGLTextureCache();
+	sceneJson.at("SceneHierarchy").get_to(newSceneHierarchy);
+	sceneJson.at("OpenGLPrimitiveManager").get_to(*newOpenGLPrimitiveManager);
+	sceneJson.at("OpenGLTextureCache").get_to(*newOpenGLTextureCache);
 	*sceneHierarchy = std::move(newSceneHierarchy);
+
+	// Update opengl helpers
+	openGLRenderer->ResetOpenGLPrimitiveManager(newOpenGLPrimitiveManager);
+	openGLRenderer->ResetOpenGLTextureCache(newOpenGLTextureCache);
 	openGLRenderer->SetSceneHierarchy(sceneHierarchy);
+
 	sceneHierarchy->BreadthFirstProcessAllSceneNodes([openGLRenderer](std::shared_ptr<SceneNode> node)
 	{
 		if (std::shared_ptr<TransformComponent> transformComponent = node->GetObject().GetFirstComponentOfType<
@@ -41,19 +57,20 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 		if (std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
 			PrimitiveComponent>())
 		{
-			primitiveComponent->SetPrimitiveManager(openGLRenderer->GetOpenGLPrimitiveManager());
+			primitiveComponent->SetOpenGLRenderer(openGLRenderer);
 		}
 		if (std::shared_ptr<MaterialComponent> materialComponent = node->GetObject().GetFirstComponentOfType<
 			MaterialComponent>())
 		{
-			materialComponent->SetTextureCache(openGLRenderer->GetOpenGLTextureCache());
+			materialComponent->SetOpenGLRenderer(openGLRenderer);
 		}
 	});
 	sceneHierarchy->SetFilePath(sceneFilePath);
 	return true;
 }
 
-bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy, const char* sceneFilePath)
+bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
+                            const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const char* sceneFilePath)
 {
 	if (sceneFilePath == nullptr)
 	{
@@ -61,7 +78,12 @@ bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 		return false;
 	}
 
-	nlohmann::json sceneJson = sceneHierarchy;
+	nlohmann::json sceneJson = {
+		{"SceneHierarchy", sceneHierarchy},
+		{"OpenGLPrimitiveManager", openGLRenderer->GetOpenGLPrimitiveManager()},
+		{"OpenGLTextureCache", openGLRenderer->GetOpenGLTextureCache()}
+	};
+
 	std::ofstream sceneFile(sceneFilePath);
 	if (sceneFile.fail())
 	{

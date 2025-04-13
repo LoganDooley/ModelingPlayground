@@ -21,10 +21,10 @@ public:
 	~OpenGLLightContainer() = default;
 
 	void Initialize(std::shared_ptr<OpenGLShader> defaultShader);
+	void Reset();
 	void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
 
 	bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);
-	void ClearLights();
 
 	void SetAllShadowMapsDirty() const;
 	void UpdateDirtyShadowMaps(const OpenGLRenderer* openGLRenderer) const;

@@ -148,7 +148,7 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 					}
 					if (ImGui::MenuItem("Save", nullptr, false, !existingFilePath.empty()))
 					{
-						SceneLoader::SaveScene(m_sceneHierarchy, existingFilePath.c_str());
+						SceneLoader::SaveScene(m_sceneHierarchy, m_openGLRenderer, existingFilePath.c_str());
 					}
 					if (ImGui::MenuItem("Save as..."))
 					{
@@ -159,7 +159,7 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							lFilterPatterns,
 							"json files"
 						);
-						SceneLoader::SaveScene(m_sceneHierarchy, filePath);
+						SceneLoader::SaveScene(m_sceneHierarchy, m_openGLRenderer, filePath);
 					}
 					ImGui::EndMenu();
 				}

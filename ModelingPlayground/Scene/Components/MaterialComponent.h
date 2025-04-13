@@ -6,15 +6,16 @@
 #include "../../nlohmann/json_fwd.hpp"
 #include "glad/glad.h"
 
+class OpenGLRenderer;
 class OpenGLTextureCache;
 
 class MaterialComponent : public Component
 {
 public:
 	MaterialComponent();
-	MaterialComponent(std::shared_ptr<OpenGLTextureCache> openGLTextureCache);
+	MaterialComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer);
 
-	void SetTextureCache(std::shared_ptr<OpenGLTextureCache> openGLTextureCache);
+	void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
 
 	void RenderInspector() override;
 
@@ -34,7 +35,7 @@ public:
 	friend void from_json(const nlohmann::json& json, MaterialComponent& materialComponent);
 
 private:
-	std::shared_ptr<OpenGLTextureCache> m_openGLTextureCache;
+	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
 
 	bool m_useColorTexture;
 	glm::vec4 m_materialColor;
