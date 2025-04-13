@@ -146,6 +146,22 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 						);
 						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer, filePath);
 					}
+					if (ImGui::MenuItem("Open External Scene"))
+					{
+						const char* externalSceneFilterPatterns[8] = {
+							"*.gltf", "*.fbx", "*.3ds", "*.ase", "*.ply", "*.obj", "*.dxf", "*.x"
+						};
+						const char* filePath = tinyfd_openFileDialog(
+							"Select a scene to open",
+							"",
+							8,
+							externalSceneFilterPatterns,
+							"files",
+							0
+						);
+						SceneLoader::LoadExternalScene(m_sceneHierarchy, m_openGLRenderer,
+						                               filePath);
+					}
 					if (ImGui::MenuItem("Save", nullptr, false, !existingFilePath.empty()))
 					{
 						SceneLoader::SaveScene(m_sceneHierarchy, m_openGLRenderer, existingFilePath.c_str());

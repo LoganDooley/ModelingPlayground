@@ -177,7 +177,6 @@
             <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
             <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
         </ClCompile>
-        <ClCompile Include="Utils\ModelLoader.cpp"/>
         <ClCompile Include="Utils\PrimitiveGenerator.cpp"/>
         <ClCompile Include="Utils\PropertyDrawer.cpp"/>
         <ClCompile Include="Utils\SceneLoader.cpp"/>
@@ -246,7 +245,6 @@
         <ClInclude Include="Serialization\PrimitiveSerializers.h"/>
         <ClInclude Include="Utils\LazyValue.h"/>
         <ClInclude Include="Utils\EnumLabels\EnumLabel.h"/>
-        <ClInclude Include="Utils\ModelLoader.h"/>
         <ClInclude Include="Utils\PrimitiveGenerator.h"/>
         <ClInclude Include="Utils\PropertyDrawer.h"/>
         <ClInclude Include="Utils\SceneLoader.h"/>

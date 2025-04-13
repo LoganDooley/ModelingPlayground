@@ -13,28 +13,16 @@
 #include "../Components/TransformComponent.h"
 #include "../SceneNode/SceneNode.h"
 
-SceneNodeGenerator::SceneNodeGenerator()
-{
-}
-
-void SceneNodeGenerator::SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer)
-{
-	m_openGLRenderer = openGLRenderer;
-}
-
-void SceneNodeGenerator::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy)
-{
-	m_sceneHierarchy = sceneHierarchy;
-}
-
 std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
-	SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent)
+	SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent,
+	const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+	const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
 {
 	auto sceneNode = std::make_shared<SceneNode>(GetDefaultSceneNodeName(sceneNodeType, parent));
 	switch (sceneNodeType)
 	{
 	case SceneNodeType::Primitive:
-		InitializePrimitiveObject(sceneNode->GetObject());
+		InitializePrimitiveObject(sceneNode->GetObject(), openGLRenderer);
 		break;
 	case SceneNodeType::DirectionalLight:
 		InitializeDirectionalLightObject(sceneNode->GetObject());
@@ -58,7 +46,7 @@ std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
 
 	sceneNode->RegisterTransformModelMatrix();
 
-	m_sceneHierarchy->OnSceneNodeAdded(sceneNode);
+	sceneHierarchy->OnSceneNodeAdded(sceneNode);
 
 	return sceneNode;
 }
@@ -92,11 +80,12 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
 	return "Unknown Type";
 }
 
-void SceneNodeGenerator::InitializePrimitiveObject(Object& object)
+void SceneNodeGenerator::InitializePrimitiveObject(Object& object,
+                                                   const std::shared_ptr<OpenGLRenderer>& openGLRenderer)
 {
 	object.AddComponent<TransformComponent>();
-	object.AddComponent<PrimitiveComponent>(m_openGLRenderer);
-	object.AddComponent<MaterialComponent>(m_openGLRenderer);
+	object.AddComponent<PrimitiveComponent>(openGLRenderer);
+	object.AddComponent<MaterialComponent>(openGLRenderer);
 }
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)

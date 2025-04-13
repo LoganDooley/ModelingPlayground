@@ -1,19 +1,14 @@
 #include "HierarchyWindow.h"
 #include "imgui.h"
 #include "SceneViewWindow.h"
-#include "tinyfiledialogs.h"
 #include "../../OpenGLHelpers/OpenGLRenderer.h"
 #include "../../Scene/SceneHierarchy.h"
 #include "../../Scene/SceneNode/SceneNodeGenerator.h"
-#include "../../Utils/ModelLoader.h"
 
 HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLRenderer> openGLRenderer):
 	m_sceneHierarchy(scene),
-	m_sceneNodeGenerator(std::make_shared<SceneNodeGenerator>()),
 	m_openGLRenderer(openGLRenderer)
 {
-	m_sceneNodeGenerator->SetOpenGLRenderer(m_openGLRenderer);
-	m_sceneNodeGenerator->SetSceneHierarchy(m_sceneHierarchy);
 }
 
 void HierarchyWindow::Render()
@@ -76,27 +71,9 @@ void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node)
 			{
 				if (ImGui::MenuItem(SceneNodeGenerator::GetSceneNodeTypeName(sceneNodeType).c_str()))
 				{
-					std::shared_ptr<SceneNode> newChildSceneNode = m_sceneNodeGenerator->CreateSceneNodeAndAddAsChild(
-						sceneNodeType, node);
+					std::shared_ptr<SceneNode> newChildSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
+						sceneNodeType, node, m_openGLRenderer, m_sceneHierarchy);
 					m_sceneHierarchy->OnSceneNodeAdded(newChildSceneNode);
-				}
-			}
-			if (ImGui::MenuItem("Custom Scene File"))
-			{
-				const char* lFilterPatterns[8] = {
-					"*.gltf", "*.fbx", "*.3ds", "*.ase", "*.ply", "*.obj", "*.dxf", "*.x"
-				};
-				const char* filePath = tinyfd_openFileDialog(
-					"Select a scene file to open",
-					"",
-					8,
-					lFilterPatterns,
-					"files",
-					0
-				);
-				if (filePath)
-				{
-					ModelLoader::LoadModel(node, filePath, m_openGLRenderer, m_sceneNodeGenerator);
 				}
 			}
 			ImGui::EndMenu();

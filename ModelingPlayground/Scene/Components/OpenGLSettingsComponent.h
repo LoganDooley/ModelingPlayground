@@ -14,6 +14,7 @@ public:
 	void RenderInspector() override;
 
 	glm::vec4 GetClearColor() const;
+	void SetAmbientLight(glm::vec3 ambientLight);
 	glm::vec3 GetAmbientLight() const;
 
 	friend void to_json(nlohmann::json& json, const OpenGLSettingsComponent& openGLSettingsComponent);

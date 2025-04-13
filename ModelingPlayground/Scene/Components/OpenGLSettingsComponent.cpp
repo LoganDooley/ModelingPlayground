@@ -29,6 +29,11 @@ glm::vec4 OpenGLSettingsComponent::GetClearColor() const
 	return m_clearColor;
 }
 
+void OpenGLSettingsComponent::SetAmbientLight(glm::vec3 ambientLight)
+{
+	m_ambientLight = ambientLight;
+}
+
 glm::vec3 OpenGLSettingsComponent::GetAmbientLight() const
 {
 	return m_ambientLight;
