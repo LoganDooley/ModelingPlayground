@@ -9,8 +9,12 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <iostream>
 #include <ranges>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 #include "../Libraries/tinyobjloader/tiny_obj_loader.h"
+#include "../Utils/SceneLoader.h"
 
 OpenGLPrimitiveManager::OpenGLPrimitiveManager():
 	m_primitives({})
@@ -59,6 +63,51 @@ void OpenGLPrimitiveManager::AddPrimitive(const std::string& primitiveName, std:
 		return;
 	}
 	m_primitives[primitiveName] = primitive;
+}
+
+void OpenGLPrimitiveManager::AddPrimitive(const std::string& filePath)
+{
+	if (filePath.empty())
+	{
+		std::cout << "OpenGLPrimitiveManager|AddPrimitive: No file path specified.\n";
+		return;
+	}
+
+	if (m_primitives.contains(filePath))
+	{
+		std::cout << "OpenGLPrimitiveManager|AddPrimitive: " << filePath << " already exists!\n";
+		return;
+	}
+
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(
+		filePath, aiProcess_OptimizeMeshes | aiProcess_Triangulate | aiProcess_FlipUVs);
+
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	{
+		std::cerr << "OpenGLPrimitiveManager|AddPrimitive: ERROR::ASSIMP::" << importer.GetErrorString() << "\n";
+		return;
+	}
+
+	if (!scene->HasMeshes())
+	{
+		std::cout << "OpenGLPrimitiveManager|AddPrimitive: Selected file has no meshes!\n";
+		return;
+	}
+
+	aiMesh* mesh = scene->mMeshes[0];
+	std::vector<float> vertices;
+	std::vector<int> indices;
+	bool hasTexCoords;
+	SceneLoader::ProcessMesh(mesh, vertices, indices, hasTexCoords);
+
+	std::vector<VertexAttribute> vertexAttributes = {VertexAttribute::Position, VertexAttribute::Normal};
+	if (hasTexCoords)
+	{
+		vertexAttributes.push_back(VertexAttribute::UV);
+	}
+
+	m_primitives[filePath] = std::make_shared<OpenGLPrimitive>(vertices, indices, vertexAttributes);
 }
 
 void OpenGLPrimitiveManager::DrawPrimitive(const std::string& primitiveName)

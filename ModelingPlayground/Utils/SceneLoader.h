@@ -19,6 +19,8 @@ public:
 	static bool SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
 	                      const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const char* sceneFilePath);
 
+	static void ProcessMesh(aiMesh* mesh, std::vector<float>& vertices, std::vector<int>& indices, bool& hasTexCoords);
+
 private:
 	static void ProcessNodeForPrimitives(aiNode* node, const aiScene* scene,
 	                                     const std::shared_ptr<SceneNode>& parentSceneNode,
@@ -33,7 +35,6 @@ private:
 	                              const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
 	                              const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
 	                              const std::string& sceneFileDirectory);
-	static void ProcessMesh(aiMesh* mesh, std::vector<float>& vertices, std::vector<int>& indices, bool& hasTexCoords);
 	static void ProcessLights(const aiScene* scene,
 	                          const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
 	                          const std::shared_ptr<SceneHierarchy>& sceneHierarchy);

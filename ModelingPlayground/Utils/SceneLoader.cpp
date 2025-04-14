@@ -95,6 +95,7 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 	}
 
 	openGLRenderer->ResetOpenGLPrimitiveManager(new OpenGLPrimitiveManager());
+	openGLRenderer->GetOpenGLPrimitiveManager()->GeneratePrimitives(10, 10);
 	openGLRenderer->ResetOpenGLTextureCache(new OpenGLTextureCache());
 
 	SceneHierarchy newSceneHierarchy;

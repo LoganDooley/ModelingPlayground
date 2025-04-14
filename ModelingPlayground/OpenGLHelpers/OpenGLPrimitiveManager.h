@@ -15,6 +15,7 @@ public:
 
 	void GeneratePrimitives(int sphereLatitudinalResolution, int sphereLongitudinalResolution);
 	void AddPrimitive(const std::string& primitiveName, std::shared_ptr<OpenGLPrimitive> primitive);
+	void AddPrimitive(const std::string& filePath);
 
 	void DrawPrimitive(const std::string& primitiveName);
 	std::vector<std::string> GetPrimitiveNames() const;

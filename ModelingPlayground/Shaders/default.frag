@@ -41,7 +41,7 @@ layout (std140, binding = 0) uniform LightsBlock
 uniform vec3 ambientColor;
 
 uniform bool useMaterialTexture;
-uniform vec4 materialColor;
+uniform vec4 materialColor = vec4(0, 0, 0, 1);
 uniform sampler2D materialTexture;
 
 uniform bool useRoughnessMap;

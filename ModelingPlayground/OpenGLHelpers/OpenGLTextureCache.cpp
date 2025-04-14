@@ -18,6 +18,7 @@ void OpenGLTextureCache::LoadTexture(const std::string& filePath)
 {
 	if (filePath.empty())
 	{
+		std::cout << "OpenGLTextureCache|LoadTexture: No file path specified.\n";
 		return;
 	}
 

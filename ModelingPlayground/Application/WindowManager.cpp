@@ -177,6 +177,33 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 						);
 						SceneLoader::SaveScene(m_sceneHierarchy, m_openGLRenderer, filePath);
 					}
+					ImGui::Separator();
+					if (ImGui::MenuItem("Import Texture"))
+					{
+						const char* textureFilterPatterns[2] = {"*.png", "*.jpg"};
+						const char* filePath = tinyfd_openFileDialog(
+							"Choose texture to import",
+							"",
+							2,
+							textureFilterPatterns,
+							"image files",
+							0
+						);
+						m_openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
+					}
+					if (ImGui::MenuItem("Import Mesh"))
+					{
+						const char* meshFilterPatterns[2] = {"*.obj"};
+						const char* filePath = tinyfd_openFileDialog(
+							"Choose mesh to import",
+							"",
+							1,
+							meshFilterPatterns,
+							"obj files",
+							0
+						);
+						m_openGLRenderer->GetOpenGLPrimitiveManager()->AddPrimitive(filePath);
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenuBar();
