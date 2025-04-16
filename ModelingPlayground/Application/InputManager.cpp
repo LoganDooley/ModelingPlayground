@@ -1,14 +1,12 @@
 ﻿#include "InputManager.h"
 
-#include <iostream>
-#include <ostream>
-
 #include "imgui.h"
 
 InputManager::InputManager():
 	m_keyEventSubscribers(std::vector<std::function<void(int, int)>>()),
 	m_cursorPosEventSubscribers(std::vector<std::function<void(double, double, double, double)>>()),
 	m_mouseButtonEventSubscribers(std::vector<std::function<void(int, int)>>()),
+	m_scrollWheelEventSubscribers(std::vector<std::function<void(double)>>()),
 	m_keysDown(std::unordered_set<int>()),
 	m_cursorPos(glm::vec2(0)),
 	m_sceneViewPos(glm::vec2(0))
@@ -26,6 +24,7 @@ void InputManager::Initialize(GLFWwindow* window)
 	glfwSetKeyCallback(window, KeyCallback);
 	glfwSetCursorPosCallback(window, CursorPosCallback);
 	glfwSetMouseButtonCallback(window, MouseButtonCallback);
+	glfwSetScrollCallback(window, ScrollWheelCallback);
 }
 
 void InputManager::SubscribeToKeyEvents(std::function<void(int, int)> callback)
@@ -41,6 +40,11 @@ void InputManager::SubscribeToCursorPosEvents(std::function<void(double, double,
 void InputManager::SubscribeToMouseButtonEvents(std::function<void(int, int)> callback)
 {
 	m_mouseButtonEventSubscribers.push_back(callback);
+}
+
+void InputManager::SubscribeToScrollWheelEvents(std::function<void(double)> callback)
+{
+	m_scrollWheelEventSubscribers.push_back(callback);
 }
 
 void InputManager::SetSceneViewPos(glm::vec2 pos)
@@ -113,6 +117,16 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 	for (const auto& subscriber : inputManager->m_mouseButtonEventSubscribers)
 	{
 		subscriber(button, action);
+	}
+}
+
+void InputManager::ScrollWheelCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	auto inputManager = static_cast<InputManager*>(glfwGetWindowUserPointer(window));
+
+	for (const auto& subscriber : inputManager->m_scrollWheelEventSubscribers)
+	{
+		subscriber(yoffset);
 	}
 }
 

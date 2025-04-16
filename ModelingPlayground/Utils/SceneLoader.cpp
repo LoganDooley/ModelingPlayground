@@ -85,8 +85,9 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 	}
 
 	Assimp::Importer importer;
+	// TODO: Flip uvs depending on file type
 	const aiScene* scene = importer.ReadFile(
-		sceneFilePath, aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_Triangulate | aiProcess_FlipUVs);
+		sceneFilePath, aiProcess_OptimizeGraph | aiProcess_OptimizeMeshes | aiProcess_Triangulate);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{

@@ -39,6 +39,7 @@ private:
 	void HandleKeyEvent(int key, int action);
 	void HandleCursorPosEvent(double xpos, double ypos, double deltaX, double deltaY);
 	void HandleMouseButtonEvent(int button, int action);
+	void HandleScrollWheelEvent(double yoffset);
 
 	void MoveCamera(double seconds);
 

@@ -67,6 +67,11 @@ SceneViewCamera::SceneViewCamera(std::shared_ptr<InputManager> inputManager, glm
 	{
 		HandleMouseButtonEvent(button, action);
 	});
+
+	m_inputManager->SubscribeToScrollWheelEvents([this](const double yoffset)
+	{
+		HandleScrollWheelEvent(yoffset);
+	});
 }
 
 void SceneViewCamera::Update(double seconds)
@@ -192,6 +197,12 @@ void SceneViewCamera::HandleCursorPosEvent(double xpos, double ypos, double delt
 
 void SceneViewCamera::HandleMouseButtonEvent(int button, int action)
 {
+}
+
+void SceneViewCamera::HandleScrollWheelEvent(double yoffset)
+{
+	m_movementSpeed += yoffset;
+	m_movementSpeed = glm::clamp(m_movementSpeed, 0.005f, 100.f);
 }
 
 glm::vec3 SceneViewCamera::ComputeMovementDirection()
