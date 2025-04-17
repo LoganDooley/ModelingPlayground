@@ -4,6 +4,7 @@
 
 #include "Window.h"
 
+class RenderingManager;
 class MaterialComponent;
 class TransformComponent;
 class PrimitiveComponent;
@@ -13,12 +14,11 @@ class ObjectData;
 class SceneHierarchy;
 class SceneViewCamera;
 class InputManager;
-class OpenGLRenderer;
 
 class SceneViewWindow : public Window
 {
 public:
-	SceneViewWindow(std::shared_ptr<OpenGLRenderer> openGLRenderer, std::shared_ptr<InputManager> inputManager);
+	SceneViewWindow(std::shared_ptr<RenderingManager> renderingManager, std::shared_ptr<InputManager> inputManager);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -27,6 +27,6 @@ public:
 
 private:
 	std::shared_ptr<SceneViewCamera> m_camera;
-	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<RenderingManager> m_renderingManager;
 	std::shared_ptr<InputManager> m_inputManager;
 };

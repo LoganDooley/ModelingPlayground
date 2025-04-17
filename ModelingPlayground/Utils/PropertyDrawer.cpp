@@ -159,8 +159,8 @@ bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
                                            const std::unique_ptr<OpenGLTextureCache>& openGLTextureCache,
                                            std::string& currentValue)
 {
-	bool selectedTextureChanged = false;
-	const std::unordered_map<std::string, std::pair<std::shared_ptr<OpenGLTexture>, int>>& openGLTextures =
+	const std::unordered_map<std::string, std::pair<std::shared_ptr<OpenGLTexture>, std::unordered_set<void*>>>&
+		openGLTextures =
 		openGLTextureCache->
 		GetAllTextures();
 	std::string comboBoxName = "##" + std::string(propertyName);
@@ -171,15 +171,7 @@ bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
 		{
 			bool selected = currentValue == textureKey;
 			std::string label = std::string("##") + textureKey;
-			if (ImGui::Selectable(label.c_str(), selected) && currentValue != textureKey)
-			{
-				if (!currentValue.empty())
-				{
-					openGLTextureCache->DecrementTextureUsage(currentValue);
-				}
-				currentValue = textureKey;
-				openGLTextureCache->IncrementTextureUsage(currentValue);
-			}
+			ImGui::Selectable(label.c_str(), selected);
 			ImGui::SameLine();
 			ImGui::Image(texture.first->GetTextureId(), ImVec2(50, 50), ImVec2(0, 1), ImVec2(1, 0));
 			ImGui::SameLine();
@@ -206,7 +198,7 @@ bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
 		);
 		if (filePath != nullptr)
 		{
-			openGLTextureCache->LoadTexture(filePath);
+			openGLTextureCache->AddTexture(filePath);
 		}
 	}
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);

@@ -1,6 +1,8 @@
 #pragma once
 #include "WindowManager.h"
-#include "../OpenGLHelpers/OpenGLRenderer.h"
+#include "Rendering/Renderers/OpenGLRenderer.h"
+
+class RenderingManager;
 
 class ApplicationManager
 {
@@ -16,7 +18,7 @@ private:
 	int End();
 
 	std::shared_ptr<SceneHierarchy> m_scene;
-	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<RenderingManager> m_renderingManager;
 	std::unique_ptr<GlfwWindow> m_glfwWindow;
 	std::unique_ptr<WindowManager> m_windowManager;
 };

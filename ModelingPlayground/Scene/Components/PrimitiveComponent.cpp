@@ -1,8 +1,7 @@
 ﻿#include "PrimitiveComponent.h"
 
 #include "imgui.h"
-#include "../../../../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/tinyfiledialogs/tinyfiledialogs.h"
-#include "../../OpenGLHelpers/OpenGLRenderer.h"
+#include "../../Application/Rendering/RenderingManager.h"
 #include "../../Utils/PropertyDrawer.h"
 
 PrimitiveComponent::PrimitiveComponent():
@@ -11,16 +10,16 @@ PrimitiveComponent::PrimitiveComponent():
 {
 }
 
-PrimitiveComponent::PrimitiveComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer):
-	m_openGLRenderer(openGLRenderer),
+PrimitiveComponent::PrimitiveComponent(std::shared_ptr<RenderingManager> renderingManager):
+	m_renderingManager(renderingManager),
 	m_primitiveName("Triangle"),
 	m_currentItem(0)
 {
 }
 
-void PrimitiveComponent::SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer)
+void PrimitiveComponent::SetRenderingManager(std::shared_ptr<RenderingManager> renderingManager)
 {
-	m_openGLRenderer = openGLRenderer;
+	m_renderingManager = renderingManager;
 }
 
 void PrimitiveComponent::RenderInspector()
@@ -28,7 +27,7 @@ void PrimitiveComponent::RenderInspector()
 	ImGuiTreeNodeFlags meshHeaderFlags = ImGuiTreeNodeFlags_DefaultOpen;
 	if (ImGui::CollapsingHeader("Mesh", meshHeaderFlags))
 	{
-		PropertyDrawer::DrawCombo("Primitive Type", m_openGLRenderer->GetOpenGLPrimitiveManager()->GetPrimitiveNames(),
+		PropertyDrawer::DrawCombo("Primitive Type", m_renderingManager->GetPrimitiveNames(),
 		                          m_primitiveName);
 	}
 }

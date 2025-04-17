@@ -3,15 +3,15 @@
 #include "Component.h"
 #include "../../nlohmann/json_fwd.hpp"
 
-class OpenGLRenderer;
+class RenderingManager;
 
 class PrimitiveComponent : public Component
 {
 public:
 	PrimitiveComponent();
-	PrimitiveComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer);
+	PrimitiveComponent(std::shared_ptr<RenderingManager> renderingManager);
 
-	void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
+	void SetRenderingManager(std::shared_ptr<RenderingManager> renderingManager);
 
 	void RenderInspector() override;
 	void SetPrimitiveName(const std::string& primitiveName);
@@ -21,7 +21,7 @@ public:
 	friend void from_json(const nlohmann::json& json, PrimitiveComponent& primitiveComponent);
 
 private:
-	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<RenderingManager> m_renderingManager;
 	std::string m_primitiveName;
 	int m_currentItem;
 };

@@ -5,7 +5,7 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include "imgui.h"
-#include "../../OpenGLHelpers/OpenGLRenderer.h"
+#include "../../Application/Rendering/Renderers/OpenGLRenderer.h"
 #include "../../Utils/PropertyDrawer.h"
 
 TransformComponent::TransformComponent():

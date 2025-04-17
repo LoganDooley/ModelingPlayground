@@ -1,36 +1,47 @@
 ﻿#pragma once
 
-#include "OpenGLLightContainer.h"
-#include "../Scene/SceneHierarchy.h"
+#include "Renderer.h"
+#include "../RenderingManager.h"
+#include "../../../Scene/SceneHierarchy.h"
+#include "../../OpenGLHelpers/OpenGLLightContainer.h"
 
-#include "../OpenGLHelpers/OpenGLTextureCache.h"
-#include "../OpenGLHelpers/OpenGLPrimitiveManager.h"
+#include "../../OpenGLHelpers/OpenGLPrimitiveManager.h"
+#include "../../OpenGLHelpers/OpenGLTextureCache.h"
 
 class MaterialComponent;
 class PrimitiveComponent;
 class TransformComponent;
 class SceneViewCamera;
 
-class OpenGLRenderer
+class OpenGLRenderer : public Renderer
 {
 public:
 	OpenGLRenderer();
-	~OpenGLRenderer() = default;
+	~OpenGLRenderer() override = default;
 
-	void Initialize();
+	void Initialize() override;
 
-	void SetCamera(std::shared_ptr<SceneViewCamera> camera);
+	void DrawSettings() override;
 
-	void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
+	void SetCamera(std::shared_ptr<SceneViewCamera> camera) override;
+
+	void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy) override;
 	void ResetOpenGLPrimitiveManager(OpenGLPrimitiveManager* openGLPrimitiveManager);
 	void ResetOpenGLTextureCache(OpenGLTextureCache* openGLTextureCache);
 
-	void Render() const;
+	void Render() const override;
 
 	void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const;
 	void RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const;
-	const std::unique_ptr<OpenGLPrimitiveManager>& GetOpenGLPrimitiveManager() const;
-	const std::unique_ptr<OpenGLTextureCache>& GetOpenGLTextureCache() const;
+
+	void AddPrimitive(const std::string& filePath) const override;
+	void AddTexture(const std::string& filePath) const override;
+
+	void IncrementTextureUsage(const std::string& filePath, void* user) const override;
+	void DecrementTextureUsage(const std::string& filePath, void* user) const override;
+
+	const std::unique_ptr<OpenGLTextureCache>& GetTextureCache() const override;
+	std::vector<std::string> GetPrimitiveNames() const override;
 
 private:
 	void ClearCameraFramebuffer() const;
@@ -54,4 +65,9 @@ private:
 	std::unique_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
 	std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
 	std::unique_ptr<OpenGLTextureCache> m_openGLTextureCache;
+
+	RasterPipeline m_rasterPipeline;
+	GlobalIllumination m_globalIllumination;
+	AmbientOcclusion m_ambientOcclusion;
+	AntiAliasing m_antiAliasing;
 };

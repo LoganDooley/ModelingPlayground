@@ -6,14 +6,15 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
-#include "OpenGLPrimitiveManager.h"
-#include "OpenGLTextureCache.h"
+#include "../../../OpenGLHelpers/OpenGLTexture.h"
+#include "../../Application/Window/SceneViewCamera.h"
+#include "../../OpenGLHelpers/OpenGLPrimitiveManager.h"
+#include "../../OpenGLHelpers/OpenGLTextureCache.h"
 #include "../../Scene/Object.h"
 #include "../../Scene/Components/MaterialComponent.h"
 #include "../../Scene/Components/OpenGLSettingsComponent.h"
 #include "../../Scene/Components/PrimitiveComponent.h"
 #include "../../Scene/Components/TransformComponent.h"
-#include "../Application/Window/SceneViewCamera.h"
 
 OpenGLRenderer::OpenGLRenderer():
 	m_defaultShader(std::make_shared<OpenGLShader>()),
@@ -137,6 +138,10 @@ void OpenGLRenderer::Initialize()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
+void OpenGLRenderer::DrawSettings()
+{
+}
+
 void OpenGLRenderer::SetCamera(std::shared_ptr<SceneViewCamera> camera)
 {
 	m_camera = camera;
@@ -237,6 +242,36 @@ void OpenGLRenderer::RenderOmnidirectionalShadow(const glm::vec3& lightPosition)
 	RenderSceneHierarchy(m_omnidirectionalDepthShader);
 }
 
+void OpenGLRenderer::AddPrimitive(const std::string& filePath) const
+{
+	m_openGLPrimitiveManager->AddPrimitive(filePath);
+}
+
+void OpenGLRenderer::AddTexture(const std::string& filePath) const
+{
+	m_openGLTextureCache->AddTexture(filePath);
+}
+
+void OpenGLRenderer::IncrementTextureUsage(const std::string& filePath, void* user) const
+{
+	m_openGLTextureCache->IncrementTextureUsage(filePath, user);
+}
+
+void OpenGLRenderer::DecrementTextureUsage(const std::string& filePath, void* user) const
+{
+	m_openGLTextureCache->DecrementTextureUsage(filePath, user);
+}
+
+const std::unique_ptr<OpenGLTextureCache>& OpenGLRenderer::GetTextureCache() const
+{
+	return m_openGLTextureCache;
+}
+
+std::vector<std::string> OpenGLRenderer::GetPrimitiveNames() const
+{
+	return m_openGLPrimitiveManager->GetPrimitiveNames();
+}
+
 void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& activeShader) const
 {
 	activeShader->BindShader();
@@ -257,16 +292,6 @@ void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& a
 			traversal.push(children[i]);
 		}
 	}
-}
-
-const std::unique_ptr<OpenGLPrimitiveManager>& OpenGLRenderer::GetOpenGLPrimitiveManager() const
-{
-	return m_openGLPrimitiveManager;
-}
-
-const std::unique_ptr<OpenGLTextureCache>& OpenGLRenderer::GetOpenGLTextureCache() const
-{
-	return m_openGLTextureCache;
 }
 
 void OpenGLRenderer::ClearCameraFramebuffer() const
@@ -352,7 +377,9 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 		activeShader->SetUniform<bool>("useMaterialTexture", materialComponent.GetUseColorTexture());
 		if (materialComponent.GetUseColorTexture())
 		{
-			activeShader->SetUniform<GLuint64>("materialTexture", materialComponent.GetMaterialTexture());
+			GLuint64 textureHandle = m_openGLTextureCache->GetTexture(materialComponent.GetMaterialTexture())->
+			                                               GetTextureHandle();
+			activeShader->SetUniform<GLuint64>("materialTexture", textureHandle);
 		}
 		else
 		{
@@ -363,7 +390,9 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 		activeShader->SetUniform<bool>("useMetallicMap", materialComponent.GetUseMetallicMap());
 		if (materialComponent.GetUseMetallicMap())
 		{
-			activeShader->SetUniform<GLuint64>("metallicMap", materialComponent.GetMetallicMap());
+			GLuint64 textureHandle = m_openGLTextureCache->GetTexture(materialComponent.GetMetallicMap())->
+			                                               GetTextureHandle();
+			activeShader->SetUniform<GLuint64>("metallicMap", textureHandle);
 		}
 		else
 		{
@@ -374,7 +403,9 @@ void OpenGLRenderer::DrawMesh(const PrimitiveComponent& primitiveComponent,
 		activeShader->SetUniform<bool>("useRoughnessMap", materialComponent.GetUseRoughnessMap());
 		if (materialComponent.GetUseRoughnessMap())
 		{
-			activeShader->SetUniform<GLuint64>("roughnessMap", materialComponent.GetRoughnessMap());
+			GLuint64 textureHandle = m_openGLTextureCache->GetTexture(materialComponent.GetRoughnessMap())->
+			                                               GetTextureHandle();
+			activeShader->SetUniform<GLuint64>("roughnessMap", textureHandle);
 		}
 		else
 		{

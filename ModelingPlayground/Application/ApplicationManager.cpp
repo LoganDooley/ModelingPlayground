@@ -1,10 +1,14 @@
 #include "ApplicationManager.h"
 
 #include "../Utils/SceneLoader.h"
+#include "Rendering/RenderingManager.h"
+
+#include "../Scene/Object.h"
+#include "../Scene/Components/ComponentIncludes.h"
 
 ApplicationManager::ApplicationManager():
 	m_scene(std::make_shared<SceneHierarchy>()),
-	m_openGLRenderer(std::make_shared<OpenGLRenderer>()),
+	m_renderingManager(std::make_shared<RenderingManager>()),
 	m_glfwWindow(std::make_unique<GlfwWindow>()),
 	m_windowManager(std::make_unique<WindowManager>())
 {
@@ -37,9 +41,13 @@ int ApplicationManager::Run()
 int ApplicationManager::Initialize()
 {
 	m_glfwWindow->Initialize();
-	m_openGLRenderer->Initialize();
-	SceneLoader::LoadScene(m_scene, m_openGLRenderer);
-	m_windowManager->Initialize(m_glfwWindow, m_scene, m_openGLRenderer);
+	m_renderingManager->Initialize();
+	auto rootSceneNode = std::make_shared<SceneNode>("World");
+	rootSceneNode->GetObject().AddComponent<OpenGLSettingsComponent>();
+	m_scene->SetRootSceneNode(rootSceneNode);
+	m_renderingManager->SetSceneHierarchy(m_scene);
+	//SceneLoader::LoadScene(m_scene, m_renderingManager);
+	m_windowManager->Initialize(m_glfwWindow, m_scene, m_renderingManager);
 	return 0;
 }
 

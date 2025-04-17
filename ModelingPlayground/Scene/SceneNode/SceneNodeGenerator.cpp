@@ -4,7 +4,7 @@
 #include <unordered_set>
 
 #include "../Object.h"
-#include "../../OpenGLHelpers/OpenGLRenderer.h"
+#include "../../Application/Rendering/Renderers/OpenGLRenderer.h"
 #include "../Components/DirectionalLightComponent.h"
 #include "../Components/MaterialComponent.h"
 #include "../Components/PointLightComponent.h"
@@ -15,7 +15,7 @@
 
 std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
 	SceneNodeType sceneNodeType, const std::shared_ptr<SceneNode>& parent,
-	const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+	const std::shared_ptr<RenderingManager>& renderingManager,
 	const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
 	std::string sceneNodeName)
 {
@@ -23,7 +23,7 @@ std::shared_ptr<SceneNode> SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
 	switch (sceneNodeType)
 	{
 	case SceneNodeType::Primitive:
-		InitializePrimitiveObject(sceneNode->GetObject(), openGLRenderer);
+		InitializePrimitiveObject(sceneNode->GetObject(), renderingManager);
 		break;
 	case SceneNodeType::DirectionalLight:
 		InitializeDirectionalLightObject(sceneNode->GetObject());
@@ -82,11 +82,11 @@ std::string SceneNodeGenerator::GetSceneNodeTypeName(SceneNodeType sceneNodeType
 }
 
 void SceneNodeGenerator::InitializePrimitiveObject(Object& object,
-                                                   const std::shared_ptr<OpenGLRenderer>& openGLRenderer)
+                                                   const std::shared_ptr<RenderingManager>& renderingManager)
 {
 	object.AddComponent<TransformComponent>();
-	object.AddComponent<PrimitiveComponent>(openGLRenderer);
-	object.AddComponent<MaterialComponent>(openGLRenderer);
+	object.AddComponent<PrimitiveComponent>(renderingManager);
+	object.AddComponent<MaterialComponent>(renderingManager);
 }
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)

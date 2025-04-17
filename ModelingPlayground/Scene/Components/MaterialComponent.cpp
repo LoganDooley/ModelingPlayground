@@ -1,9 +1,7 @@
 ﻿#include "MaterialComponent.h"
 
 #include "imgui.h"
-#include "../../OpenGLHelpers/OpenGLRenderer.h"
-#include "../../OpenGLHelpers/OpenGLTexture.h"
-#include "../../OpenGLHelpers/OpenGLTextureCache.h"
+#include "../../Application/Rendering/RenderingManager.h"
 #include "../../Utils/PropertyDrawer.h"
 
 MaterialComponent::MaterialComponent():
@@ -16,8 +14,8 @@ MaterialComponent::MaterialComponent():
 {
 }
 
-MaterialComponent::MaterialComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer):
-	m_openGLRenderer(openGLRenderer),
+MaterialComponent::MaterialComponent(std::shared_ptr<RenderingManager> renderingManager):
+	m_renderingManager(renderingManager),
 	m_useColorTexture(false),
 	m_materialColor(glm::vec4(1)),
 	m_useMetallicMap(false),
@@ -27,27 +25,27 @@ MaterialComponent::MaterialComponent(std::shared_ptr<OpenGLRenderer> openGLRende
 {
 }
 
-void MaterialComponent::SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer)
+void MaterialComponent::SetOpenGLRenderer(std::shared_ptr<RenderingManager> renderingManager)
 {
-	m_openGLRenderer = openGLRenderer;
+	m_renderingManager = renderingManager;
 
 	// Load textures into memory
-	m_openGLRenderer->GetOpenGLTextureCache()->LoadTexture(m_materialColorTexturePath);
+	m_renderingManager->AddTexture(m_materialColorTexturePath);
 	if (m_useColorTexture)
 	{
-		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_materialColorTexturePath);
+		m_renderingManager->IncrementTextureUsage(m_materialColorTexturePath, this);
 	}
 
-	m_openGLRenderer->GetOpenGLTextureCache()->LoadTexture(m_metallicMapPath);
+	m_renderingManager->AddTexture(m_metallicMapPath);
 	if (m_useMetallicMap)
 	{
-		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_metallicMapPath);
+		m_renderingManager->IncrementTextureUsage(m_metallicMapPath, this);
 	}
 
-	m_openGLRenderer->GetOpenGLTextureCache()->LoadTexture(m_roughnessMapPath);
+	m_renderingManager->AddTexture(m_roughnessMapPath);
 	if (m_useRoughnessMap)
 	{
-		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_roughnessMapPath);
+		m_renderingManager->IncrementTextureUsage(m_roughnessMapPath, this);
 	}
 }
 
@@ -63,18 +61,24 @@ void MaterialComponent::RenderInspector()
 			{
 				if (m_useColorTexture)
 				{
-					m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_materialColorTexturePath);
+					m_renderingManager->IncrementTextureUsage(m_materialColorTexturePath, this);
 				}
 				else
 				{
-					m_openGLRenderer->GetOpenGLTextureCache()->DecrementTextureUsage(m_materialColorTexturePath);
+					m_renderingManager->DecrementTextureUsage(m_materialColorTexturePath, this);
 				}
 			}
 		}
 		if (m_useColorTexture)
 		{
-			PropertyDrawer::DrawTextureCacheCombo("Color Texture", m_openGLRenderer->GetOpenGLTextureCache(),
+			std::string previousPath = m_materialColorTexturePath;
+			PropertyDrawer::DrawTextureCacheCombo("Color Texture", m_renderingManager->GetTextureCache(),
 			                                      m_materialColorTexturePath);
+			if (previousPath != m_materialColorTexturePath)
+			{
+				m_renderingManager->DecrementTextureUsage(previousPath, this);
+				m_renderingManager->IncrementTextureUsage(m_materialColorTexturePath, this);
+			}
 		}
 		else
 		{
@@ -88,18 +92,24 @@ void MaterialComponent::RenderInspector()
 			{
 				if (m_useMetallicMap)
 				{
-					m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_metallicMapPath);
+					m_renderingManager->IncrementTextureUsage(m_metallicMapPath, this);
 				}
 				else
 				{
-					m_openGLRenderer->GetOpenGLTextureCache()->DecrementTextureUsage(m_metallicMapPath);
+					m_renderingManager->DecrementTextureUsage(m_metallicMapPath, this);
 				}
 			}
 		}
 		if (m_useMetallicMap)
 		{
-			PropertyDrawer::DrawTextureCacheCombo("Metallic Map", m_openGLRenderer->GetOpenGLTextureCache(),
+			std::string previousPath = m_metallicMapPath;
+			PropertyDrawer::DrawTextureCacheCombo("Metallic Map", m_renderingManager->GetTextureCache(),
 			                                      m_metallicMapPath);
+			if (previousPath != m_metallicMapPath)
+			{
+				m_renderingManager->DecrementTextureUsage(previousPath, this);
+				m_renderingManager->IncrementTextureUsage(m_metallicMapPath, this);
+			}
 		}
 		else
 		{
@@ -113,18 +123,24 @@ void MaterialComponent::RenderInspector()
 			{
 				if (m_useRoughnessMap)
 				{
-					m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_roughnessMapPath);
+					m_renderingManager->IncrementTextureUsage(m_roughnessMapPath, this);
 				}
 				else
 				{
-					m_openGLRenderer->GetOpenGLTextureCache()->DecrementTextureUsage(m_roughnessMapPath);
+					m_renderingManager->DecrementTextureUsage(m_roughnessMapPath, this);
 				}
 			}
 		}
 		if (m_useRoughnessMap)
 		{
-			PropertyDrawer::DrawTextureCacheCombo("Roughness Map", m_openGLRenderer->GetOpenGLTextureCache(),
+			std::string previousPath = m_roughnessMapPath;
+			PropertyDrawer::DrawTextureCacheCombo("Roughness Map", m_renderingManager->GetTextureCache(),
 			                                      m_roughnessMapPath);
+			if (previousPath != m_roughnessMapPath)
+			{
+				m_renderingManager->DecrementTextureUsage(previousPath, this);
+				m_renderingManager->IncrementTextureUsage(m_roughnessMapPath, this);
+			}
 		}
 		else
 		{
@@ -143,9 +159,9 @@ glm::vec4 MaterialComponent::GetMaterialColor() const
 	return m_materialColor;
 }
 
-GLuint64 MaterialComponent::GetMaterialTexture() const
+const std::string& MaterialComponent::GetMaterialTexture() const
 {
-	return m_openGLRenderer->GetOpenGLTextureCache()->GetTexture(m_materialColorTexturePath)->GetTextureHandle();
+	return m_materialColorTexturePath;
 }
 
 void MaterialComponent::SetMaterialTexture(const std::string& materialTexture, bool setUseColorTexture)
@@ -155,7 +171,7 @@ void MaterialComponent::SetMaterialTexture(const std::string& materialTexture, b
 	if (setUseColorTexture)
 	{
 		m_useColorTexture = true;
-		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_materialColorTexturePath);
+		m_renderingManager->IncrementTextureUsage(m_materialColorTexturePath, this);
 	}
 }
 
@@ -169,9 +185,9 @@ float MaterialComponent::GetMetallic() const
 	return m_metallic;
 }
 
-GLuint64 MaterialComponent::GetMetallicMap() const
+const std::string& MaterialComponent::GetMetallicMap() const
 {
-	return m_openGLRenderer->GetOpenGLTextureCache()->GetTexture(m_metallicMapPath)->GetTextureHandle();
+	return m_metallicMapPath;
 }
 
 void MaterialComponent::SetMetallicMap(const std::string& metallicMap, bool setUseMetallicMap)
@@ -181,7 +197,7 @@ void MaterialComponent::SetMetallicMap(const std::string& metallicMap, bool setU
 	if (setUseMetallicMap)
 	{
 		m_useMetallicMap = true;
-		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_metallicMapPath);
+		m_renderingManager->IncrementTextureUsage(m_metallicMapPath, this);
 	}
 }
 
@@ -195,9 +211,9 @@ float MaterialComponent::GetRoughness() const
 	return m_roughness;
 }
 
-GLuint64 MaterialComponent::GetRoughnessMap() const
+const std::string& MaterialComponent::GetRoughnessMap() const
 {
-	return m_openGLRenderer->GetOpenGLTextureCache()->GetTexture(m_roughnessMapPath)->GetTextureHandle();
+	return m_roughnessMapPath;
 }
 
 void MaterialComponent::SetRoughnessMap(const std::string& roughnessMap, bool setUseRoughnessMap)
@@ -207,6 +223,6 @@ void MaterialComponent::SetRoughnessMap(const std::string& roughnessMap, bool se
 	if (setUseRoughnessMap)
 	{
 		m_useRoughnessMap = true;
-		m_openGLRenderer->GetOpenGLTextureCache()->IncrementTextureUsage(m_roughnessMapPath);
+		m_renderingManager->IncrementTextureUsage(m_roughnessMapPath, this);
 	}
 }

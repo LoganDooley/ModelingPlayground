@@ -1,28 +1,24 @@
 #include "SceneViewWindow.h"
 
-#include <iostream>
-#include <ostream>
-
 #include "imgui.h"
-#include "imgui_internal.h"
 #include "SceneViewCamera.h"
 #include "../InputManager.h"
-#include "../../OpenGLHelpers/OpenGLRenderer.h"
+#include "../../Application/Rendering/RenderingManager.h"
 #include "../../Scene/Components/OpenGLSettingsComponent.h"
 #include "glm/glm.hpp"
 
-SceneViewWindow::SceneViewWindow(std::shared_ptr<OpenGLRenderer> openGLRenderer,
+SceneViewWindow::SceneViewWindow(std::shared_ptr<RenderingManager> renderingManager,
                                  std::shared_ptr<InputManager> inputManager):
 	m_camera(std::make_shared<SceneViewCamera>(inputManager, glm::uvec2(1, 1))),
-	m_openGLRenderer(openGLRenderer),
+	m_renderingManager(renderingManager),
 	m_inputManager(inputManager)
 {
-	m_openGLRenderer->SetCamera(m_camera);
+	m_renderingManager->SetCamera(m_camera);
 }
 
 void SceneViewWindow::Render()
 {
-	m_openGLRenderer->Render();
+	m_renderingManager->Render();
 
 	ImGui::Begin(Name.c_str(), nullptr, ImGuiWindowFlags_NoMove);
 	ImVec2 windowSize = ImGui::GetContentRegionAvail();

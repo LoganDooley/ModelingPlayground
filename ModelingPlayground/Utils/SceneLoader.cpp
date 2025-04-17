@@ -7,12 +7,16 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include "../Application/Rendering/RenderingManager.h"
 #include "../Scene/SceneNode/SceneNodeGenerator.h"
 #include "../Serialization/Serializers.h"
 
 bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
-                            const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const char* sceneFilePath)
+                            const std::shared_ptr<RenderingManager>& renderingManager, const char* sceneFilePath)
 {
+	return false;
+
+	/*
 	if (sceneFilePath == nullptr)
 	{
 		// Create new scene
@@ -24,9 +28,9 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 		// Update opengl helpers
 		auto openGLPrimitiveManager = new OpenGLPrimitiveManager();
 		openGLPrimitiveManager->GeneratePrimitives(10, 10);
-		openGLRenderer->ResetOpenGLPrimitiveManager(openGLPrimitiveManager);
-		openGLRenderer->ResetOpenGLTextureCache(new OpenGLTextureCache());
-		openGLRenderer->SetSceneHierarchy(sceneHierarchy);
+		renderingManager->ResetOpenGLPrimitiveManager(openGLPrimitiveManager);
+		renderingManager->ResetOpenGLTextureCache(new OpenGLTextureCache());
+		renderingManager->SetSceneHierarchy(sceneHierarchy);
 		return true;
 	}
 
@@ -48,11 +52,11 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 	*sceneHierarchy = std::move(newSceneHierarchy);
 
 	// Update opengl helpers
-	openGLRenderer->ResetOpenGLPrimitiveManager(newOpenGLPrimitiveManager);
-	openGLRenderer->ResetOpenGLTextureCache(newOpenGLTextureCache);
-	openGLRenderer->SetSceneHierarchy(sceneHierarchy);
+	renderingManager->ResetOpenGLPrimitiveManager(newOpenGLPrimitiveManager);
+	renderingManager->ResetOpenGLTextureCache(newOpenGLTextureCache);
+	renderingManager->SetSceneHierarchy(sceneHierarchy);
 
-	sceneHierarchy->BreadthFirstProcessAllSceneNodes([openGLRenderer](std::shared_ptr<SceneNode> node)
+	sceneHierarchy->BreadthFirstProcessAllSceneNodes([renderingManager](std::shared_ptr<SceneNode> node)
 	{
 		if (std::shared_ptr<TransformComponent> transformComponent = node->GetObject().GetFirstComponentOfType<
 			TransformComponent>())
@@ -62,22 +66,26 @@ bool SceneLoader::LoadScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 		if (std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
 			PrimitiveComponent>())
 		{
-			primitiveComponent->SetOpenGLRenderer(openGLRenderer);
+			primitiveComponent->SetOpenGLRenderer(renderingManager);
 		}
 		if (std::shared_ptr<MaterialComponent> materialComponent = node->GetObject().GetFirstComponentOfType<
 			MaterialComponent>())
 		{
-			materialComponent->SetOpenGLRenderer(openGLRenderer);
+			materialComponent->SetOpenGLRenderer(renderingManager);
 		}
 	});
 	sceneHierarchy->SetFilePath(sceneFilePath);
 	return true;
+	*/
 }
 
 bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
-                                    const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+                                    const std::shared_ptr<RenderingManager>& renderingManager,
                                     const char* sceneFilePath)
 {
+	return false;
+
+	/*
 	if (sceneFilePath == nullptr)
 	{
 		std::cout << "SceneLoader|LoadExternalScene: No file path specified.\n";
@@ -95,9 +103,9 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 		return false;
 	}
 
-	openGLRenderer->ResetOpenGLPrimitiveManager(new OpenGLPrimitiveManager());
-	openGLRenderer->GetOpenGLPrimitiveManager()->GeneratePrimitives(10, 10);
-	openGLRenderer->ResetOpenGLTextureCache(new OpenGLTextureCache());
+	renderingManager->ResetOpenGLPrimitiveManager(new OpenGLPrimitiveManager());
+	renderingManager->GetOpenGLPrimitiveManager()->GeneratePrimitives(10, 10);
+	renderingManager->ResetOpenGLTextureCache(new OpenGLTextureCache());
 
 	SceneHierarchy newSceneHierarchy;
 	auto rootSceneNode = std::make_shared<SceneNode>("World");
@@ -108,7 +116,7 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 	// Process materials
 	std::size_t found = std::string(sceneFilePath).find_last_of("/\\");
 	std::string sceneFileDirectory = std::string(sceneFilePath).substr(0, found + 1);
-	ProcessMaterials(scene, openGLRenderer, sceneFileDirectory);
+	ProcessMaterials(scene, renderingManager, sceneFileDirectory);
 
 	// Process nodes for primitives
 	std::stack<std::tuple<aiNode*, std::shared_ptr<SceneNode>, std::string>> nodeStack;
@@ -120,7 +128,7 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 		std::string primitiveNameBase = std::get<2>(nodeStack.top());
 		nodeStack.pop();
 
-		ProcessNodeForPrimitives(nodeToProcess, scene, parent, primitiveNameBase, openGLRenderer, sceneHierarchy,
+		ProcessNodeForPrimitives(nodeToProcess, scene, parent, primitiveNameBase, renderingManager, sceneHierarchy,
 		                         sceneFileDirectory);
 
 		std::shared_ptr<SceneNode> newParent = parent->HasChildren() ? parent->GetChildren().front() : parent;
@@ -134,16 +142,20 @@ bool SceneLoader::LoadExternalScene(const std::shared_ptr<SceneHierarchy>& scene
 	}
 
 	// Process lights
-	ProcessLights(scene, openGLRenderer, sceneHierarchy);
+	ProcessLights(scene, renderingManager, sceneHierarchy);
 
-	openGLRenderer->SetSceneHierarchy(sceneHierarchy);
+	renderingManager->SetSceneHierarchy(sceneHierarchy);
 
 	return true;
+	*/
 }
 
 bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
-                            const std::shared_ptr<OpenGLRenderer>& openGLRenderer, const char* sceneFilePath)
+                            const std::shared_ptr<RenderingManager>& renderingManager, const char* sceneFilePath)
 {
+	return false;
+
+	/*
 	if (sceneFilePath == nullptr)
 	{
 		std::cout << "SceneLoader|SaveScene: No file path specified.\n";
@@ -152,8 +164,8 @@ bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 
 	nlohmann::json sceneJson = {
 		{"SceneHierarchy", sceneHierarchy},
-		{"OpenGLPrimitiveManager", openGLRenderer->GetOpenGLPrimitiveManager()},
-		{"OpenGLTextureCache", openGLRenderer->GetOpenGLTextureCache()}
+		{"OpenGLPrimitiveManager", renderingManager->GetOpenGLPrimitiveManager()},
+		{"OpenGLTextureCache", renderingManager->GetOpenGLTextureCache()}
 	};
 
 	std::ofstream sceneFile(sceneFilePath);
@@ -164,12 +176,13 @@ bool SceneLoader::SaveScene(const std::shared_ptr<SceneHierarchy>& sceneHierarch
 	sceneFile << sceneJson;
 	sceneHierarchy->SetFilePath(sceneFilePath);
 	return true;
+	*/
 }
 
 void SceneLoader::ProcessNodeForPrimitives(aiNode* node, const aiScene* scene,
                                            const std::shared_ptr<SceneNode>& parentSceneNode,
                                            const std::string& primitiveNameBase,
-                                           const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+                                           const std::shared_ptr<RenderingManager>& renderingManager,
                                            const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
                                            const std::string& sceneFileDirectory)
 {
@@ -181,16 +194,17 @@ void SceneLoader::ProcessNodeForPrimitives(aiNode* node, const aiScene* scene,
 
 	AddPrimitiveNodes(node, scene, glm::vec3(position.x, position.y, position.z),
 	                  degrees(glm::vec3(rotation.x, rotation.y, rotation.z)), glm::vec3(scale.x, scale.y, scale.z),
-	                  parentSceneNode, primitiveNameBase, openGLRenderer, sceneHierarchy, sceneFileDirectory);
+	                  parentSceneNode, primitiveNameBase, renderingManager, sceneHierarchy, sceneFileDirectory);
 }
 
 void SceneLoader::AddPrimitiveNodes(aiNode* node, const aiScene* scene, glm::vec3 position, glm::vec3 rotation,
                                     glm::vec3 scale, const std::shared_ptr<SceneNode>& parentSceneNode,
                                     const std::string& primitiveNameBase,
-                                    const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+                                    const std::shared_ptr<RenderingManager>& renderingManager,
                                     const std::shared_ptr<SceneHierarchy>& sceneHierarchy,
                                     const std::string& sceneFileDirectory)
 {
+	/*
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -209,11 +223,11 @@ void SceneLoader::AddPrimitiveNodes(aiNode* node, const aiScene* scene, glm::vec
 
 		auto openGLPrimitive = std::make_shared<OpenGLPrimitive>(vertices, indices, vertexAttributes);
 		std::string primitiveName = primitiveNameBase + "|" + std::to_string(i);
-		openGLRenderer->GetOpenGLPrimitiveManager()->AddPrimitive(primitiveName,
-		                                                          openGLPrimitive);
+		renderingManager->AddPrimitive(primitiveName,
+		                                                            openGLPrimitive);
 
 		std::shared_ptr<SceneNode> childSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
-			SceneNodeType::Primitive, parentSceneNode, openGLRenderer, sceneHierarchy, mesh->mName.C_Str());
+			SceneNodeType::Primitive, parentSceneNode, renderingManager, sceneHierarchy, mesh->mName.C_Str());
 
 		// Set up primitive component
 		std::shared_ptr<PrimitiveComponent> primitiveComponent = childSceneNode->GetObject().GetFirstComponentOfType
@@ -252,6 +266,7 @@ void SceneLoader::AddPrimitiveNodes(aiNode* node, const aiScene* scene, glm::vec
 				sceneFileDirectory + std::string(roughnessMap.C_Str()));
 		}
 	}
+	*/
 }
 
 void SceneLoader::ProcessMesh(aiMesh* mesh, std::vector<float>& vertices, std::vector<int>& indices, bool& hasTexCoords)
@@ -295,7 +310,7 @@ void SceneLoader::ProcessMesh(aiMesh* mesh, std::vector<float>& vertices, std::v
 	}
 }
 
-void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<RenderingManager>& renderingManager,
                                 const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
 {
 	for (unsigned int i = 0; i < scene->mNumLights; i++)
@@ -310,7 +325,7 @@ void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<Open
 		case aiLightSource_POINT:
 			{
 				std::shared_ptr<SceneNode> pointLightSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
-					SceneNodeType::PointLight, sceneHierarchy->GetRootSceneNode(), openGLRenderer, sceneHierarchy);
+					SceneNodeType::PointLight, sceneHierarchy->GetRootSceneNode(), renderingManager, sceneHierarchy);
 				pointLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->GetPositionDataBinding()
 				                   .SetAndNotify(lightPosition);
 			}
@@ -318,7 +333,7 @@ void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<Open
 		case aiLightSource_DIRECTIONAL:
 			{
 				std::shared_ptr<SceneNode> directionalLightSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
-					SceneNodeType::DirectionalLight, sceneHierarchy->GetRootSceneNode(), openGLRenderer,
+					SceneNodeType::DirectionalLight, sceneHierarchy->GetRootSceneNode(), renderingManager,
 					sceneHierarchy);
 				directionalLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->
 				                           GetLocalXUnitVectorDataBinding()
@@ -328,7 +343,7 @@ void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<Open
 		case aiLightSource_SPOT:
 			{
 				std::shared_ptr<SceneNode> spotLightSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
-					SceneNodeType::SpotLight, sceneHierarchy->GetRootSceneNode(), openGLRenderer, sceneHierarchy);
+					SceneNodeType::SpotLight, sceneHierarchy->GetRootSceneNode(), renderingManager, sceneHierarchy);
 				spotLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->GetPositionDataBinding()
 				                  .SetAndNotify(lightPosition);
 				spotLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->
@@ -350,7 +365,7 @@ void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<Open
 	}
 }
 
-void SceneLoader::ProcessMaterials(const aiScene* scene, const std::shared_ptr<OpenGLRenderer>& openGLRenderer,
+void SceneLoader::ProcessMaterials(const aiScene* scene, const std::shared_ptr<RenderingManager>& renderingManager,
                                    const std::string& sceneFileDirectory)
 {
 	for (unsigned int i = 0; i < scene->mNumMaterials; i++)
@@ -361,21 +376,21 @@ void SceneLoader::ProcessMaterials(const aiScene* scene, const std::shared_ptr<O
 			aiString relativePath;
 			material->GetTexture(aiTextureType_BASE_COLOR, j, &relativePath);
 			std::string filePath = sceneFileDirectory + std::string(relativePath.C_Str());
-			openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
+			renderingManager->AddTexture(filePath);
 		}
 		for (unsigned int j = 0; j < material->GetTextureCount(aiTextureType_METALNESS); j++)
 		{
 			aiString relativePath;
 			material->GetTexture(aiTextureType_METALNESS, j, &relativePath);
 			std::string filePath = sceneFileDirectory + std::string(relativePath.C_Str());
-			openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
+			renderingManager->AddTexture(filePath);
 		}
 		for (unsigned int j = 0; j < material->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS); j++)
 		{
 			aiString relativePath;
 			material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, j, &relativePath);
 			std::string filePath = sceneFileDirectory + std::string(relativePath.C_Str());
-			openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
+			renderingManager->AddTexture(filePath);
 		}
 	}
 }

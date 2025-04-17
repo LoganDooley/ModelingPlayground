@@ -213,6 +213,6 @@ inline void from_json(const nlohmann::json& json, OpenGLTextureCache& openGLText
 
 	for (const auto& texture : textures)
 	{
-		openGLTextureCache.LoadTexture(texture);
+		openGLTextureCache.AddTexture(texture);
 	}
 }

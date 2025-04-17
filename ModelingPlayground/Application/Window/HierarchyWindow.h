@@ -4,16 +4,16 @@
 
 #include "Window.h"
 
+class RenderingManager;
 class SceneNode;
 class ObjectSceneNode;
 class SceneHierarchy;
-class OpenGLRenderer;
 class SceneNodeGenerator;
 
 class HierarchyWindow : public Window
 {
 public:
-	HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLRenderer> openGLRenderer);
+	HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<RenderingManager> renderingManager);
 
 	void Render() override;
 	void Update(double seconds) override;
@@ -26,5 +26,5 @@ private:
 	void CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node);
 
 	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
-	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<RenderingManager> m_renderingManager;
 };

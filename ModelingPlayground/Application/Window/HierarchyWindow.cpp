@@ -1,13 +1,14 @@
 #include "HierarchyWindow.h"
 #include "imgui.h"
 #include "SceneViewWindow.h"
-#include "../../OpenGLHelpers/OpenGLRenderer.h"
 #include "../../Scene/SceneHierarchy.h"
 #include "../../Scene/SceneNode/SceneNodeGenerator.h"
+#include "../Rendering/Renderers/OpenGLRenderer.h"
 
-HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene, std::shared_ptr<OpenGLRenderer> openGLRenderer):
+HierarchyWindow::HierarchyWindow(std::shared_ptr<SceneHierarchy> scene,
+                                 std::shared_ptr<RenderingManager> renderingManager):
 	m_sceneHierarchy(scene),
-	m_openGLRenderer(openGLRenderer)
+	m_renderingManager(renderingManager)
 {
 }
 
@@ -72,7 +73,7 @@ void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node)
 				if (ImGui::MenuItem(SceneNodeGenerator::GetSceneNodeTypeName(sceneNodeType).c_str()))
 				{
 					std::shared_ptr<SceneNode> newChildSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
-						sceneNodeType, node, m_openGLRenderer, m_sceneHierarchy);
+						sceneNodeType, node, m_renderingManager, m_sceneHierarchy);
 					m_sceneHierarchy->OnSceneNodeAdded(newChildSceneNode);
 				}
 			}

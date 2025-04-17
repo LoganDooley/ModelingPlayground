@@ -10,6 +10,7 @@
 
 #include "../../../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/tinyfiledialogs/tinyfiledialogs.h"
 #include "../Utils/SceneLoader.h"
+#include "Rendering/RenderingManager.h"
 #include "Window/HierarchyWindow.h"
 #include "Window/InspectorWindow.h"
 #include "Window/SceneViewWindow.h"
@@ -25,7 +26,7 @@ WindowManager::~WindowManager()
 
 void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow,
                                std::shared_ptr<SceneHierarchy> sceneHierarchy,
-                               std::shared_ptr<OpenGLRenderer> openGLRenderer)
+                               std::shared_ptr<RenderingManager> renderingManager)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -47,12 +48,12 @@ void WindowManager::Initialize(const std::unique_ptr<GlfwWindow>& glfwWindow,
 	ImGui_ImplGlfw_InitForOpenGL(glfwWindow->GetWindowPointer(), true);
 	ImGui_ImplOpenGL3_Init();
 
-	m_windows.push_back(std::make_shared<HierarchyWindow>(sceneHierarchy, openGLRenderer));
-	m_windows.push_back(std::make_shared<SceneViewWindow>(openGLRenderer, glfwWindow->GetInputManager()));
+	m_windows.push_back(std::make_shared<HierarchyWindow>(sceneHierarchy, renderingManager));
+	m_windows.push_back(std::make_shared<SceneViewWindow>(renderingManager, glfwWindow->GetInputManager()));
 	m_windows.push_back(std::make_shared<InspectorWindow>(sceneHierarchy));
 
 	m_sceneHierarchy = sceneHierarchy;
-	m_openGLRenderer = openGLRenderer;
+	m_renderingManager = renderingManager;
 }
 
 void WindowManager::Update(double seconds) const
@@ -132,7 +133,7 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 					std::string existingFilePath = m_sceneHierarchy->GetFilePath();
 					if (ImGui::MenuItem("New"))
 					{
-						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer);
+						SceneLoader::LoadScene(m_sceneHierarchy, m_renderingManager);
 					}
 					if (ImGui::MenuItem("Open"))
 					{
@@ -144,7 +145,7 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							"json files",
 							0
 						);
-						SceneLoader::LoadScene(m_sceneHierarchy, m_openGLRenderer, filePath);
+						SceneLoader::LoadScene(m_sceneHierarchy, m_renderingManager, filePath);
 					}
 					if (ImGui::MenuItem("Open External Scene"))
 					{
@@ -159,12 +160,12 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							"files",
 							0
 						);
-						SceneLoader::LoadExternalScene(m_sceneHierarchy, m_openGLRenderer,
+						SceneLoader::LoadExternalScene(m_sceneHierarchy, m_renderingManager,
 						                               filePath);
 					}
 					if (ImGui::MenuItem("Save", nullptr, false, !existingFilePath.empty()))
 					{
-						SceneLoader::SaveScene(m_sceneHierarchy, m_openGLRenderer, existingFilePath.c_str());
+						SceneLoader::SaveScene(m_sceneHierarchy, m_renderingManager, existingFilePath.c_str());
 					}
 					if (ImGui::MenuItem("Save as..."))
 					{
@@ -175,7 +176,7 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							lFilterPatterns,
 							"json files"
 						);
-						SceneLoader::SaveScene(m_sceneHierarchy, m_openGLRenderer, filePath);
+						SceneLoader::SaveScene(m_sceneHierarchy, m_renderingManager, filePath);
 					}
 					ImGui::Separator();
 					if (ImGui::MenuItem("Import Texture"))
@@ -189,7 +190,7 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							"image files",
 							0
 						);
-						m_openGLRenderer->GetOpenGLTextureCache()->LoadTexture(filePath);
+						m_renderingManager->AddTexture(filePath);
 					}
 					if (ImGui::MenuItem("Import Mesh"))
 					{
@@ -202,7 +203,7 @@ void WindowManager::Render(const std::unique_ptr<GlfwWindow>& glfwWindow) const
 							"obj files",
 							0
 						);
-						m_openGLRenderer->GetOpenGLPrimitiveManager()->AddPrimitive(filePath);
+						m_renderingManager->AddPrimitive(filePath);
 					}
 					ImGui::EndMenu();
 				}

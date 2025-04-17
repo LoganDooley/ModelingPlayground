@@ -6,39 +6,38 @@
 #include "../../nlohmann/json_fwd.hpp"
 #include "glad/glad.h"
 
-class OpenGLRenderer;
-class OpenGLTextureCache;
+class RenderingManager;
 
 class MaterialComponent : public Component
 {
 public:
 	MaterialComponent();
-	MaterialComponent(std::shared_ptr<OpenGLRenderer> openGLRenderer);
+	MaterialComponent(std::shared_ptr<RenderingManager> renderingManager);
 
-	void SetOpenGLRenderer(std::shared_ptr<OpenGLRenderer> openGLRenderer);
+	void SetOpenGLRenderer(std::shared_ptr<RenderingManager> renderingManager);
 
 	void RenderInspector() override;
 
 	bool GetUseColorTexture() const;
 	glm::vec4 GetMaterialColor() const;
-	GLuint64 GetMaterialTexture() const;
+	const std::string& GetMaterialTexture() const;
 	void SetMaterialTexture(const std::string& materialTexture, bool setUseColorTexture = true);
 
 	bool GetUseMetallicMap() const;
 	float GetMetallic() const;
-	GLuint64 GetMetallicMap() const;
+	const std::string& GetMetallicMap() const;
 	void SetMetallicMap(const std::string& metallicMap, bool setUseMetallicMap = true);
 
 	bool GetUseRoughnessMap() const;
 	float GetRoughness() const;
-	GLuint64 GetRoughnessMap() const;
+	const std::string& GetRoughnessMap() const;
 	void SetRoughnessMap(const std::string& roughnessMap, bool setUseRoughnessMap = true);
 
 	friend void to_json(nlohmann::json& json, const MaterialComponent& materialComponent);
 	friend void from_json(const nlohmann::json& json, MaterialComponent& materialComponent);
 
 private:
-	std::shared_ptr<OpenGLRenderer> m_openGLRenderer;
+	std::shared_ptr<RenderingManager> m_renderingManager;
 
 	bool m_useColorTexture;
 	glm::vec4 m_materialColor;

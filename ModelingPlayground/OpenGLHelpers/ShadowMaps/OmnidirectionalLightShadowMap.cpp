@@ -1,7 +1,7 @@
 ﻿#include "OmnidirectionalLightShadowMap.h"
 
 #include "../OpenGLFramebuffer.h"
-#include "../OpenGLRenderer.h"
+#include "../../Application/Rendering/Renderers/OpenGLRenderer.h"
 
 #include "glad/glad.h"
 

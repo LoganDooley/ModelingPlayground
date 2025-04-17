@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
+class RenderingManager;
 class SceneHierarchy;
-class OpenGLRenderer;
 class SceneNode;
 class Object;
 
@@ -18,8 +18,8 @@ class SceneNodeGenerator
 public:
 	static std::shared_ptr<SceneNode> CreateSceneNodeAndAddAsChild(SceneNodeType sceneNodeType,
 	                                                               const std::shared_ptr<SceneNode>& parent,
-	                                                               const std::shared_ptr<OpenGLRenderer>&
-	                                                               openGLRenderer,
+	                                                               const std::shared_ptr<RenderingManager>&
+	                                                               renderingManager,
 	                                                               const std::shared_ptr<SceneHierarchy>&
 	                                                               sceneHierarchy,
 	                                                               std::string sceneNodeName = "");
@@ -27,7 +27,7 @@ public:
 	static std::string GetSceneNodeTypeName(SceneNodeType sceneNodeType);
 
 private:
-	static void InitializePrimitiveObject(Object& object, const std::shared_ptr<OpenGLRenderer>& openGLRenderer);
+	static void InitializePrimitiveObject(Object& object, const std::shared_ptr<RenderingManager>& renderingManager);
 	static void InitializeDirectionalLightObject(Object& object);
 	static void InitializePointLightObject(Object& object);
 	static void InitializeSpotLightObject(Object& object);
