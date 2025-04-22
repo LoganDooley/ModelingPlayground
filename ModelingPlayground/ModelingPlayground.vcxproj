@@ -197,6 +197,7 @@
             <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include</AdditionalIncludeDirectories>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
+        <ClCompile Include="Application\Rendering\Renderers\RasterRenderer.cpp"/>
         <ClCompile Include="Application\Rendering\RenderingManager.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -336,6 +337,7 @@
         <ClInclude Include="Application\ApplicationManager.h"/>
         <ClInclude Include="Application\InputManager.h"/>
         <ClInclude Include="Application\Rendering\Renderers\OpenGLRenderer.h"/>
+        <ClInclude Include="Application\Rendering\Renderers\RasterRenderer.h"/>
         <ClInclude Include="Application\Rendering\Renderers\Renderer.h"/>
         <ClInclude Include="Application\Rendering\RenderingManager.h"/>
         <ClInclude Include="Application\ShaderLoader.h"/>

@@ -171,7 +171,10 @@ bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
 		{
 			bool selected = currentValue == textureKey;
 			std::string label = std::string("##") + textureKey;
-			ImGui::Selectable(label.c_str(), selected);
+			if (ImGui::Selectable(label.c_str(), selected))
+			{
+				currentValue = textureKey;
+			}
 			ImGui::SameLine();
 			ImGui::Image(texture.first->GetTextureId(), ImVec2(50, 50), ImVec2(0, 1), ImVec2(1, 0));
 			ImGui::SameLine();

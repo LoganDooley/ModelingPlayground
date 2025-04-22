@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+class SceneNode;
 class SceneHierarchy;
 class SceneViewCamera;
 class OpenGLTextureCache;
@@ -27,4 +28,10 @@ public:
 
 	virtual const std::unique_ptr<OpenGLTextureCache>& GetTextureCache() const = 0;
 	virtual std::vector<std::string> GetPrimitiveNames() const = 0;
+
+protected:
+	virtual void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const = 0;
+
+	std::shared_ptr<SceneViewCamera> m_camera;
+	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 };

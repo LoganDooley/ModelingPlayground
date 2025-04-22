@@ -20,10 +20,13 @@ OpenGLRenderer::OpenGLRenderer():
 	m_defaultShader(std::make_shared<OpenGLShader>()),
 	m_depthShader(std::make_shared<OpenGLShader>()),
 	m_omnidirectionalDepthShader(std::make_shared<OpenGLShader>()),
-	m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
 	m_openGLPrimitiveManager(std::make_unique<OpenGLPrimitiveManager>()),
 	m_openGLLightContainer(std::make_unique<OpenGLLightContainer>()),
 	m_openGLTextureCache(std::make_unique<OpenGLTextureCache>())
+{
+}
+
+OpenGLRenderer::~OpenGLRenderer()
 {
 }
 
@@ -136,10 +139,6 @@ void OpenGLRenderer::Initialize()
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
-void OpenGLRenderer::DrawSettings()
-{
 }
 
 void OpenGLRenderer::SetCamera(std::shared_ptr<SceneViewCamera> camera)
