@@ -18,7 +18,6 @@ public:
 	void BindShader() const;
 	void UnbindShader() const;
 
-	void RegisterUniformVariable(const std::string& uniformName);
 	bool RegisterUniformBufferObject(std::string uniformBufferObjectName, GLsizeiptr sizeInBytes,
 	                                 GLuint bindingLocation);
 
@@ -61,6 +60,8 @@ public:
 	                                   glm::mat4 data) const;
 
 private:
+	void RegisterProgramUniforms();
+	void RegisterUniformVariable(const std::string& uniformName);
 	bool ValidateUniformName(const std::string& uniformName) const;
 	bool ValidateUniformBufferObjectName(const std::string& uniformBufferObjectName) const;
 

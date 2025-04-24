@@ -23,11 +23,15 @@ OpenGLShader::~OpenGLShader()
 void OpenGLShader::LoadShader(const char* vertexFilePath, const char* fragmentFilePath)
 {
 	m_shaderProgramId = ShaderLoader::createShaderProgram(vertexFilePath, fragmentFilePath);
+
+	RegisterProgramUniforms();
 }
 
 void OpenGLShader::LoadShader(const char* vertexFilePath, const char* geometryFilePath, const char* fragmentFilePath)
 {
 	m_shaderProgramId = ShaderLoader::createShaderProgram(vertexFilePath, geometryFilePath, fragmentFilePath);
+
+	RegisterProgramUniforms();
 }
 
 void OpenGLShader::BindShader() const
@@ -38,17 +42,6 @@ void OpenGLShader::BindShader() const
 void OpenGLShader::UnbindShader() const
 {
 	glUseProgram(0);
-}
-
-void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
-{
-	if (m_uniforms.contains(uniformName))
-	{
-		std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName <<
-			" is already registered!\n";
-		return;
-	}
-	m_uniforms[uniformName] = std::make_unique<OpenGLUniformVariable>(uniformName, m_shaderProgramId);
 }
 
 bool OpenGLShader::RegisterUniformBufferObject(std::string uniformBufferObjectName, GLsizeiptr sizeInBytes,
@@ -152,6 +145,38 @@ void OpenGLShader::SetUniformBufferObjectSubData(const std::string& uniformBuffe
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferObjects.at(uniformBufferObjectName).first);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(glm::mat4), value_ptr(data));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void OpenGLShader::RegisterProgramUniforms()
+{
+	GLint uniformCount;
+	glGetProgramiv(m_shaderProgramId, GL_ACTIVE_UNIFORMS, &uniformCount);
+
+	GLint maxUniformNameLength;
+	glGetProgramiv(m_shaderProgramId, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLength);
+
+	for (GLuint i = 0; i < uniformCount; i++)
+	{
+		std::vector<GLchar> uniformName(maxUniformNameLength);
+		GLsizei uniformNameLength;
+		GLenum uniformType;
+		GLint uniformSize;
+		glGetActiveUniform(m_shaderProgramId, i, maxUniformNameLength, &uniformNameLength, &uniformSize, &uniformType,
+		                   uniformName.data());
+		std::cout << "Registering uniform: " << std::string(uniformName.data()) << std::endl;
+		RegisterUniformVariable(uniformName.data());
+	}
+}
+
+void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
+{
+	if (m_uniforms.contains(uniformName))
+	{
+		std::cout << "OpenGLShader|RegisterUniformVariable: Uniform variable " << uniformName <<
+			" is already registered!\n";
+		return;
+	}
+	m_uniforms[uniformName] = std::make_unique<OpenGLUniformVariable>(uniformName, m_shaderProgramId);
 }
 
 bool OpenGLShader::ValidateUniformName(const std::string& uniformName) const

@@ -90,44 +90,13 @@ void OpenGLRenderer::Initialize()
 
 	m_defaultShader->LoadShader("Shaders/default.vert", "Shaders/default.frag");
 
-	// Initialize shader
-	m_defaultShader->RegisterUniformVariable("modelMatrix");
-	m_defaultShader->RegisterUniformVariable("inverseTransposeModelMatrix");
-	m_defaultShader->RegisterUniformVariable("cameraMatrix");
-	m_defaultShader->RegisterUniformVariable("cameraPosition");
-	m_defaultShader->RegisterUniformVariable("ambientColor");
-	m_defaultShader->RegisterUniformVariable("useMaterialTexture");
-	m_defaultShader->RegisterUniformVariable("materialColor");
-	m_defaultShader->RegisterUniformVariable("materialTexture");
-	m_defaultShader->RegisterUniformVariable("useRoughnessMap");
-	m_defaultShader->RegisterUniformVariable("roughness");
-	m_defaultShader->RegisterUniformVariable("roughnessMap");
-	m_defaultShader->RegisterUniformVariable("useMetallicMap");
-	m_defaultShader->RegisterUniformVariable("metallic");
-	m_defaultShader->RegisterUniformVariable("metallicMap");
-
 	m_defaultShader->RegisterUniformBufferObject("LightsBlock", 64 * 250 + 4, 0);
 
 	m_depthShader->LoadShader("Shaders/depth.vert",
 	                          "Shaders/depth.frag");
 
-	// Initialize shadow shader
-	m_depthShader->RegisterUniformVariable("cameraMatrix");
-	m_depthShader->RegisterUniformVariable("modelMatrix");
-
 	m_omnidirectionalDepthShader->LoadShader("Shaders/omnidirectionalDepth.vert", "Shaders/omnidirectionalDepth.geom",
 	                                         "Shaders/omnidirectionalDepth.frag");
-
-	// Initialize omnidirectional shadow shader
-	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[0]");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[1]");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[2]");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[3]");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[4]");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("lightMatrices[5]");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("modelMatrix");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("lightPosition");
-	m_omnidirectionalDepthShader->RegisterUniformVariable("farPlane");
 
 	m_openGLPrimitiveManager->GeneratePrimitives(10, 10);
 
