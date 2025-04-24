@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ModelingEngine" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ModelingEngine/ModelingEngine/ModelingEngine/Libraries/imgui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ModelingPlayground/Libraries/glm" vcs="Git" />
   </component>
 </project>

@@ -86,7 +86,8 @@ void SceneNodeGenerator::InitializePrimitiveObject(Object& object,
 {
 	object.AddComponent<TransformComponent>();
 	object.AddComponent<PrimitiveComponent>(renderingManager);
-	object.AddComponent<MaterialComponent>(renderingManager);
+	object.AddComponent<MaterialComponent>();
+	object.GetFirstComponentOfType<MaterialComponent>()->SetOpenGLRenderer(renderingManager);
 }
 
 void SceneNodeGenerator::InitializeDirectionalLightObject(Object& object)
