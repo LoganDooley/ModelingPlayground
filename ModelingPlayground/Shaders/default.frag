@@ -34,8 +34,8 @@ struct Light{
 
 layout (std140, binding = 0) uniform LightsBlock
 {
-    Light lights[MAX_LIGHTS]; // lights[i] = 132 * i
-    int lightCount; // lightCount = 132 * MAX_LIGHTS
+    Light lights[MAX_LIGHTS]; // lights[i] = 144 * i
+    int lightCount; // lightCount = 144 * MAX_LIGHTS
 };
 
 uniform vec3 ambientColor;

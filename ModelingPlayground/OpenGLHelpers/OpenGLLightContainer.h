@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "OpenGLShader.h"
+#include "Shader/OpenGLShader.h"
 #include "../Scene/SceneHierarchy.h"
 #include "../Scene/Components/DirectionalLightComponent.h"
 #include "../Scene/Components/PointLightComponent.h"
@@ -17,27 +17,27 @@ class OpenGLLight;
 class OpenGLLightContainer
 {
 public:
-	OpenGLLightContainer();
-	~OpenGLLightContainer() = default;
+    OpenGLLightContainer();
+    ~OpenGLLightContainer() = default;
 
-	void Initialize(std::shared_ptr<OpenGLShader> defaultShader);
-	void Reset();
-	void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
+    void Initialize(std::shared_ptr<OpenGLShader> defaultShader);
+    void Reset();
+    void SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy);
 
-	bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);
+    bool TryAddLight(const std::shared_ptr<SceneNode>& lightSceneNode);
 
-	void SetAllShadowMapsDirty() const;
-	void UpdateDirtyShadowMaps(const OpenGLRenderer* openGLRenderer) const;
+    void SetAllShadowMapsDirty() const;
+    void UpdateDirtyShadowMaps(const OpenGLRenderer* openGLRenderer) const;
 
 private:
-	bool AddLightInternal(const std::shared_ptr<SceneNode>& lightSceneNode, LightType lightType);
-	static LightType GetLightType(const std::shared_ptr<SceneNode>& lightSceneNode);
+    bool AddLightInternal(const std::shared_ptr<SceneNode>& lightSceneNode, LightType lightType);
+    static LightType GetLightType(const std::shared_ptr<SceneNode>& lightSceneNode);
 
-	std::shared_ptr<OpenGLShader> m_defaultShader;
-	std::vector<std::shared_ptr<OpenGLLight>> m_lights;
+    std::shared_ptr<OpenGLShader> m_defaultShader;
+    std::vector<std::shared_ptr<OpenGLLight>> m_lights;
 
-	const int m_maxLights = 50;
-	const int m_lightStructSize = 144;
-	const int m_lightCountOffset = m_maxLights * m_lightStructSize;
-	const std::string m_lightsBlockName = "LightsBlock";
+    const int m_maxLights = 50;
+    const int m_lightStructSize = 144;
+    const int m_lightCountOffset = m_maxLights * m_lightStructSize;
+    const std::string m_lightsBlockName = "LightsBlock";
 };
