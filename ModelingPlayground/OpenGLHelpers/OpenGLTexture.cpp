@@ -117,12 +117,18 @@ GLuint64 OpenGLTexture::GetTextureHandle() const
 
 void OpenGLTexture::MakeTextureResident()
 {
-    glMakeTextureHandleResidentARB(m_textureHandle);
+    if (!glIsTextureHandleResidentARB(m_textureHandle))
+    {
+        glMakeTextureHandleResidentARB(m_textureHandle);
+    }
 }
 
 void OpenGLTexture::MakeTextureNonResident()
 {
-    glMakeTextureHandleNonResidentARB(m_textureHandle);
+    if (glIsTextureHandleResidentARB(m_textureHandle))
+    {
+        glMakeTextureHandleNonResidentARB(m_textureHandle);
+    }
 }
 
 void OpenGLTexture::Bind()

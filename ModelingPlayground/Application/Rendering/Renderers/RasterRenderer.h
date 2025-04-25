@@ -3,29 +3,47 @@
 
 #include "Renderer.h"
 
-#include "../RenderingManager.h"
+enum class RasterPipeline
+{
+    Forward, ForwardPlus, Deferred
+};
+
+enum class AmbientOcclusion
+{
+    None, SSAO
+};
+
+enum class AntiAliasing
+{
+    None, FXAA, MLAA, MSAA, SMAA, TAA, TSAA, CSAA
+};
+
+enum class GlobalIllumination
+{
+    None, Ambient, VoxelConeTracing
+};
 
 class RasterRenderer : public Renderer
 {
 public:
-	RasterRenderer();
-	~RasterRenderer() override;
+    RasterRenderer();
+    ~RasterRenderer() override;
 
-	void DrawSettings() override;
+    void DrawSettings() override;
 
-	virtual void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const = 0;
-	virtual void RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const = 0;
+    virtual void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const = 0;
+    virtual void RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const = 0;
 
 protected:
-	virtual void ClearCameraFramebuffer() const = 0;
-	virtual void DepthPrepass() const = 0;
-	virtual void SetAmbientLightColor() const = 0;
+    virtual void ClearCameraFramebuffer() const = 0;
+    virtual void DepthPrepass() const = 0;
+    virtual void SetAmbientLightColor() const = 0;
 
-	std::shared_ptr<SceneViewCamera> m_camera;
-	std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
+    std::shared_ptr<SceneViewCamera> m_camera;
+    std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 
-	RasterPipeline m_rasterPipeline;
-	GlobalIllumination m_globalIllumination;
-	AmbientOcclusion m_ambientOcclusion;
-	AntiAliasing m_antiAliasing;
+    RasterPipeline m_rasterPipeline;
+    GlobalIllumination m_globalIllumination;
+    AmbientOcclusion m_ambientOcclusion;
+    AntiAliasing m_antiAliasing;
 };

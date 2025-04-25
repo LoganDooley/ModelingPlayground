@@ -238,6 +238,41 @@ std::vector<std::string> OpenGLRenderer::GetPrimitiveNames() const
     return m_openGLPrimitiveManager->GetPrimitiveNames();
 }
 
+void OpenGLRenderer::SelectObjectAtPixel(int x, int y) const
+{
+    m_sceneHierarchy->BreadthFirstProcessAllSceneNodes([this, x, y](std::shared_ptr<SceneNode> sceneNode)
+    {
+        std::shared_ptr<TransformComponent> transformComponent = sceneNode->GetObject().GetFirstComponentOfType<
+            TransformComponent>();
+        std::shared_ptr<PrimitiveComponent> primitiveComponent = sceneNode->GetObject().GetFirstComponentOfType<
+            PrimitiveComponent>();
+
+        if (primitiveComponent == nullptr || transformComponent == nullptr)
+        {
+            return;
+        }
+
+        std::pair<glm::vec3, glm::vec3> ray = m_camera->GetWorldSpaceRayThroughPixel(x, y);
+        glm::mat4 modelMatrix = transformComponent->GetCumulativeModelMatrix();
+        glm::vec3 p = modelMatrix * glm::vec4(ray.first, 1.0);
+        glm::vec3 d = modelMatrix * glm::vec4(ray.second, 0.0);
+
+        std::cout << d.x << " " << d.y << " " << d.z << std::endl;
+
+        if (m_openGLPrimitiveManager->GetPrimitive(primitiveComponent->GetPrimitiveName())->Raycast(p, d))
+        {
+            if (m_sceneHierarchy->IsSceneNodeSelected(sceneNode))
+            {
+                m_sceneHierarchy->SetSceneNodeSelected(nullptr);
+            }
+            else
+            {
+                m_sceneHierarchy->SetSceneNodeSelected(sceneNode);
+            }
+        }
+    });
+}
+
 void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& activeShader) const
 {
     activeShader->BindShader();

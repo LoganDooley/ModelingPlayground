@@ -548,8 +548,8 @@
         <ClInclude Include="Serialization\DataBindingSerializer.h"/>
         <ClInclude Include="Serialization\GLMSerializers.h"/>
         <ClInclude Include="Serialization\PrimitiveSerializers.h"/>
+        <ClInclude Include="Utils\EnumToString.h"/>
         <ClInclude Include="Utils\LazyValue.h"/>
-        <ClInclude Include="Utils\EnumLabels\EnumLabel.h"/>
         <ClInclude Include="Utils\PrimitiveGenerator.h"/>
         <ClInclude Include="Utils\PropertyDrawer.h"/>
         <ClInclude Include="Utils\SceneLoader.h"/>

@@ -5,8 +5,8 @@
 #include <glm/vec4.hpp>
 
 #include "DataBinding.h"
+#include "EnumToString.h"
 #include "imgui.h"
-#include "EnumLabels/EnumLabel.h"
 
 class OpenGLTextureCache;
 
@@ -48,25 +48,14 @@ public:
     static bool DrawCombo(const char* propertyName, std::vector<std::string> options, std::string& currentValue);
 
     template <typename E>
-    static bool DrawEnumLabelCombo(const char* propertyName, EnumLabel<E> enumLabel, E& enumValue)
+    static bool DrawEnumCombo(const char* propertyName, E& enumValue)
     {
-        int newEnumIndex = enumLabel.GetEnumIndex(enumValue);
-        if (ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(),
-                         static_cast<int>(enumLabel.Count())))
+        int newEnumIndex = static_cast<int>(enumValue);
+        if (ImGui::Combo(propertyName, &newEnumIndex, EnumToStringMap[std::type_index(typeid(E))].data(),
+                         EnumToStringMap[std::type_index(typeid(E))].size()))
         {
-            enumValue = enumLabel.GetEnums()[newEnumIndex];
+            enumValue = static_cast<E>(newEnumIndex);
             return true;
-        }
-        return false;
-    }
-
-    template <typename E>
-    static bool DrawEnumLabelCombo(const char* propertyName, EnumLabel<E> enumLabel, DataBinding<E>& enumValue)
-    {
-        int newEnumIndex = enumLabel.GetEnumIndex(enumValue.GetData());
-        if (ImGui::Combo(propertyName, &newEnumIndex, enumLabel.GetCStrings().data(), enumLabel.Count()))
-        {
-            return enumValue.SetAndNotify(enumLabel.GetEnums()[newEnumIndex]);
         }
         return false;
     }

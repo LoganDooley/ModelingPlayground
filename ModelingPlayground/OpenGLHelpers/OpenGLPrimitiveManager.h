@@ -10,19 +10,20 @@
 class OpenGLPrimitiveManager
 {
 public:
-	OpenGLPrimitiveManager();
-	~OpenGLPrimitiveManager() = default;
+    OpenGLPrimitiveManager();
+    ~OpenGLPrimitiveManager() = default;
 
-	void GeneratePrimitives(int sphereLatitudinalResolution, int sphereLongitudinalResolution);
-	void AddPrimitive(const std::string& primitiveName, std::shared_ptr<OpenGLPrimitive> primitive);
-	void AddPrimitive(const std::string& filePath);
+    void GeneratePrimitives(int sphereLatitudinalResolution, int sphereLongitudinalResolution);
+    void AddPrimitive(const std::string& primitiveName, std::shared_ptr<OpenGLPrimitive> primitive);
+    void AddPrimitive(const std::string& filePath);
+    const std::shared_ptr<OpenGLPrimitive>& GetPrimitive(const std::string& primitiveName) const;
 
-	void DrawPrimitive(const std::string& primitiveName);
-	std::vector<std::string> GetPrimitiveNames() const;
+    void DrawPrimitive(const std::string& primitiveName);
+    std::vector<std::string> GetPrimitiveNames() const;
 
-	friend void to_json(nlohmann::json& json, const OpenGLPrimitiveManager& openGLPrimitiveManager);
-	friend void from_json(const nlohmann::json& json, OpenGLPrimitiveManager& openGLPrimitiveManager);
+    friend void to_json(nlohmann::json& json, const OpenGLPrimitiveManager& openGLPrimitiveManager);
+    friend void from_json(const nlohmann::json& json, OpenGLPrimitiveManager& openGLPrimitiveManager);
 
 private:
-	std::unordered_map<std::string, std::shared_ptr<OpenGLPrimitive>> m_primitives;
+    std::unordered_map<std::string, std::shared_ptr<OpenGLPrimitive>> m_primitives;
 };
