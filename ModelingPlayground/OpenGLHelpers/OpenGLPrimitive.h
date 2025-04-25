@@ -42,11 +42,11 @@ public:
     friend void to_json(nlohmann::json& json, const OpenGLPrimitive& openGLPrimitive);
     friend void from_json(const nlohmann::json& json, OpenGLPrimitive& openGLPrimitive);
 
-    bool Raycast(glm::vec3 p, glm::vec3 d) const;
+    float Raycast(glm::vec3 p, glm::vec3 d) const;
 
 private:
     bool IsVertexAttributeLayoutSupported() const;
-    bool RaycastTriangle(glm::vec3 p, glm::vec3 d, int i0, int i1, int i2) const;
+    float RaycastTriangle(glm::vec3 p, glm::vec3 d, int i0, int i1, int i2) const;
 
     GLuint m_vbo;
     GLuint m_vao;

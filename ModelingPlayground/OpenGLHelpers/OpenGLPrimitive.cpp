@@ -103,16 +103,18 @@ void OpenGLPrimitive::Draw() const
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
 }
 
-bool OpenGLPrimitive::Raycast(glm::vec3 p, glm::vec3 d) const
+float OpenGLPrimitive::Raycast(glm::vec3 p, glm::vec3 d) const
 {
+    float t = std::numeric_limits<float>::max();
     for (int i = 0; i < m_indices.size(); i += 3)
     {
-        if (RaycastTriangle(p, d, i, i + 1, i + 2))
+        float triangleT = RaycastTriangle(p, d, i, i + 1, i + 2);
+        if (triangleT > 0 && triangleT < t)
         {
-            return true;
+            t = triangleT;
         }
     }
-    return false;
+    return t;
 }
 
 bool OpenGLPrimitive::IsVertexAttributeLayoutSupported() const
@@ -140,7 +142,7 @@ bool OpenGLPrimitive::IsVertexAttributeLayoutSupported() const
     return true;
 }
 
-bool OpenGLPrimitive::RaycastTriangle(glm::vec3 p, glm::vec3 d, int i0, int i1, int i2) const
+float OpenGLPrimitive::RaycastTriangle(glm::vec3 p, glm::vec3 d, int i0, int i1, int i2) const
 {
     int vertexSize = 0;
     for (auto vertexAttribute : m_vertexAttributeLayout)
@@ -160,7 +162,7 @@ bool OpenGLPrimitive::RaycastTriangle(glm::vec3 p, glm::vec3 d, int i0, int i1, 
 
     if (det > 0.0001f && det < 0.0001f)
     {
-        return false;
+        return -1;
     }
 
     float invDet = 1.0f / det;
@@ -168,15 +170,15 @@ bool OpenGLPrimitive::RaycastTriangle(glm::vec3 p, glm::vec3 d, int i0, int i1, 
     float u = glm::dot(tVec, pVec) * invDet;
     if (u < 0.0f || u > 1.0f)
     {
-        return false;
+        return -1;
     }
 
     glm::vec3 qVec = glm::cross(tVec, e1);
     float v = glm::dot(d, qVec) * invDet;
     if (v < 0.0f || u + v > 1.0f)
     {
-        return false;
+        return -1;
     }
 
-    return true;
+    return glm::dot(e2, qVec) * invDet;
 }
