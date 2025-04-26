@@ -63,11 +63,11 @@ void OpenGLPrimitive::CreateOpenGLObjects()
     {
         switch (vertexAttribute)
         {
-        case VertexAttribute::Position:
-        case VertexAttribute::Normal:
+        case VertexAttribute::PositionF3:
+        case VertexAttribute::NormalF3:
             vertexLength += 3;
             break;
-        case VertexAttribute::UV:
+        case VertexAttribute::UVF2:
             vertexLength += 2;
             break;
         }
@@ -121,15 +121,15 @@ bool OpenGLPrimitive::IsVertexAttributeLayoutSupported() const
 {
     if (m_vertexAttributeLayout.size() >= 2)
     {
-        if (m_vertexAttributeLayout[0] != VertexAttribute::Position)
+        if (m_vertexAttributeLayout[0] != VertexAttribute::PositionF3)
         {
             return false;
         }
-        if (m_vertexAttributeLayout[1] != VertexAttribute::Normal)
+        if (m_vertexAttributeLayout[1] != VertexAttribute::NormalF3)
         {
             return false;
         }
-        if (m_vertexAttributeLayout.size() >= 3 && m_vertexAttributeLayout[2] != VertexAttribute::UV)
+        if (m_vertexAttributeLayout.size() >= 3 && m_vertexAttributeLayout[2] != VertexAttribute::UVF2)
         {
             return false;
         }

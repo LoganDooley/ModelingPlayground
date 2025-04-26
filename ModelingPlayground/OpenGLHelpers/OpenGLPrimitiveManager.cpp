@@ -36,22 +36,24 @@ void OpenGLPrimitiveManager::GeneratePrimitives(int sphereLatitudinalResolution,
 
     m_primitives["Triangle"] = std::make_shared<OpenGLPrimitive>(triangleVertices, triangleIndices,
                                                                  std::vector{
-                                                                     VertexAttribute::Position, VertexAttribute::Normal,
-                                                                     VertexAttribute::UV
+                                                                     VertexAttribute::PositionF3,
+                                                                     VertexAttribute::NormalF3,
+                                                                     VertexAttribute::UVF2
                                                                  });
 
 
     std::pair<std::vector<float>, std::vector<int>> sphereData = PrimitiveGenerator::GenerateSphere(
         sphereLatitudinalResolution, sphereLongitudinalResolution);
     m_primitives["Sphere"] = std::make_shared<OpenGLPrimitive>(sphereData.first, sphereData.second, std::vector{
-                                                                   VertexAttribute::Position, VertexAttribute::Normal,
-                                                                   VertexAttribute::UV
+                                                                   VertexAttribute::PositionF3,
+                                                                   VertexAttribute::NormalF3,
+                                                                   VertexAttribute::UVF2
                                                                });
 
     std::pair<std::vector<float>, std::vector<int>> cubeData = PrimitiveGenerator::GenerateCube();
     m_primitives["Cube"] = std::make_shared<OpenGLPrimitive>(cubeData.first, cubeData.second, std::vector{
-                                                                 VertexAttribute::Position, VertexAttribute::Normal,
-                                                                 VertexAttribute::UV
+                                                                 VertexAttribute::PositionF3, VertexAttribute::NormalF3,
+                                                                 VertexAttribute::UVF2
                                                              });
 }
 
@@ -101,10 +103,10 @@ void OpenGLPrimitiveManager::AddPrimitive(const std::string& filePath)
     bool hasTexCoords;
     SceneLoader::ProcessMesh(mesh, vertices, indices, hasTexCoords);
 
-    std::vector<VertexAttribute> vertexAttributes = {VertexAttribute::Position, VertexAttribute::Normal};
+    std::vector<VertexAttribute> vertexAttributes = {VertexAttribute::PositionF3, VertexAttribute::NormalF3};
     if (hasTexCoords)
     {
-        vertexAttributes.push_back(VertexAttribute::UV);
+        vertexAttributes.push_back(VertexAttribute::UVF2);
     }
 
     m_primitives[filePath] = std::make_shared<OpenGLPrimitive>(vertices, indices, vertexAttributes);

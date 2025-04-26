@@ -6,21 +6,21 @@
 
 #include "../nlohmann/json_fwd.hpp"
 
-enum class VertexAttribute : int
+enum class VertexAttribute
 {
-    Position = 0,
-    Normal = 1,
-    UV = 2
+    PositionF3,
+    NormalF3,
+    UVF2
 };
 
 inline int GetSize(VertexAttribute vertexAttribute)
 {
     switch (vertexAttribute)
     {
-    case VertexAttribute::Position:
-    case VertexAttribute::Normal:
+    case VertexAttribute::PositionF3:
+    case VertexAttribute::NormalF3:
         return 3;
-    case VertexAttribute::UV:
+    case VertexAttribute::UVF2:
         return 2;
     }
 

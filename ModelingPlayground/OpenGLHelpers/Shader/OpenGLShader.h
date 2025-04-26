@@ -6,6 +6,7 @@
 
 #include "OpenGLUniformBlock.h"
 #include "OpenGLUniformVariable.h"
+#include "../OpenGLPrimitive.h"
 #include "glad/glad.h"
 
 class OpenGLShader
@@ -52,12 +53,15 @@ public:
 
 private:
     void RegisterProgramUniformsAndBlocks();
+    void RegisterProgramAttributes();
     void RegisterUniformVariable(const std::string& uniformName);
     void RegisterUniformBlock(std::string uniformBlockName, GLuint uniformBlockIndex);
+    void RegisterAttribute(const std::string& attributeName, GLenum attributeType);
     bool ValidateUniformName(const std::string& uniformName) const;
     bool ValidateUniformBlockName(const std::string& uniformBlockName) const;
 
     std::unordered_map<std::string, std::unique_ptr<OpenGLUniformVariable>> m_uniforms;
     std::unordered_map<std::string, std::unique_ptr<OpenGLUniformBlock>> m_uniformBlocks;
+    std::vector<VertexAttribute> m_attributes;
     GLuint m_shaderProgramId;
 };

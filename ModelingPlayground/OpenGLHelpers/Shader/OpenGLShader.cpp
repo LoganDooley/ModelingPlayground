@@ -26,6 +26,7 @@ void OpenGLShader::LoadShader(const char* vertexFilePath, const char* fragmentFi
     m_shaderProgramId = ShaderLoader::createShaderProgram(vertexFilePath, fragmentFilePath);
 
     RegisterProgramUniformsAndBlocks();
+    RegisterProgramAttributes();
 }
 
 void OpenGLShader::LoadShader(const char* vertexFilePath, const char* geometryFilePath, const char* fragmentFilePath)
@@ -33,6 +34,7 @@ void OpenGLShader::LoadShader(const char* vertexFilePath, const char* geometryFi
     m_shaderProgramId = ShaderLoader::createShaderProgram(vertexFilePath, geometryFilePath, fragmentFilePath);
 
     RegisterProgramUniformsAndBlocks();
+    RegisterProgramAttributes();
 }
 
 void OpenGLShader::BindShader() const
@@ -82,6 +84,26 @@ void OpenGLShader::RegisterProgramUniformsAndBlocks()
     }
 }
 
+void OpenGLShader::RegisterProgramAttributes()
+{
+    GLint attributeCount;
+    glGetProgramiv(m_shaderProgramId, GL_ACTIVE_ATTRIBUTES, &attributeCount);
+
+    GLint maxAttributeNameLength;
+    glGetProgramiv(m_shaderProgramId, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeNameLength);
+
+    for (GLuint i = 0; i < attributeCount; i++)
+    {
+        std::vector<GLchar> attributeName(maxAttributeNameLength);
+        GLsizei attributeNameLength;
+        GLenum attributeType;
+        GLint attributeSize;
+        glGetActiveAttrib(m_shaderProgramId, i, maxAttributeNameLength, &attributeNameLength, &attributeSize,
+                          &attributeType, attributeName.data());
+        RegisterAttribute(attributeName.data(), attributeType);
+    }
+}
+
 void OpenGLShader::RegisterUniformVariable(const std::string& uniformName)
 {
     if (m_uniforms.contains(uniformName) || glGetUniformLocation(m_shaderProgramId, uniformName.c_str()) == -1)
@@ -103,6 +125,26 @@ void OpenGLShader::RegisterUniformBlock(std::string uniformBlockName, GLuint uni
 
     m_uniformBlocks[uniformBlockName] = std::make_unique<OpenGLUniformBlock>(
         uniformBlockIndex, m_shaderProgramId);
+}
+
+void OpenGLShader::RegisterAttribute(const std::string& attributeName, GLenum attributeType)
+{
+    if (attributeName == "aPos" && attributeType == GL_FLOAT_VEC3)
+    {
+        m_attributes.emplace_back(VertexAttribute::PositionF3);
+    }
+    else if (attributeName == "aNormal" && attributeType == GL_FLOAT_VEC3)
+    {
+        m_attributes.emplace_back(VertexAttribute::NormalF3);
+    }
+    else if (attributeName == "aTexCoord" && attributeType == GL_FLOAT_VEC2)
+    {
+        m_attributes.emplace_back(VertexAttribute::UVF2);
+    }
+    else
+    {
+        std::cerr << "Unknown attribute: " << attributeName << "\n";
+    }
 }
 
 bool OpenGLShader::ValidateUniformName(const std::string& uniformName) const
