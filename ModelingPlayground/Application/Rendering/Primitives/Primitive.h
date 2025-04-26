@@ -1,10 +1,7 @@
 ﻿#pragma once
-
+#include <vector>
 #include <glm/vec3.hpp>
-
-#include "glad/glad.h"
-
-#include "../nlohmann/json_fwd.hpp"
+#include "../nlohmann/json.hpp"
 
 enum class VertexAttribute
 {
@@ -27,30 +24,23 @@ inline int GetSize(VertexAttribute vertexAttribute)
     return 0;
 }
 
-// Wrapper class used to store object geometry
-class OpenGLPrimitive
+
+class Primitive
 {
 public:
-    OpenGLPrimitive();
-    OpenGLPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices,
-                    const std::vector<VertexAttribute>& vertexAttributeLayout);
-    ~OpenGLPrimitive();
+    Primitive();
+    Primitive(const std::vector<float>& vertices, const std::vector<int>& indices,
+              const std::vector<VertexAttribute>& vertexAttributeLayout);
+    ~Primitive();
 
-    void CreateOpenGLObjects();
-    void Draw() const;
-
-    friend void to_json(nlohmann::json& json, const OpenGLPrimitive& openGLPrimitive);
-    friend void from_json(const nlohmann::json& json, OpenGLPrimitive& openGLPrimitive);
+    friend void to_json(nlohmann::json& json, const Primitive& openGLPrimitive);
+    friend void from_json(const nlohmann::json& json, Primitive& openGLPrimitive);
 
     float Raycast(glm::vec3 p, glm::vec3 d) const;
 
 private:
     bool IsVertexAttributeLayoutSupported() const;
     float RaycastTriangle(glm::vec3 p, glm::vec3 d, int i0, int i1, int i2) const;
-
-    GLuint m_vbo;
-    GLuint m_vao;
-    GLuint m_ebo;
 
     std::vector<VertexAttribute> m_vertexAttributeLayout;
     std::vector<float> m_vertices;

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+class PrimitiveManager;
 class SceneHierarchy;
 class SceneViewCamera;
 class MaterialComponent;
@@ -46,4 +47,5 @@ private:
     RenderingMode m_renderingMode;
     std::unique_ptr<Renderer> m_renderer;
     std::shared_ptr<SceneViewCamera> m_camera;
+    std::shared_ptr<PrimitiveManager> m_primitiveManager;
 };

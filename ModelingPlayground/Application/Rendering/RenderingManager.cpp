@@ -1,11 +1,13 @@
 ﻿#include "RenderingManager.h"
 
 #include "../../Utils/PropertyDrawer.h"
+#include "Primitives/PrimitiveManager.h"
 #include "Renderers/OpenGLRenderer.h"
 
 RenderingManager::RenderingManager():
     m_renderingMode(RenderingMode::Raster),
-    m_renderer(std::make_unique<OpenGLRenderer>())
+    m_renderer(std::make_unique<OpenGLRenderer>()),
+    m_primitiveManager(std::make_shared<PrimitiveManager>())
 {
 }
 
@@ -32,7 +34,7 @@ void RenderingManager::Render() const
 
 void RenderingManager::AddPrimitive(const std::string& filePath) const
 {
-    m_renderer->AddPrimitive(filePath);
+    m_primitiveManager->AddPrimitive(filePath);
 }
 
 void RenderingManager::AddTexture(const std::string& filePath) const
@@ -57,7 +59,7 @@ const std::unique_ptr<OpenGLTextureCache>& RenderingManager::GetTextureCache() c
 
 std::vector<std::string> RenderingManager::GetPrimitiveNames() const
 {
-    return m_renderer->GetPrimitiveNames();
+    return m_primitiveManager->GetPrimitiveNames();
 }
 
 void RenderingManager::DrawSettings()
@@ -68,5 +70,5 @@ void RenderingManager::DrawSettings()
 
 void RenderingManager::SelectObjectAtPixel(int x, int y) const
 {
-    m_renderer->SelectObjectAtPixel(x, y);
+    m_renderer->SelectObjectAtPixel(x, y, m_primitiveManager);
 }

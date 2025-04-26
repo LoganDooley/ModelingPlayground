@@ -6,7 +6,7 @@
 
 #include "OpenGLUniformBlock.h"
 #include "OpenGLUniformVariable.h"
-#include "../OpenGLPrimitive.h"
+#include "../../Application/Rendering/Primitives/Primitive.h"
 #include "glad/glad.h"
 
 class OpenGLShader

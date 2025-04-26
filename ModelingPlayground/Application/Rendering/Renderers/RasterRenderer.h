@@ -39,9 +39,6 @@ protected:
     virtual void DepthPrepass() const = 0;
     virtual void SetAmbientLightColor() const = 0;
 
-    std::shared_ptr<SceneViewCamera> m_camera;
-    std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
-
     RasterPipeline m_rasterPipeline;
     GlobalIllumination m_globalIllumination;
     AmbientOcclusion m_ambientOcclusion;

@@ -5,7 +5,6 @@
 #include "../../../Scene/SceneHierarchy.h"
 #include "../../OpenGLHelpers/OpenGLLightContainer.h"
 
-#include "../../OpenGLHelpers/OpenGLPrimitiveManager.h"
 #include "../../OpenGLHelpers/OpenGLTextureCache.h"
 
 class MaterialComponent;
@@ -25,13 +24,10 @@ public:
     void SetCamera(std::shared_ptr<SceneViewCamera> camera) override;
     void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy) override;
     void Render() const override;
-    void AddPrimitive(const std::string& filePath) const override;
     void AddTexture(const std::string& filePath) const override;
     void IncrementTextureUsage(const std::string& filePath, void* user) const override;
     void DecrementTextureUsage(const std::string& filePath, void* user) const override;
     const std::unique_ptr<OpenGLTextureCache>& GetTextureCache() const override;
-    std::vector<std::string> GetPrimitiveNames() const override;
-    void SelectObjectAtPixel(int x, int y) const override;
 
     /* Raster Renderer Public Methods */
 
@@ -40,7 +36,6 @@ public:
 
     /* OpenGLRenderer Public Methods */
 
-    void ResetOpenGLPrimitiveManager(OpenGLPrimitiveManager* openGLPrimitiveManager);
     void ResetOpenGLTextureCache(OpenGLTextureCache* openGLTextureCache);
 
 protected:
@@ -67,7 +62,6 @@ protected:
     std::shared_ptr<OpenGLShader> m_depthShader;
     std::shared_ptr<OpenGLShader> m_omnidirectionalDepthShader;
 
-    std::unique_ptr<OpenGLPrimitiveManager> m_openGLPrimitiveManager;
     std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
     std::unique_ptr<OpenGLTextureCache> m_openGLTextureCache;
 };
