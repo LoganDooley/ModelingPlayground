@@ -276,6 +276,7 @@
             <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include</AdditionalIncludeDirectories>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
+        <ClCompile Include="Application\Rendering\RenderPipeline\DrawCommand\OpenGLMultiDrawElementsCommand.cpp"/>
         <ClCompile Include="Application\Rendering\RenderPipeline\RenderPipeline.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -352,6 +353,9 @@
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
         <ClCompile Include="Application\Rendering\RenderPipeline\RenderPipelineStep.cpp"/>
+        <ClCompile Include="Application\Rendering\Wrappers\IndexBuffer\OpenGLIndexBuffer.cpp"/>
+        <ClCompile Include="Application\Rendering\Wrappers\VertexArray\OpenGLVertexArray.cpp"/>
+        <ClCompile Include="Application\Rendering\Wrappers\VertexBuffer\OpenGLVertexBuffer.cpp"/>
         <ClCompile Include="Application\WindowManager.cpp"/>
         <ClCompile Include="Application\GlfwWindow.cpp"/>
         <ClCompile Include="Application\Window\HierarchyWindow.cpp"/>
@@ -385,6 +389,7 @@
         <ClCompile Include="OpenGLHelpers\OpenGLRenderbuffer.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLTexture.cpp"/>
         <ClCompile Include="OpenGLHelpers\OpenGLTextureCache.cpp"/>
+        <ClCompile Include="OpenGLHelpers\OpenGLTypeMap.cpp"/>
         <ClCompile Include="OpenGLHelpers\Shader\OpenGLShader.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -568,8 +573,14 @@
         <ClInclude Include="Application\Rendering\Renderers\RasterRenderer.h"/>
         <ClInclude Include="Application\Rendering\Renderers\Renderer.h"/>
         <ClInclude Include="Application\Rendering\RenderingManager.h"/>
+        <ClInclude Include="Application\Rendering\RenderPipeline\DrawCommand\DrawCommand.h"/>
+        <ClInclude Include="Application\Rendering\RenderPipeline\DrawCommand\OpenGLMultiDrawElementsCommand.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipeline.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipelineStep.h"/>
+        <ClInclude Include="Application\Rendering\Wrappers\IndexBuffer\OpenGLIndexBuffer.h"/>
+        <ClInclude Include="Application\Rendering\Wrappers\ShaderStorageBuffer\OpenGLShaderStorageBuffer.h"/>
+        <ClInclude Include="Application\Rendering\Wrappers\VertexArray\OpenGLVertexArray.h"/>
+        <ClInclude Include="Application\Rendering\Wrappers\VertexBuffer\OpenGLVertexBuffer.h"/>
         <ClInclude Include="Application\ShaderLoader.h"/>
         <ClInclude Include="Application\WindowManager.h"/>
         <ClInclude Include="Application\GlfwWindow.h"/>
@@ -604,6 +615,7 @@
         <ClInclude Include="OpenGLHelpers\OpenGLRenderbuffer.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLTexture.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLTextureCache.h"/>
+        <ClInclude Include="OpenGLHelpers\OpenGLTypeMap.h"/>
         <ClInclude Include="OpenGLHelpers\Shader\OpenGLShader.h"/>
         <ClInclude Include="OpenGLHelpers\Shader\OpenGLUniformBlock.h"/>
         <ClInclude Include="OpenGLHelpers\Shader\OpenGLUniformVariable.h"/>

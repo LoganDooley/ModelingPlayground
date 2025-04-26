@@ -1,5 +1,8 @@
 ﻿#pragma once
+#include <memory>
 #include <string>
+
+class DrawCommand;
 
 class RenderPipelineStep
 {
@@ -11,4 +14,6 @@ public:
 
 private:
     std::string m_name;
+
+    std::shared_ptr<DrawCommand> m_drawCommand;
 };
