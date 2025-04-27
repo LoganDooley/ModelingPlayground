@@ -26,7 +26,7 @@ enum class GlobalIllumination
 class RasterRenderer : public Renderer
 {
 public:
-    RasterRenderer();
+    RasterRenderer(std::shared_ptr<PrimitiveManager> primitiveManager);
     ~RasterRenderer() override;
 
     void DrawSettings() override;

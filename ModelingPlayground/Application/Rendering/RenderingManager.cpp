@@ -6,8 +6,8 @@
 
 RenderingManager::RenderingManager():
     m_renderingMode(RenderingMode::Raster),
-    m_renderer(std::make_unique<OpenGLRenderer>()),
-    m_primitiveManager(std::make_shared<PrimitiveManager>())
+    m_primitiveManager(std::make_shared<PrimitiveManager>()),
+    m_renderer(std::make_unique<OpenGLRenderer>(m_primitiveManager))
 {
 }
 
@@ -70,5 +70,5 @@ void RenderingManager::DrawSettings()
 
 void RenderingManager::SelectObjectAtPixel(int x, int y) const
 {
-    m_renderer->SelectObjectAtPixel(x, y, m_primitiveManager);
+    m_renderer->SelectObjectAtPixel(x, y);
 }

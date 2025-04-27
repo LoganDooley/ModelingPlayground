@@ -7,6 +7,9 @@
 
 #include "../../OpenGLHelpers/OpenGLTextureCache.h"
 
+class OpenGLMultiDrawElementsCommand;
+class OpenGLVertexArray;
+class OpenGLBuffer;
 class MaterialComponent;
 class PrimitiveComponent;
 class TransformComponent;
@@ -15,7 +18,7 @@ class SceneViewCamera;
 class OpenGLRenderer : public RasterRenderer
 {
 public:
-    OpenGLRenderer();
+    OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManager);
     ~OpenGLRenderer() override;
 
     /* Renderer Public Methods */
@@ -38,7 +41,7 @@ public:
 
     void ResetOpenGLTextureCache(OpenGLTextureCache* openGLTextureCache);
 
-protected:
+private:
     /* Renderer Protected Methods */
 
     void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const override;
@@ -54,6 +57,9 @@ protected:
     void RenderScene() const;
     void RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& activeShader) const;
 
+    void RebuildSceneMeshBuffers();
+    void RebuildSceneMultiDrawElementsCommand();
+
     void ProcessObject(const Object& object, std::shared_ptr<OpenGLShader> activeShader) const;
     void DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent,
                   const MaterialComponent& materialComponent, std::shared_ptr<OpenGLShader> activeShader) const;
@@ -64,4 +70,10 @@ protected:
 
     std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
     std::unique_ptr<OpenGLTextureCache> m_openGLTextureCache;
+
+    std::shared_ptr<OpenGLBuffer> m_sceneVertexBuffer;
+    std::shared_ptr<OpenGLVertexArray> m_sceneVertexArray;
+    std::shared_ptr<OpenGLBuffer> m_sceneIndexBuffer;
+    std::unordered_map<std::string, std::pair<unsigned int, unsigned int>> m_primitiveToIndexMap;
+    std::shared_ptr<OpenGLMultiDrawElementsCommand> m_sceneMultiDrawElementsCommand;
 };

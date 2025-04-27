@@ -14,14 +14,24 @@
 #include "../../Scene/Components/OpenGLSettingsComponent.h"
 #include "../../Scene/Components/PrimitiveComponent.h"
 #include "../../Scene/Components/TransformComponent.h"
+#include "../Primitives/PrimitiveManager.h"
+#include "../RenderPipeline/DrawCommand/OpenGLMultiDrawElementsCommand.h"
+#include "../Wrappers/OpenGLBuffer.h"
+#include "../Wrappers/VertexArray/OpenGLVertexArray.h"
 
-OpenGLRenderer::OpenGLRenderer():
+OpenGLRenderer::OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManager):
+    RasterRenderer(primitiveManager),
     m_defaultShader(std::make_shared<OpenGLShader>()),
     m_depthShader(std::make_shared<OpenGLShader>()),
     m_omnidirectionalDepthShader(std::make_shared<OpenGLShader>()),
     m_openGLLightContainer(std::make_unique<OpenGLLightContainer>()),
     m_openGLTextureCache(std::make_unique<OpenGLTextureCache>())
 {
+    m_primitiveManager->SubscribeToOnPrimitiveAdded([this]
+    {
+        RebuildSceneMeshBuffers();
+        RebuildSceneMultiDrawElementsCommand();
+    });
 }
 
 OpenGLRenderer::~OpenGLRenderer()
@@ -239,6 +249,58 @@ void OpenGLRenderer::RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& a
             traversal.push(children[i]);
         }
     }
+}
+
+void OpenGLRenderer::RebuildSceneMeshBuffers()
+{
+    m_primitiveToIndexMap.clear();
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+    unsigned int vertexOffset = 0;
+    unsigned int indexOffset = 0;
+    for (const auto& primitive : m_primitiveManager->GetAllPrimitives())
+    {
+        vertices.insert(vertices.end(), primitive.second->GetVertices().begin(), primitive.second->GetVertices().end());
+        indices.insert(indices.end(), primitive.second->GetIndices().begin(), primitive.second->GetIndices().end());
+        m_primitiveToIndexMap[primitive.first] = {vertexOffset, indexOffset};
+        vertexOffset += primitive.second->GetVertices().size() / 8;
+        indexOffset += primitive.second->GetIndices().size();
+    }
+    m_sceneVertexBuffer = std::make_shared<OpenGLBuffer>(vertices, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+    m_sceneVertexArray = std::make_shared<OpenGLVertexArray>(m_sceneVertexBuffer,
+                                                             std::vector({
+                                                                 VertexAttribute::PositionF3, VertexAttribute::NormalF3,
+                                                                 VertexAttribute::UVF2
+                                                             }));
+    m_sceneVertexArray->Bind();
+    m_sceneIndexBuffer = std::make_shared<OpenGLBuffer>(indices, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+    OpenGLVertexArray::Unbind();
+}
+
+void OpenGLRenderer::RebuildSceneMultiDrawElementsCommand()
+{
+    std::vector<DrawElementsIndirectCommand> drawCommands;
+    m_sceneHierarchy->BreadthFirstProcessAllSceneNodes([this, drawCommands](std::shared_ptr<SceneNode> node) mutable
+    {
+        std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
+            PrimitiveComponent>();
+        if (primitiveComponent == nullptr)
+        {
+            return;
+        }
+
+        std::shared_ptr<Primitive> primitive = m_primitiveManager->GetPrimitive(primitiveComponent->GetPrimitiveName());
+        drawCommands.emplace_back(DrawElementsIndirectCommand{
+            .count = static_cast<unsigned int>(primitive->GetIndices().size()),
+            .instanceCount = 1,
+            .firstIndex = m_primitiveToIndexMap[primitiveComponent->GetPrimitiveName()].second,
+            .baseVertex = m_primitiveToIndexMap[primitiveComponent->GetPrimitiveName()].first,
+            .baseInstance = 0,
+        });
+    });
+
+    m_sceneMultiDrawElementsCommand = std::make_shared<OpenGLMultiDrawElementsCommand>(
+        m_sceneVertexArray, drawCommands);
 }
 
 void OpenGLRenderer::ClearCameraFramebuffer() const

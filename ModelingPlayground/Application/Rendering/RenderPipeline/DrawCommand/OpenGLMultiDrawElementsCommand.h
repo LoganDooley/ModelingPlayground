@@ -3,8 +3,9 @@
 #include <vector>
 
 #include "DrawCommand.h"
+#include "glad/glad.h"
 
-class OpenGLIndexBuffer;
+class OpenGLBuffer;
 class OpenGLVertexArray;
 
 using DrawElementsIndirectCommand = struct
@@ -19,14 +20,14 @@ using DrawElementsIndirectCommand = struct
 class OpenGLMultiDrawElementsCommand : public DrawCommand
 {
 public:
-    OpenGLMultiDrawElementsCommand(std::shared_ptr<OpenGLVertexArray> vao, std::shared_ptr<OpenGLIndexBuffer> ebo);
+    OpenGLMultiDrawElementsCommand(std::shared_ptr<OpenGLVertexArray> vao,
+                                   const std::vector<DrawElementsIndirectCommand>& drawElementsIndirectCommands);
     ~OpenGLMultiDrawElementsCommand() override;
 
     void Execute() override;
 
 private:
     std::shared_ptr<OpenGLVertexArray> m_vao;
-    std::shared_ptr<OpenGLIndexBuffer> m_ebo;
-
-    std::vector<DrawElementsIndirectCommand> m_drawElementsIndirectCommands;
+    std::unique_ptr<OpenGLBuffer> m_drawIndirectBuffer;
+    GLsizei m_drawCount;
 };

@@ -353,9 +353,8 @@
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
         <ClCompile Include="Application\Rendering\RenderPipeline\RenderPipelineStep.cpp"/>
-        <ClCompile Include="Application\Rendering\Wrappers\IndexBuffer\OpenGLIndexBuffer.cpp"/>
+        <ClCompile Include="Application\Rendering\Wrappers\OpenGLBuffer.cpp"/>
         <ClCompile Include="Application\Rendering\Wrappers\VertexArray\OpenGLVertexArray.cpp"/>
-        <ClCompile Include="Application\Rendering\Wrappers\VertexBuffer\OpenGLVertexBuffer.cpp"/>
         <ClCompile Include="Application\WindowManager.cpp"/>
         <ClCompile Include="Application\GlfwWindow.cpp"/>
         <ClCompile Include="Application\Window\HierarchyWindow.cpp"/>
@@ -577,10 +576,8 @@
         <ClInclude Include="Application\Rendering\RenderPipeline\DrawCommand\OpenGLMultiDrawElementsCommand.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipeline.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipelineStep.h"/>
-        <ClInclude Include="Application\Rendering\Wrappers\IndexBuffer\OpenGLIndexBuffer.h"/>
-        <ClInclude Include="Application\Rendering\Wrappers\ShaderStorageBuffer\OpenGLShaderStorageBuffer.h"/>
+        <ClInclude Include="Application\Rendering\Wrappers\OpenGLBuffer.h"/>
         <ClInclude Include="Application\Rendering\Wrappers\VertexArray\OpenGLVertexArray.h"/>
-        <ClInclude Include="Application\Rendering\Wrappers\VertexBuffer\OpenGLVertexBuffer.h"/>
         <ClInclude Include="Application\ShaderLoader.h"/>
         <ClInclude Include="Application\WindowManager.h"/>
         <ClInclude Include="Application\GlfwWindow.h"/>

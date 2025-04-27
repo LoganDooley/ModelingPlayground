@@ -31,8 +31,6 @@ public:
 
     void BreadthFirstProcessAllSceneNodes(
         const std::function<void(std::shared_ptr<SceneNode>)>& sceneNodeProcessingFunction) const;
-    void DepthFirstProcessAllSceneNodes(
-        const std::function<void(std::shared_ptr<SceneNode>)>& sceneNodeProcessingFunction) const;
 
     friend void to_json(nlohmann::json& json, const SceneHierarchy& sceneHierarchy);
     friend void from_json(const nlohmann::json& json, SceneHierarchy& sceneHierarchy);

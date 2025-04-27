@@ -29,9 +29,12 @@ class Primitive
 {
 public:
     Primitive();
-    Primitive(const std::vector<float>& vertices, const std::vector<int>& indices,
+    Primitive(const std::vector<float>& vertices, const std::vector<unsigned int>& indices,
               const std::vector<VertexAttribute>& vertexAttributeLayout);
     ~Primitive();
+
+    const std::vector<float>& GetVertices() const;
+    const std::vector<unsigned int>& GetIndices() const;
 
     friend void to_json(nlohmann::json& json, const Primitive& openGLPrimitive);
     friend void from_json(const nlohmann::json& json, Primitive& openGLPrimitive);
@@ -44,5 +47,5 @@ private:
 
     std::vector<VertexAttribute> m_vertexAttributeLayout;
     std::vector<float> m_vertices;
-    std::vector<int> m_indices;
+    std::vector<unsigned int> m_indices;
 };

@@ -7,7 +7,7 @@ Primitive::Primitive()
 {
 }
 
-Primitive::Primitive(const std::vector<float>& vertices, const std::vector<int>& indices,
+Primitive::Primitive(const std::vector<float>& vertices, const std::vector<unsigned int>& indices,
                      const std::vector<VertexAttribute>& vertexAttributeLayout):
     m_vertexAttributeLayout(vertexAttributeLayout),
     m_vertices(vertices),
@@ -34,6 +34,16 @@ Primitive::Primitive(const std::vector<float>& vertices, const std::vector<int>&
 
 Primitive::~Primitive()
 {
+}
+
+const std::vector<float>& Primitive::GetVertices() const
+{
+    return m_vertices;
+}
+
+const std::vector<unsigned int>& Primitive::GetIndices() const
+{
+    return m_indices;
 }
 
 float Primitive::Raycast(glm::vec3 p, glm::vec3 d) const

@@ -3,7 +3,7 @@
 class DrawCommand
 {
 public:
-    virtual ~DrawCommand() = 0;
+    virtual ~DrawCommand() = default;
 
     virtual void Execute() = 0;
 };

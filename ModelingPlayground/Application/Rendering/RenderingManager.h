@@ -45,7 +45,7 @@ public:
 
 private:
     RenderingMode m_renderingMode;
+    std::shared_ptr<PrimitiveManager> m_primitiveManager;
     std::unique_ptr<Renderer> m_renderer;
     std::shared_ptr<SceneViewCamera> m_camera;
-    std::shared_ptr<PrimitiveManager> m_primitiveManager;
 };

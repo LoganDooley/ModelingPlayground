@@ -8,17 +8,18 @@
 #include "../Primitives/PrimitiveManager.h"
 #include "../Primitives/Primitive.h"
 
-Renderer::Renderer():
-    m_sceneHierarchy(std::make_shared<SceneHierarchy>())
+Renderer::Renderer(std::shared_ptr<PrimitiveManager> primitiveManager):
+    m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
+    m_primitiveManager(primitiveManager)
 {
 }
 
-void Renderer::SelectObjectAtPixel(int x, int y, const std::shared_ptr<PrimitiveManager>& primitiveManager) const
+void Renderer::SelectObjectAtPixel(int x, int y) const
 {
     float minT = std::numeric_limits<float>::max();
     std::shared_ptr<SceneNode> closestSceneNode = nullptr;
     m_sceneHierarchy->BreadthFirstProcessAllSceneNodes(
-        [this, x, y, primitiveManager, &minT, &closestSceneNode](std::shared_ptr<SceneNode> sceneNode)
+        [this, x, y, &minT, &closestSceneNode](std::shared_ptr<SceneNode> sceneNode)
         {
             std::shared_ptr<TransformComponent> transformComponent = sceneNode->GetObject().GetFirstComponentOfType<
                 TransformComponent>();
@@ -35,7 +36,7 @@ void Renderer::SelectObjectAtPixel(int x, int y, const std::shared_ptr<Primitive
             glm::vec3 p = modelMatrix * glm::vec4(ray.first, 1.0);
             glm::vec3 d = modelMatrix * glm::vec4(ray.second, 0.0);
 
-            float t = primitiveManager->GetPrimitive(primitiveComponent->GetPrimitiveName())->Raycast(p, d);
+            float t = m_primitiveManager->GetPrimitive(primitiveComponent->GetPrimitiveName())->Raycast(p, d);
             if (t > 0 && t < minT)
             {
                 minT = t;

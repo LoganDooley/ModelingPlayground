@@ -2,12 +2,12 @@
 #include "../../Primitives/Primitive.h"
 #include "glad/glad.h"
 
-class OpenGLVertexBuffer;
+class OpenGLBuffer;
 
 class OpenGLVertexArray
 {
 public:
-    OpenGLVertexArray(const std::shared_ptr<OpenGLVertexBuffer>& vbo,
+    OpenGLVertexArray(const std::shared_ptr<OpenGLBuffer>& vbo,
                       const std::vector<VertexAttribute>& vertexAttributes);
     ~OpenGLVertexArray();
 

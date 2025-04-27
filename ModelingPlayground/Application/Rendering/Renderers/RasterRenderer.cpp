@@ -2,7 +2,8 @@
 
 #include "../../Scene/SceneHierarchy.h"
 
-RasterRenderer::RasterRenderer():
+RasterRenderer::RasterRenderer(std::shared_ptr<PrimitiveManager> primitiveManager):
+    Renderer(primitiveManager),
     m_rasterPipeline(RasterPipeline::Forward),
     m_globalIllumination(GlobalIllumination::Ambient),
     m_ambientOcclusion(AmbientOcclusion::None),

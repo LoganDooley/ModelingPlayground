@@ -1,8 +1,8 @@
 ﻿#include "OpenGLVertexArray.h"
 
-#include "../VertexBuffer/OpenGLVertexBuffer.h"
+#include "../OpenGLBuffer.h"
 
-OpenGLVertexArray::OpenGLVertexArray(const std::shared_ptr<OpenGLVertexBuffer>& vbo,
+OpenGLVertexArray::OpenGLVertexArray(const std::shared_ptr<OpenGLBuffer>& vbo,
                                      const std::vector<VertexAttribute>& vertexAttributes):
     m_vao(0)
 {

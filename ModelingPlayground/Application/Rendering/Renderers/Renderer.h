@@ -12,7 +12,7 @@ class OpenGLTextureCache;
 class Renderer
 {
 public:
-    Renderer();
+    Renderer(std::shared_ptr<PrimitiveManager> primitiveManager);
     virtual ~Renderer() = default;
 
     virtual void Initialize() = 0;
@@ -29,11 +29,12 @@ public:
 
     virtual const std::unique_ptr<OpenGLTextureCache>& GetTextureCache() const = 0;
 
-    void SelectObjectAtPixel(int x, int y, const std::shared_ptr<PrimitiveManager>& primitiveManager) const;
+    void SelectObjectAtPixel(int x, int y) const;
 
 protected:
     virtual void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const = 0;
 
     std::shared_ptr<SceneViewCamera> m_camera;
     std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
+    std::shared_ptr<PrimitiveManager> m_primitiveManager;
 };

@@ -56,7 +56,7 @@ void PrimitiveManager::AddPrimitive(const std::string& filePath)
 
     aiMesh* mesh = scene->mMeshes[0];
     std::vector<float> vertices;
-    std::vector<int> indices;
+    std::vector<unsigned int> indices;
     bool hasTexCoords;
     SceneLoader::ProcessMesh(mesh, vertices, indices, hasTexCoords);
 
@@ -72,6 +72,16 @@ void PrimitiveManager::AddPrimitive(const std::string& filePath)
 const std::shared_ptr<Primitive>& PrimitiveManager::GetPrimitive(const std::string& primitiveName) const
 {
     return m_primitives.at(primitiveName);
+}
+
+const std::unordered_map<std::string, std::shared_ptr<Primitive>>& PrimitiveManager::GetAllPrimitives() const
+{
+    return m_primitives;
+}
+
+void PrimitiveManager::SubscribeToOnPrimitiveAdded(std::function<void()> callback)
+{
+    m_onPrimitiveAddedCallbacks.push_back(callback);
 }
 
 std::vector<std::string> PrimitiveManager::GetPrimitiveNames() const
@@ -93,7 +103,7 @@ void PrimitiveManager::GeneratePrimitives(int sphereLatitudinalResolution, int s
         0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5, 1
     };
 
-    std::vector<int> triangleIndices = {
+    std::vector<unsigned int> triangleIndices = {
         0, 1, 2
     };
 
@@ -105,7 +115,7 @@ void PrimitiveManager::GeneratePrimitives(int sphereLatitudinalResolution, int s
                                                            });
 
 
-    std::pair<std::vector<float>, std::vector<int>> sphereData = PrimitiveGenerator::GenerateSphere(
+    std::pair<std::vector<float>, std::vector<unsigned int>> sphereData = PrimitiveGenerator::GenerateSphere(
         sphereLatitudinalResolution, sphereLongitudinalResolution);
     m_primitives["Sphere"] = std::make_shared<Primitive>(sphereData.first, sphereData.second, std::vector{
                                                              VertexAttribute::PositionF3,
@@ -113,7 +123,7 @@ void PrimitiveManager::GeneratePrimitives(int sphereLatitudinalResolution, int s
                                                              VertexAttribute::UVF2
                                                          });
 
-    std::pair<std::vector<float>, std::vector<int>> cubeData = PrimitiveGenerator::GenerateCube();
+    std::pair<std::vector<float>, std::vector<unsigned int>> cubeData = PrimitiveGenerator::GenerateCube();
     m_primitives["Cube"] = std::make_shared<Primitive>(cubeData.first, cubeData.second, std::vector{
                                                            VertexAttribute::PositionF3, VertexAttribute::NormalF3,
                                                            VertexAttribute::UVF2
