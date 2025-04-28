@@ -45,7 +45,8 @@ public:
     static bool DrawVec4fColor(const std::string& propertyName, DataBinding<glm::vec4>& vec4f);
 
     // Combo
-    static bool DrawCombo(const char* propertyName, std::vector<std::string> options, std::string& currentValue);
+    static bool DrawCombo(const char* propertyName, std::vector<std::string> options,
+                          DataBinding<std::string>& currentValue);
 
     template <typename E>
     static bool DrawEnumCombo(const char* propertyName, E& enumValue)

@@ -29,6 +29,9 @@ public:
     void SubscribeToSceneNodeAdded(std::function<void(const std::shared_ptr<SceneNode>&)> callback);
     void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& sceneNode) const;
 
+    void SubscribeToSceneNodeRemoved(std::function<void(const std::shared_ptr<SceneNode>&)> callback);
+    void OnSceneNodeRemoved(const std::shared_ptr<SceneNode>& sceneNode) const;
+
     void BreadthFirstProcessAllSceneNodes(
         const std::function<void(std::shared_ptr<SceneNode>)>& sceneNodeProcessingFunction) const;
 
@@ -40,4 +43,5 @@ private:
     std::shared_ptr<SceneNode> m_selectedSceneNode;
     std::shared_ptr<SceneNode> m_rootSceneNode;
     std::vector<std::function<void(const std::shared_ptr<SceneNode>&)>> m_sceneNodeAddedSubscribers;
+    std::vector<std::function<void(const std::shared_ptr<SceneNode>&)>> m_sceneNodeRemovedSubscribers;
 };

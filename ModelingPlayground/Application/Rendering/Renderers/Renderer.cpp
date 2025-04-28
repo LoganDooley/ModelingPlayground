@@ -36,7 +36,8 @@ void Renderer::SelectObjectAtPixel(int x, int y) const
             glm::vec3 p = modelMatrix * glm::vec4(ray.first, 1.0);
             glm::vec3 d = modelMatrix * glm::vec4(ray.second, 0.0);
 
-            float t = m_primitiveManager->GetPrimitive(primitiveComponent->GetPrimitiveName())->Raycast(p, d);
+            float t = m_primitiveManager->GetPrimitive(primitiveComponent->GetPrimitiveNameDataBinding().GetData())->
+                                          Raycast(p, d);
             if (t > 0 && t < minT)
             {
                 minT = t;

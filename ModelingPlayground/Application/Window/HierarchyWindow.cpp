@@ -81,7 +81,6 @@ void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node)
                 {
                     std::shared_ptr<SceneNode> newChildSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
                         sceneNodeType, node, m_renderingManager, m_sceneHierarchy);
-                    m_sceneHierarchy->OnSceneNodeAdded(newChildSceneNode);
                 }
             }
             ImGui::EndMenu();
@@ -91,6 +90,7 @@ void HierarchyWindow::CheckNodePopupMenu(const std::shared_ptr<SceneNode>& node)
             if (node->HasParent())
             {
                 node->GetParent()->RemoveChild(node);
+                m_sceneHierarchy->OnSceneNodeRemoved(node);
             }
         }
         ImGui::EndPopup();

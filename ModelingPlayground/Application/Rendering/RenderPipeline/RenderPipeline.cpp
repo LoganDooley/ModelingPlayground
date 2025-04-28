@@ -1,6 +1,6 @@
 ﻿#include "RenderPipeline.h"
 
-#include "RenderPipelineStep.h"
+#include "RenderPipelineSteps/RenderPipelineStep.h"
 
 RenderPipeline::RenderPipeline()
 {
@@ -25,5 +25,13 @@ void RenderPipeline::RemoveRenderPipelineStep(const std::string& name)
     if (index != -1)
     {
         m_renderPipelineSteps.erase(m_renderPipelineSteps.begin() + index);
+    }
+}
+
+void RenderPipeline::Render() const
+{
+    for (const auto& step : m_renderPipelineSteps)
+    {
+        step->Execute();
     }
 }

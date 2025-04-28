@@ -40,20 +40,25 @@ layout (std140, binding = 0) uniform LightsBlock
 
 uniform vec3 ambientColor;
 
-uniform bool useMaterialTexture;
-uniform vec4 materialColor = vec4(0, 0, 0, 1);
-uniform sampler2D materialTexture;
+struct Material{
+    bool useMaterialTexture;
+    vec4 materialColor;
+    sampler2D materialTexture;
+    bool useRoughnessMap;
+    float roughness;
+    sampler2D roughnessMap;
+    bool useMetallicMap;
+    float metallic;
+    sampler2D metallicMap;
+};
 
-uniform bool useRoughnessMap;
-uniform float roughness;
-uniform sampler2D roughnessMap;
-
-uniform bool useMetallicMap;
-uniform float metallic;
-uniform sampler2D metallicMap;
+layout (binding = 5, std430) readonly buffer MaterialBuffer {
+    Material materials[];
+};
 
 uniform vec3 cameraPosition;
 
+flat in int drawID;
 in vec3 vertexWorldPosition;
 in vec3 vertexNormal;
 in vec2 vertexTexCoord;
@@ -66,25 +71,25 @@ struct LightData {
     vec3 radiance;
 };
 
-vec4 GetMaterialColorValue(){
-    if(!useMaterialTexture){
-        return materialColor;
+vec4 GetMaterialColorValue(Material material){
+    if(!material.useMaterialTexture){
+        return material.materialColor;
     }
-    return texture(materialTexture, vertexTexCoord);
+    return texture(material.materialTexture, vertexTexCoord);
 }
 
-float GetRoughnessValue(){
-    if(!useRoughnessMap){
-        return roughness;
+float GetRoughnessValue(Material material){
+    if(!material.useRoughnessMap){
+        return material.roughness;
     }
-    return texture(roughnessMap, vertexTexCoord).r;
+    return texture(material.roughnessMap, vertexTexCoord).r;
 }
 
-float GetMetallicValue(){
-    if(!useMetallicMap){
-        return metallic;
+float GetMetallicValue(Material material){
+    if(!material.useMetallicMap){
+        return material.metallic;
     }
-    return texture(metallicMap, vertexTexCoord).r;
+    return texture(material.metallicMap, vertexTexCoord).r;
 }
 
 float GetOmnidirectionalShadowFactor(int lightIndex){
@@ -244,18 +249,16 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity,
     return (kD * materialColorValue / PI + specular) * lightData.radiance * NdotL * shadowFactor;
 }
 
-float GetObjectTransparency(){
-    return materialColor.w;
-}
-
 void main()
 {
     vec3 normal = normalize(vertexNormal);
     vec3 toCamera = normalize(cameraPosition - vertexWorldPosition);
     
-    vec4 materialColorValue = GetMaterialColorValue();
-    float roughnessValue = GetRoughnessValue();
-    float metallicValue = GetMetallicValue();
+    Material material = materials[drawID];
+    
+    vec4 materialColorValue = GetMaterialColorValue(material);
+    float roughnessValue = GetRoughnessValue(material);
+    float metallicValue = GetMetallicValue(material);
     
     vec3 baseReflectivity = mix(vec3(0.04), materialColorValue.xyz, metallicValue);
     
@@ -276,7 +279,7 @@ void main()
     // Apply gamma correction
     color = pow(color, vec3(1.0/2.2));
     
-    float transparency = GetObjectTransparency();
+    float transparency = materialColorValue.w;
     
     FragColor = vec4(color, transparency);
 }

@@ -17,20 +17,23 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
 {
     UpdateLightMatrix();
 
-    m_directionalLightComponent->GetLightColorDataBinding().Subscribe([this](const glm::vec3& lightColor, glm::vec3)
-    {
-        SetLightColorUniform(lightColor);
-    });
-
-    m_transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(
-        [this](const glm::vec3&, glm::vec3)
+    m_directionalLightComponent->GetLightColorDataBinding().Subscribe(
+        this, [this](const glm::vec3& lightColor, glm::vec3)
         {
-            SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
-            UpdateLightMatrix();
-            SetShadowMapDirty();
+            SetLightColorUniform(lightColor);
         });
 
-    m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
+    m_transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(this,
+                                                                     [this](const glm::vec3&, glm::vec3)
+                                                                     {
+                                                                         SetLightDirectionUniform(
+                                                                             m_transformComponent->
+                                                                             GetWorldSpaceXUnitVector());
+                                                                         UpdateLightMatrix();
+                                                                         SetShadowMapDirty();
+                                                                     });
+
+    m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(this,
         [this](const glm::mat4&, glm::mat4)
         {
             SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
@@ -38,7 +41,7 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
             SetShadowMapDirty();
         });
 
-    m_lightMatrix.Subscribe([this](const glm::mat4& lightMatrix, glm::mat4)
+    m_lightMatrix.Subscribe(this, [this](const glm::mat4& lightMatrix, glm::mat4)
     {
         SetLightMatrixUniform(lightMatrix);
         SetShadowMapDirty();

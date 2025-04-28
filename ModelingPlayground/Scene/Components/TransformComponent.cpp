@@ -17,18 +17,18 @@ TransformComponent::TransformComponent():
     m_localXUnitVector(glm::vec3(1, 0, 0))
 
 {
-    m_position.Subscribe([this](const glm::vec3&, glm::vec3)
+    m_position.Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
         UpdateLocalModelMatrix();
     });
 
-    m_rotation.Subscribe([this](const glm::vec3&, glm::vec3)
+    m_rotation.Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
         UpdateLocalModelMatrix();
         UpdateLocalXUnitVector();
     });
 
-    m_scale.Subscribe([this](const glm::vec3&, glm::vec3)
+    m_scale.Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
         UpdateLocalModelMatrix();
     });

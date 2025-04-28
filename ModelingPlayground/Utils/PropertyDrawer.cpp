@@ -139,7 +139,8 @@ bool PropertyDrawer::DrawVec4fColor(const std::string& propertyName, DataBinding
     return false;
 }
 
-bool PropertyDrawer::DrawCombo(const char* propertyName, std::vector<std::string> options, std::string& currentValue)
+bool PropertyDrawer::DrawCombo(const char* propertyName, std::vector<std::string> options,
+                               DataBinding<std::string>& currentValue)
 {
     std::vector<const char*> optionNames;
     for (int i = 0; i < options.size(); i++)
@@ -147,7 +148,7 @@ bool PropertyDrawer::DrawCombo(const char* propertyName, std::vector<std::string
         optionNames.push_back(options[i].c_str());
     }
 
-    auto location = std::find(options.begin(), options.end(), currentValue);
+    auto location = std::find(options.begin(), options.end(), currentValue.GetData());
     int newOptionIndex = 0;
     if (location != options.end())
     {
@@ -156,8 +157,7 @@ bool PropertyDrawer::DrawCombo(const char* propertyName, std::vector<std::string
 
     if (ImGui::Combo(propertyName, &newOptionIndex, optionNames.data(), static_cast<int>(options.size())))
     {
-        currentValue = options[newOptionIndex];
-        return true;
+        return currentValue.SetAndNotify(options[newOptionIndex]);
     }
     return false;
 }

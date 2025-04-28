@@ -11,13 +11,15 @@ public:
     RenderPipeline();
     ~RenderPipeline();
 
-    template <typename T>
-    void AddRenderPipelineStep(const std::string& name)
+    template <class T, typename... Args>
+    void AddRenderPipelineStep(Args... args)
     {
-        m_renderPipelineSteps.push_back(std::make_shared<T>(name));
+        m_renderPipelineSteps.push_back(std::make_shared<T>(args...));
     }
 
     void RemoveRenderPipelineStep(const std::string& name);
+
+    void Render() const;
 
 private:
     std::vector<std::shared_ptr<RenderPipelineStep>> m_renderPipelineSteps;

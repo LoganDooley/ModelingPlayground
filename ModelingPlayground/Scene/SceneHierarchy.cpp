@@ -91,6 +91,19 @@ void SceneHierarchy::OnSceneNodeAdded(const std::shared_ptr<SceneNode>& sceneNod
     }
 }
 
+void SceneHierarchy::SubscribeToSceneNodeRemoved(std::function<void(const std::shared_ptr<SceneNode>&)> callback)
+{
+    m_sceneNodeRemovedSubscribers.push_back(callback);
+}
+
+void SceneHierarchy::OnSceneNodeRemoved(const std::shared_ptr<SceneNode>& sceneNode) const
+{
+    for (const auto& subscriber : m_sceneNodeRemovedSubscribers)
+    {
+        subscriber(sceneNode);
+    }
+}
+
 void SceneHierarchy::BreadthFirstProcessAllSceneNodes(
     const std::function<void(std::shared_ptr<SceneNode>)>& sceneNodeProcessingFunction) const
 {

@@ -3,16 +3,45 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
 
-uniform mat4 modelMatrix;
-uniform mat3 inverseTransposeModelMatrix;
+struct TestB{
+    int a;
+    int b;
+    int c[2];
+};
+
+struct TestA{
+    int a;
+    int b;
+    int c;
+    TestB d[2];
+};
+
+layout (binding = 3, std430) readonly buffer ModelMatrixBuffer {
+    mat4 modelMatrices[];
+};
+
+layout (binding = 4, std430) readonly buffer InverseTransposeModelMatrixBuffer {
+    mat3 inverseTransposeModelMatrices[];
+};
+
+layout (binding = 6, std430) readonly buffer TestBuffer {
+    TestA a;
+    TestA b[];
+};
+
 uniform mat4 cameraMatrix;
 
 out vec3 vertexWorldPosition;
 out vec3 vertexNormal;
 out vec2 vertexTexCoord;
+out int drawID;
 
 void main()
 {
+    drawID = gl_DrawID;
+    mat4 modelMatrix = modelMatrices[gl_DrawID];
+    mat3 inverseTransposeModelMatrix = inverseTransposeModelMatrices[gl_DrawID];
+    
     vec4 vertexWorldPosition4;
     vertexWorldPosition4 = modelMatrix * vec4(aPos, 1.0);
     

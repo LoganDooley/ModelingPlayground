@@ -12,7 +12,7 @@ MaterialComponent::MaterialComponent():
     m_useRoughnessMap(false),
     m_roughness(0.f)
 {
-    m_useColorTexture.Subscribe([this](const bool& currentValue, bool)
+    m_useColorTexture.Subscribe(this, [this](const bool& currentValue, bool)
     {
         if (!m_renderingManager || m_materialColorTexturePath.GetData().empty())
         {
@@ -29,7 +29,7 @@ MaterialComponent::MaterialComponent():
         }
     });
 
-    m_materialColorTexturePath.Subscribe([this](const std::string& currentValue, std::string previousValue)
+    m_materialColorTexturePath.Subscribe(this, [this](const std::string& currentValue, std::string previousValue)
     {
         if (m_renderingManager && m_useColorTexture.GetData())
         {
@@ -38,7 +38,7 @@ MaterialComponent::MaterialComponent():
         }
     });
 
-    m_useMetallicMap.Subscribe([this](const bool& currentValue, bool)
+    m_useMetallicMap.Subscribe(this, [this](const bool& currentValue, bool)
     {
         if (!m_renderingManager || m_metallicMapPath.GetData().empty())
         {
@@ -55,7 +55,7 @@ MaterialComponent::MaterialComponent():
         }
     });
 
-    m_metallicMapPath.Subscribe([this](const std::string& currentValue, std::string previousValue)
+    m_metallicMapPath.Subscribe(this, [this](const std::string& currentValue, std::string previousValue)
     {
         if (m_renderingManager && m_useMetallicMap.GetData())
         {
@@ -64,7 +64,7 @@ MaterialComponent::MaterialComponent():
         }
     });
 
-    m_useMetallicMap.Subscribe([this](const bool& currentValue, bool)
+    m_useMetallicMap.Subscribe(this, [this](const bool& currentValue, bool)
     {
         if (!m_renderingManager || m_roughnessMapPath.GetData().empty())
         {
@@ -81,7 +81,7 @@ MaterialComponent::MaterialComponent():
         }
     });
 
-    m_roughnessMapPath.Subscribe([this](const std::string& currentValue, std::string previousValue)
+    m_roughnessMapPath.Subscribe(this, [this](const std::string& currentValue, std::string previousValue)
     {
         if (m_renderingManager && m_useRoughnessMap.GetData())
         {

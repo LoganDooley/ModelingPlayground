@@ -49,6 +49,7 @@ void OpenGLShader::UnbindShader() const
 
 void OpenGLShader::RegisterProgramUniformsAndBlocks()
 {
+    // Uniform blocks
     GLint uniformBlockCount;
     glGetProgramiv(m_shaderProgramId, GL_ACTIVE_UNIFORM_BLOCKS, &uniformBlockCount);
 
@@ -65,7 +66,7 @@ void OpenGLShader::RegisterProgramUniformsAndBlocks()
         RegisterUniformBlock(uniformBlockName.data(), i);
     }
 
-
+    // Uniforms
     GLint uniformCount;
     glGetProgramiv(m_shaderProgramId, GL_ACTIVE_UNIFORMS, &uniformCount);
 
@@ -81,6 +82,22 @@ void OpenGLShader::RegisterProgramUniformsAndBlocks()
         glGetActiveUniform(m_shaderProgramId, i, maxUniformNameLength, &uniformNameLength, &uniformSize, &uniformType,
                            uniformName.data());
         RegisterUniformVariable(uniformName.data());
+    }
+
+    // Shader storage blocks
+    GLint shaderStorageBlockCount;
+    glGetProgramInterfaceiv(m_shaderProgramId, GL_SHADER_STORAGE_BLOCK, GL_ACTIVE_RESOURCES, &shaderStorageBlockCount);
+    GLint maxShaderStorageBlockNameLength;
+    glGetProgramInterfaceiv(m_shaderProgramId, GL_SHADER_STORAGE_BLOCK, GL_MAX_NAME_LENGTH,
+                            &maxShaderStorageBlockNameLength);
+
+    for (GLuint i = 0; i < shaderStorageBlockCount; i++)
+    {
+        std::vector<GLchar> shaderStorageBlockName(maxShaderStorageBlockNameLength);
+        GLsizei shaderStorageBlockNameLength;
+        glGetProgramResourceName(m_shaderProgramId, GL_SHADER_STORAGE_BLOCK, i, maxShaderStorageBlockNameLength,
+                                 &shaderStorageBlockNameLength, shaderStorageBlockName.data());
+        RegisterShaderStorageBlock(shaderStorageBlockName.data(), i);
     }
 }
 
@@ -125,6 +142,19 @@ void OpenGLShader::RegisterUniformBlock(std::string uniformBlockName, GLuint uni
 
     m_uniformBlocks[uniformBlockName] = std::make_unique<OpenGLUniformBlock>(
         uniformBlockIndex, m_shaderProgramId);
+}
+
+void OpenGLShader::RegisterShaderStorageBlock(std::string shaderStorageBlockName, GLuint shaderStorageBlockIndex)
+{
+    if (m_shaderStorageBlocks.contains(shaderStorageBlockName))
+    {
+        std::cout << "OpenGLShader|RegisterShaderStorageBlock: Shader storage block " << shaderStorageBlockName <<
+            " is already registered!\n";
+        return;
+    }
+
+    m_shaderStorageBlocks[shaderStorageBlockName] = std::make_unique<OpenGLShaderStorageBlock>(
+        shaderStorageBlockIndex, m_shaderProgramId);
 }
 
 void OpenGLShader::RegisterAttribute(const std::string& attributeName, GLenum attributeType)

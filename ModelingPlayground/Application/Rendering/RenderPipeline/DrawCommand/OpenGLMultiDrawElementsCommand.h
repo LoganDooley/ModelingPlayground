@@ -24,7 +24,7 @@ public:
                                    const std::vector<DrawElementsIndirectCommand>& drawElementsIndirectCommands);
     ~OpenGLMultiDrawElementsCommand() override;
 
-    void Execute() override;
+    void Execute() const override;
 
 private:
     std::shared_ptr<OpenGLVertexArray> m_vao;

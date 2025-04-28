@@ -3,6 +3,8 @@
 
 #include "Renderer.h"
 
+class RenderPipeline;
+
 enum class RasterPipeline
 {
     Forward, ForwardPlus, Deferred
@@ -31,6 +33,8 @@ public:
 
     void DrawSettings() override;
 
+    void Render() const override;
+
     virtual void RenderUnidirectionalShadow(const glm::mat4& lightMatrix) const = 0;
     virtual void RenderOmnidirectionalShadow(const glm::vec3& lightPosition) const = 0;
 
@@ -43,4 +47,6 @@ protected:
     GlobalIllumination m_globalIllumination;
     AmbientOcclusion m_ambientOcclusion;
     AntiAliasing m_antiAliasing;
+
+    std::shared_ptr<RenderPipeline> m_renderPipeline;
 };

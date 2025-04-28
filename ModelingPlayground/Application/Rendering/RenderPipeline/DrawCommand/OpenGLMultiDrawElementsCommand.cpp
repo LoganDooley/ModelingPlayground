@@ -17,7 +17,7 @@ OpenGLMultiDrawElementsCommand::~OpenGLMultiDrawElementsCommand()
 {
 }
 
-void OpenGLMultiDrawElementsCommand::Execute()
+void OpenGLMultiDrawElementsCommand::Execute() const
 {
     m_vao->Bind();
     m_drawIndirectBuffer->Bind();

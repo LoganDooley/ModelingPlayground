@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <memory>
+
 #include <string>
 
 class DrawCommand;
@@ -12,8 +12,8 @@ public:
 
     const std::string& GetName() const;
 
+    virtual void Execute() const = 0;
+
 private:
     std::string m_name;
-
-    std::shared_ptr<DrawCommand> m_drawCommand;
 };

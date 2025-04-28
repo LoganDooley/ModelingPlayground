@@ -17,27 +17,29 @@ OpenGLSpotLight::OpenGLSpotLight(std::shared_ptr<OpenGLShader> defaultShader, st
 {
     UpdateLightMatrix();
 
-    m_spotLightComponent->GetLightColorDataBinding().Subscribe([this](const glm::vec3& lightColor, glm::vec3)
+    m_spotLightComponent->GetLightColorDataBinding().Subscribe(this, [this](const glm::vec3& lightColor, glm::vec3)
     {
         SetLightColorUniform(lightColor);
     });
 
-    m_transformComponent->GetPositionDataBinding().Subscribe([this](const glm::vec3&, glm::vec3)
+    m_transformComponent->GetPositionDataBinding().Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
         SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
         UpdateLightMatrix();
         SetShadowMapDirty();
     });
 
-    m_transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(
-        [this](const glm::vec3&, glm::vec3)
-        {
-            SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
-            UpdateLightMatrix();
-            SetShadowMapDirty();
-        });
+    m_transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(this,
+                                                                     [this](const glm::vec3&, glm::vec3)
+                                                                     {
+                                                                         SetLightDirectionUniform(
+                                                                             m_transformComponent->
+                                                                             GetWorldSpaceXUnitVector());
+                                                                         UpdateLightMatrix();
+                                                                         SetShadowMapDirty();
+                                                                     });
 
-    m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(
+    m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(this,
         [this](const glm::mat4&, glm::mat4)
         {
             SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
@@ -46,15 +48,17 @@ OpenGLSpotLight::OpenGLSpotLight(std::shared_ptr<OpenGLShader> defaultShader, st
             SetShadowMapDirty();
         });
 
-    m_spotLightComponent->GetLightFalloffAnglesDataBinding().Subscribe(
-        [this](const glm::vec2& lightFalloffAngles, glm::vec2)
-        {
-            SetLightFalloffUniform(glm::vec3(lightFalloffAngles, 0));
-            UpdateLightMatrix();
-            SetShadowMapDirty();
-        });
+    m_spotLightComponent->GetLightFalloffAnglesDataBinding().Subscribe(this,
+                                                                       [this](const glm::vec2& lightFalloffAngles,
+                                                                              glm::vec2)
+                                                                       {
+                                                                           SetLightFalloffUniform(
+                                                                               glm::vec3(lightFalloffAngles, 0));
+                                                                           UpdateLightMatrix();
+                                                                           SetShadowMapDirty();
+                                                                       });
 
-    m_lightMatrix.Subscribe([this](const glm::mat4& lightMatrix, glm::mat4)
+    m_lightMatrix.Subscribe(this, [this](const glm::mat4& lightMatrix, glm::mat4)
     {
         SetLightMatrixUniform(lightMatrix);
         SetShadowMapDirty();

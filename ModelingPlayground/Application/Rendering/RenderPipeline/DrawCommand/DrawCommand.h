@@ -5,5 +5,5 @@ class DrawCommand
 public:
     virtual ~DrawCommand() = default;
 
-    virtual void Execute() = 0;
+    virtual void Execute() const = 0;
 };

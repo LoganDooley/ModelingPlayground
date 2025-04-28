@@ -7,6 +7,7 @@
 
 #include "../../OpenGLHelpers/OpenGLTextureCache.h"
 
+class OpenGLMeshManager;
 class OpenGLMultiDrawElementsCommand;
 class OpenGLVertexArray;
 class OpenGLBuffer;
@@ -26,7 +27,6 @@ public:
     void Initialize() override;
     void SetCamera(std::shared_ptr<SceneViewCamera> camera) override;
     void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy) override;
-    void Render() const override;
     void AddTexture(const std::string& filePath) const override;
     void IncrementTextureUsage(const std::string& filePath, void* user) const override;
     void DecrementTextureUsage(const std::string& filePath, void* user) const override;
@@ -54,15 +54,7 @@ private:
 
     /* OpenGLRenderer Protected Methods */
 
-    void RenderScene() const;
-    void RenderSceneHierarchy(const std::shared_ptr<OpenGLShader>& activeShader) const;
-
-    void RebuildSceneMeshBuffers();
     void RebuildSceneMultiDrawElementsCommand();
-
-    void ProcessObject(const Object& object, std::shared_ptr<OpenGLShader> activeShader) const;
-    void DrawMesh(const PrimitiveComponent& primitiveComponent, const TransformComponent& transformComponent,
-                  const MaterialComponent& materialComponent, std::shared_ptr<OpenGLShader> activeShader) const;
 
     std::shared_ptr<OpenGLShader> m_defaultShader;
     std::shared_ptr<OpenGLShader> m_depthShader;
@@ -71,9 +63,6 @@ private:
     std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
     std::unique_ptr<OpenGLTextureCache> m_openGLTextureCache;
 
-    std::shared_ptr<OpenGLBuffer> m_sceneVertexBuffer;
-    std::shared_ptr<OpenGLVertexArray> m_sceneVertexArray;
-    std::shared_ptr<OpenGLBuffer> m_sceneIndexBuffer;
-    std::unordered_map<std::string, std::pair<unsigned int, unsigned int>> m_primitiveToIndexMap;
+    std::shared_ptr<OpenGLMeshManager> m_meshManager;
     std::shared_ptr<OpenGLMultiDrawElementsCommand> m_sceneMultiDrawElementsCommand;
 };

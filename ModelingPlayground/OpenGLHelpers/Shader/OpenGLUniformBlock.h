@@ -1,8 +1,11 @@
 ﻿#pragma once
 
+#include "../../Application/Rendering/Wrappers/OpenGLBuffer.h"
+
+#include <iostream>
+#include <memory>
 #include <string>
 #include <unordered_map>
-#include <glm/mat4x4.hpp>
 
 #include "glad/glad.h"
 
@@ -10,14 +13,27 @@ class OpenGLUniformBlock
 {
 public:
     OpenGLUniformBlock(GLuint uniformBlockIndex, GLuint programId);
+    ~OpenGLUniformBlock() = default;
 
-    void SetValue(const std::string& uniformName, int uniformValue);
-    void SetValue(const std::string& uniformName, uint64_t uniformValue);
-    void SetValue(const std::string& uniformName, float uniformValue);
-    void SetValue(const std::string& uniformName, glm::mat4 uniformValue);
+    GLuint GetUniformBlockDataSize() const;
+    GLuint GetUniformBlockBinding() const;
+
+    template <typename T>
+    void SetValue(const std::shared_ptr<OpenGLBuffer>& uniformBufferObject, const std::string& uniformName,
+                  const T& uniformValue)
+    {
+        if (!m_uniformBlockUniformOffsets.contains(uniformName))
+        {
+            std::cout << "OpenGLUniformBlock|SetValue: Uniform: " << uniformName << " is not registered!\n";
+            return;
+        }
+
+        uniformBufferObject->SetSubData(m_uniformBlockUniformOffsets[uniformName], uniformValue);
+    }
 
 private:
     GLuint m_programId;
-    GLuint m_uniformBufferObject;
+    GLuint m_uniformBlockDataSize;
+    GLuint m_uniformBlockBinding;
     std::unordered_map<std::string, GLint> m_uniformBlockUniformOffsets;
 };
