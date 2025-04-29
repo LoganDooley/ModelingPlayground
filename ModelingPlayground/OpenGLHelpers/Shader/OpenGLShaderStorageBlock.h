@@ -54,6 +54,14 @@ struct BufferProperty
     }
 };
 
+struct MemberOffset
+{
+    std::vector<std::string> m_name;
+    std::vector<bool> m_arrayTypes;
+    unsigned int m_offset;
+    unsigned int m_arrayStride;
+};
+
 class OpenGLShaderStorageBlock
 {
 public:
@@ -61,6 +69,9 @@ public:
     ~OpenGLShaderStorageBlock() = default;
 
 private:
+    static bool TryCreateMemberOffset(MemberOffset& memberOffset, const std::string& name, unsigned int offset,
+                                      unsigned int arrayStride);
+    static bool TryAddNameFragment(MemberOffset& memberOffset, const std::string& nameFragment);
     GLuint m_programId;
     std::vector<BufferProperty> m_members;
 };
