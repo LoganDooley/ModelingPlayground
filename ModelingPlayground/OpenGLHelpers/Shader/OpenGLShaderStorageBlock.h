@@ -7,11 +7,10 @@
 
 struct BufferProperty
 {
-    std::string m_name;
     unsigned int m_cumulativeOffset = 0;
     unsigned int m_offset = 0;
     int m_arrayStride = -1;
-    std::vector<BufferProperty> m_members;
+    std::unordered_map<std::string, BufferProperty> m_members;
 
     BufferProperty operator[](unsigned int index) const
     {
@@ -21,9 +20,12 @@ struct BufferProperty
             return {};
         }
 
-        BufferProperty accessedProperty = m_members[index];
-        accessedProperty.m_cumulativeOffset = m_cumulativeOffset + index * m_arrayStride;
-        return accessedProperty;
+        return {
+            .m_cumulativeOffset = m_cumulativeOffset + index * m_arrayStride,
+            .m_offset = m_offset,
+            .m_arrayStride = -1,
+            .m_members = m_members
+        };
     }
 
     BufferProperty operator()(const std::string& memberName) const
@@ -34,32 +36,21 @@ struct BufferProperty
             return {};
         }
 
-        int indexOfMember = -1;
-        for (int i = 0; i < m_members.size(); i++)
-        {
-            if (m_members[i].m_name == memberName)
-            {
-                indexOfMember = i;
-            }
-        }
-        if (indexOfMember == -1)
+        if (!m_members.contains(memberName))
         {
             std::cerr << "BufferProperty|operator(): Member with name \"" << memberName << "\" not found!\n";
             return {};
         }
 
-        BufferProperty accessedProperty = m_members[indexOfMember];
+        BufferProperty accessedProperty = m_members.at(memberName);
         accessedProperty.m_cumulativeOffset = m_cumulativeOffset + accessedProperty.m_offset;
         return accessedProperty;
     }
-};
 
-struct MemberOffset
-{
-    std::vector<std::string> m_name;
-    std::vector<bool> m_arrayTypes;
-    unsigned int m_offset;
-    unsigned int m_arrayStride;
+    unsigned int GetCumulativeOffset() const
+    {
+        return m_cumulativeOffset;
+    }
 };
 
 class OpenGLShaderStorageBlock
@@ -68,10 +59,18 @@ public:
     OpenGLShaderStorageBlock(GLuint uniformBlockIndex, GLuint programId);
     ~OpenGLShaderStorageBlock() = default;
 
+    BufferProperty operator()(const std::string& memberName) const;
+
 private:
-    static bool TryCreateMemberOffset(MemberOffset& memberOffset, const std::string& name, unsigned int offset,
-                                      unsigned int arrayStride);
-    static bool TryAddNameFragment(MemberOffset& memberOffset, const std::string& nameFragment);
+    void TryCreateBufferProperties(const std::string& name, unsigned int offset,
+                                   int topLevelArrayStride, int arrayStride);
+    static bool ShouldAddMember(const std::string& memberName);
+    static unsigned int UpdateOffset(BufferProperty& bufferProperty);
+    static void SwitchToRelativeOffset(BufferProperty& bufferProperty, unsigned int parentCumulativeOffset);
+    static bool MemberNameIsArray(const std::string& memberName);
+    static int GetMemberArrayIndex(const std::string& memberName);
+    static std::string GetMemberNameFromArrayName(const std::string& arrayName);
+    static void UpdateArrayMembers(std::unordered_map<std::string, BufferProperty>* members);
     GLuint m_programId;
-    std::vector<BufferProperty> m_members;
+    std::unordered_map<std::string, BufferProperty> m_members;
 };

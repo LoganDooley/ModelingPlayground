@@ -9,7 +9,8 @@
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
 
-OpenGLShader::OpenGLShader()
+OpenGLShader::OpenGLShader():
+    m_shaderProgramId(0)
 {
 }
 
@@ -45,6 +46,26 @@ void OpenGLShader::BindShader() const
 void OpenGLShader::UnbindShader() const
 {
     glUseProgram(0);
+}
+
+const std::shared_ptr<OpenGLUniformBlock>& OpenGLShader::GetUniformBlock(const std::string& name) const
+{
+    if (!m_uniformBlocks.contains(name))
+    {
+        std::cerr << "OpenGLShader|GetUniformBlock: Uniform block " << name << " not found!\n";
+        return nullptr;
+    }
+    return m_uniformBlocks.at(name);
+}
+
+const std::shared_ptr<OpenGLShaderStorageBlock>& OpenGLShader::GetShaderStorageBlock(const std::string& name) const
+{
+    if (!m_shaderStorageBlocks.contains(name))
+    {
+        std::cerr << "OpenGLShader|GetShaderStorageBlock: Shader storage block " << name << " not found!\n";
+        return nullptr;
+    }
+    return m_shaderStorageBlocks.at(name);
 }
 
 void OpenGLShader::RegisterProgramUniformsAndBlocks()
@@ -140,7 +161,7 @@ void OpenGLShader::RegisterUniformBlock(std::string uniformBlockName, GLuint uni
         return;
     }
 
-    m_uniformBlocks[uniformBlockName] = std::make_unique<OpenGLUniformBlock>(
+    m_uniformBlocks[uniformBlockName] = std::make_shared<OpenGLUniformBlock>(
         uniformBlockIndex, m_shaderProgramId);
 }
 
@@ -153,7 +174,7 @@ void OpenGLShader::RegisterShaderStorageBlock(std::string shaderStorageBlockName
         return;
     }
 
-    m_shaderStorageBlocks[shaderStorageBlockName] = std::make_unique<OpenGLShaderStorageBlock>(
+    m_shaderStorageBlocks[shaderStorageBlockName] = std::make_shared<OpenGLShaderStorageBlock>(
         shaderStorageBlockIndex, m_shaderProgramId);
 }
 

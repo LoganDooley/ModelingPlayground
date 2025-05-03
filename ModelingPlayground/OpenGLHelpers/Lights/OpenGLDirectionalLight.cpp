@@ -70,14 +70,15 @@ void OpenGLDirectionalLight::SetAllUniforms()
 
 void OpenGLDirectionalLight::SetLightTypeUniform() const
 {
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "type", Directional);
+    // tell opengl renderer to set uniform buffer
+    //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "type", Directional);
 }
 
 void OpenGLDirectionalLight::SetLightShadowMapHandleUniform() const
 {
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "shadowMap",
+    /*m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "shadowMap",
                                                  m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->
-                                                              GetTextureHandle());
+                                                              GetTextureHandle());*/
 }
 
 void OpenGLDirectionalLight::UpdateLightMatrix()

@@ -58,12 +58,12 @@ void OpenGLPointLight::SetAllUniforms()
 
 void OpenGLPointLight::SetLightTypeUniform() const
 {
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "type", Point);
+    //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "type", Point);
 }
 
 void OpenGLPointLight::SetLightShadowMapHandleUniform() const
 {
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "cubeShadowMap",
+    /*m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "cubeShadowMap",
                                                  m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->
-                                                              GetTextureHandle());
+                                                              GetTextureHandle());*/
 }

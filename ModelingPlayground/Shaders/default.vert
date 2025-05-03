@@ -3,30 +3,12 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
 
-struct TestB{
-    int a;
-    int b;
-    int c[2];
-};
-
-struct TestA{
-    int a;
-    int b;
-    int c;
-    TestB d[2];
-};
-
 layout (binding = 3, std430) readonly buffer ModelMatrixBuffer {
     mat4 modelMatrices[];
 };
 
 layout (binding = 4, std430) readonly buffer InverseTransposeModelMatrixBuffer {
     mat3 inverseTransposeModelMatrices[];
-};
-
-layout (binding = 6, std430) readonly buffer TestBuffer {
-    TestA a;
-    TestA b[];
 };
 
 uniform mat4 cameraMatrix;

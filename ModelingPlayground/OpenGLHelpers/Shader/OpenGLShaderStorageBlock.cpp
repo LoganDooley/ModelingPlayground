@@ -1,6 +1,7 @@
 ﻿#include "OpenGLShaderStorageBlock.h"
 
 #include <algorithm>
+#include <ranges>
 
 OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint uniformBlockIndex, GLuint programId):
     m_programId(programId)
@@ -15,8 +16,6 @@ OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint uniformBlockIndex, GLu
     glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, uniformBlockIndex, 1, property, numActiveVariables,
                            nullptr, activeVariables.data());
 
-    std::vector<MemberOffset> memberOffsets;
-
     for (const auto& activeVariableIndex : activeVariables)
     {
         GLint variableNameLength;
@@ -27,82 +26,202 @@ OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint uniformBlockIndex, GLu
         glGetProgramResourceName(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, variableNameLength, nullptr,
                                  variableName.data());
         property[0] = GL_TOP_LEVEL_ARRAY_STRIDE;
-        GLint structStride;
+        GLint topLevelStride;
         glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
-                               &structStride); // Useful for array of structs
+                               &topLevelStride); // Useful for array of structs
         property[0] = GL_ARRAY_STRIDE;
-        GLint valueStride;
+        GLint arrayStride;
         glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
-                               &valueStride); // Useful for array of typed
+                               &arrayStride); // Useful for array of basic types
         property[0] = GL_OFFSET;
         GLint offset;
         glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
                                &offset); // Total offset
 
-        MemberOffset memberOffset;
-        if (TryCreateMemberOffset(memberOffset, variableName.data(), offset, std::max(structStride, valueStride)))
-        {
-            memberOffsets.push_back(memberOffset);
-        }
+        TryCreateBufferProperties(variableName.data(), offset, topLevelStride, arrayStride);
     }
 
-    /*
-     * Parse out all variables except for those with [n] in them where n != 0
-     * if ends in [0], it is an array of a simple type, use GL_ARRAY_STRIDE
-     * otherwise it is a member
-     *
-     * if it is a member prefixed by [0]., get the stride of that array with GL_TOP_LEVEL_ARRAY_STRIDE
-     * Get their local offset by subtracting their offset from the first member's offset in that struct (all variables
-     * with same prefix and that have no suffix, [0] is ok but another . is not)
-     */
-
-    std::ranges::sort(memberOffsets, [](MemberOffset a, MemberOffset b)
+    for (auto& bufferProperty : m_members | std::views::values)
     {
-        return a.m_name.size() < b.m_name.size();
-    });
+        UpdateOffset(bufferProperty);
+    }
+    for (auto& bufferProperty : m_members | std::views::values)
+    {
+        SwitchToRelativeOffset(bufferProperty, 0);
+    }
+
+    UpdateArrayMembers(&m_members);
 }
 
-bool OpenGLShaderStorageBlock::TryCreateMemberOffset(MemberOffset& memberOffset, const std::string& name,
-                                                     unsigned int offset, unsigned int arrayStride)
+BufferProperty OpenGLShaderStorageBlock::operator()(const std::string& memberName) const
 {
+    if (!m_members.contains(memberName))
+    {
+        std::cerr << "OpenGLShaderStorageBlock|operator(): Member with name \"" << memberName << "\" not found!\n";
+        return {};
+    }
+
+    BufferProperty accessedProperty = m_members.at(memberName);
+    accessedProperty.m_cumulativeOffset = accessedProperty.m_offset;
+    return accessedProperty;
+}
+
+void OpenGLShaderStorageBlock::TryCreateBufferProperties(const std::string& name, unsigned int offset,
+                                                         int topLevelArrayStride, int arrayStride)
+{
+    std::vector<std::string> memberPath;
+    std::vector<bool> arrayTypes;
     int lastDotIndex = -1;
     for (int i = 0; i < name.size(); i++)
     {
         if (name[i] == '.')
         {
-            std::string nameFragment = name.substr(lastDotIndex + 1, i);
-            if (!TryAddNameFragment(memberOffset, nameFragment))
+            std::string memberName = name.substr(lastDotIndex + 1, i);
+            if (!ShouldAddMember(memberName))
             {
-                return false;
+                return;
             }
+            memberPath.push_back(memberName);
             lastDotIndex = i;
         }
     }
-    std::string nameFragment = name.substr(lastDotIndex + 1, name.size());
-    if (!TryAddNameFragment(memberOffset, nameFragment))
+    if (!ShouldAddMember(name.substr(lastDotIndex + 1, name.size())))
     {
-        return false;
+        return;
     }
-    memberOffset.m_offset = offset;
-    memberOffset.m_arrayStride = arrayStride;
+    memberPath.push_back(name.substr(lastDotIndex + 1, name.size()));
+
+    std::unordered_map<std::string, BufferProperty>* memberMap = &m_members;
+    bool hasSetTopLevelArrayStride = false;
+    for (const auto& memberName : memberPath)
+    {
+        if (!memberMap->contains(memberName))
+        {
+            memberMap->insert({
+                memberName, BufferProperty{
+                    .m_offset = offset,
+                    .m_members = std::unordered_map<std::string, BufferProperty>(),
+                }
+            });
+            if (MemberNameIsArray(memberName))
+            {
+                memberMap->at(memberName).m_arrayStride = arrayStride;
+                if (!hasSetTopLevelArrayStride && topLevelArrayStride > 0)
+                {
+                    memberMap->at(memberName).m_arrayStride = topLevelArrayStride;
+                    hasSetTopLevelArrayStride = true;
+                }
+            }
+            memberMap = &memberMap->at(memberName).m_members;
+        }
+        else
+        {
+            if (MemberNameIsArray(memberName))
+            {
+                memberMap->at(memberName).m_arrayStride = arrayStride;
+                if (!hasSetTopLevelArrayStride && topLevelArrayStride > 0)
+                {
+                    memberMap->at(memberName).m_arrayStride = topLevelArrayStride;
+                    hasSetTopLevelArrayStride = true;
+                }
+            }
+            memberMap = &memberMap->at(memberName).m_members;
+        }
+    }
+}
+
+bool OpenGLShaderStorageBlock::ShouldAddMember(const std::string& memberName)
+{
+    if (memberName.find('[') != std::string::npos)
+    {
+        if (memberName.find("[0]") == std::string::npos && memberName.find("[1]") == std::string::npos)
+        {
+            // Not first or second array element, return false
+            return false;
+        }
+    }
     return true;
 }
 
-bool OpenGLShaderStorageBlock::TryAddNameFragment(MemberOffset& memberOffset, const std::string& nameFragment)
+unsigned int OpenGLShaderStorageBlock::UpdateOffset(BufferProperty& bufferProperty)
 {
-    if (nameFragment.find('[') != std::string::npos)
+    unsigned int minOffset = bufferProperty.m_offset;
+
+    for (auto& val : bufferProperty.m_members | std::views::values)
     {
-        if (nameFragment.find("[0]") == std::string::npos)
+        minOffset = std::min(minOffset, UpdateOffset(val));
+    }
+
+    bufferProperty.m_offset = minOffset;
+
+    return minOffset;
+}
+
+void OpenGLShaderStorageBlock::SwitchToRelativeOffset(BufferProperty& bufferProperty,
+                                                      unsigned int parentCumulativeOffset)
+{
+    unsigned int cumulativeOffset = bufferProperty.m_offset;
+    bufferProperty.m_offset -= parentCumulativeOffset;
+    for (auto& member : bufferProperty.m_members | std::views::values)
+    {
+        SwitchToRelativeOffset(member, cumulativeOffset);
+    }
+}
+
+bool OpenGLShaderStorageBlock::MemberNameIsArray(const std::string& memberName)
+{
+    return memberName.find('[') != std::string::npos;
+}
+
+int OpenGLShaderStorageBlock::GetMemberArrayIndex(const std::string& memberName)
+{
+    return memberName.find("[0]") != std::string::npos ? 0 : 1;
+}
+
+std::string OpenGLShaderStorageBlock::GetMemberNameFromArrayName(const std::string& arrayName)
+{
+    return arrayName.substr(0, arrayName.find('['));
+}
+
+void OpenGLShaderStorageBlock::UpdateArrayMembers(std::unordered_map<std::string, BufferProperty>* members)
+{
+    // get keys for array members
+    std::vector<std::string> arrayMemberNames;
+    for (const auto& member : *members)
+    {
+        if (MemberNameIsArray(member.first))
         {
-            // Not first array element, return false
-            return false;
+            arrayMemberNames.push_back(member.first);
         }
-        memberOffset.m_arrayTypes.push_back(true);
     }
-    else
+
+    for (const auto& arrayMemberName : arrayMemberNames)
     {
-        memberOffset.m_arrayTypes.push_back(false);
+        if (!members->contains(arrayMemberName))
+        {
+            continue;
+        }
+
+        int arrayIndex = GetMemberArrayIndex(arrayMemberName);
+        std::string memberName = GetMemberNameFromArrayName(arrayMemberName);
+        if (members->contains(memberName + "[1]"))
+        {
+            if (members->contains(memberName + "[0]"))
+            {
+                members->at(memberName + "[0]").m_arrayStride = members->at(memberName + "[1]").m_offset - members->at(
+                    memberName + "[0]").m_offset;
+            }
+
+            members->erase(memberName + "[1]");
+        }
+
+        auto pair = members->extract(arrayMemberName);
+        pair.key() = std::move(memberName);
+        members->insert(std::move(pair));
     }
-    memberOffset.m_name.push_back(nameFragment);
-    return true;
+
+    for (auto& member : *members | std::views::values)
+    {
+        UpdateArrayMembers(&member.m_members);
+    }
 }

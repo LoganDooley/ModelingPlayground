@@ -19,20 +19,20 @@ void OpenGLLightContainer::Initialize(std::shared_ptr<OpenGLShader> defaultShade
 {
     m_defaultShader = defaultShader;
 
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", 0);
+    //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", 0);
 }
 
 void OpenGLLightContainer::Reset()
 {
     m_lights.clear();
 
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", 0);
+    //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", 0);
 }
 
 void OpenGLLightContainer::SetSceneHierarchy(const std::shared_ptr<SceneHierarchy>& sceneHierarchy)
 {
     m_lights.clear();
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", 0);
+    //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", 0);
 
     // bfs through hierarchy and add nodes that are lights
     std::queue<std::shared_ptr<SceneNode>> bfs;
@@ -103,7 +103,7 @@ bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& li
         break;
     }
 
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", m_lights.size());
+    //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", m_lights.size());
 
     std::shared_ptr<OpenGLLight> newLight = m_lights[newLightIndex];
     light->SubscribeToOnDestroyed([this, newLight]()
@@ -111,7 +111,7 @@ bool OpenGLLightContainer::AddLightInternal(const std::shared_ptr<SceneNode>& li
         if (m_lights.size() > 0)
         {
             std::erase(m_lights, newLight);
-            m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", m_lights.size());
+            //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, "lightCount", m_lights.size());
         }
     });
 

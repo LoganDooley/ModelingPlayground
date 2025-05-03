@@ -89,14 +89,14 @@ void OpenGLSpotLight::SetAllUniforms()
 
 void OpenGLSpotLight::SetLightTypeUniform() const
 {
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "type", Spot);
+    //m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "type", Spot);
 }
 
 void OpenGLSpotLight::SetLightShadowMapHandleUniform() const
 {
-    m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "shadowMap",
+    /*m_defaultShader->SetUniformBlockUniformValue(m_lightsBlockName, m_uniformNameBase + "shadowMap",
                                                  m_shadowMap->GetFramebuffer()->GetTexture(GL_DEPTH_ATTACHMENT)->
-                                                              GetTextureHandle());
+                                                              GetTextureHandle());*/
 }
 
 void OpenGLSpotLight::UpdateLightMatrix()
