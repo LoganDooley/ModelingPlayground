@@ -62,6 +62,6 @@ public:
     }
 
     static bool DrawTextureCacheCombo(const char* propertyName,
-                                      const std::unique_ptr<OpenGLTextureCache>& openGLTextureCache,
+                                      const std::shared_ptr<OpenGLTextureCache>& openGLTextureCache,
                                       DataBinding<std::string>& currentTextureKey);
 };

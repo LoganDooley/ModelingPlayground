@@ -9,10 +9,10 @@ public:
     RenderPipelineDrawStep(const std::string& name, std::shared_ptr<DrawCommand> drawCommand);
     ~RenderPipelineDrawStep() override;
 
+    virtual void PreExecute() const = 0;
     void Execute() const override;
+    virtual void PostExecute() const = 0;
 
 protected:
-    virtual void SetupAndBindShader() const = 0;
-
     std::shared_ptr<DrawCommand> m_drawCommand;
 };

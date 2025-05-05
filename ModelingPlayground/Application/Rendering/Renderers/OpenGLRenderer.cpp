@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <queue>
-#include <stack>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
@@ -15,48 +14,13 @@
 #include "../../Scene/Components/PrimitiveComponent.h"
 #include "../../Scene/Components/TransformComponent.h"
 #include "../Primitives/PrimitiveManager.h"
+#include "../RenderPipeline/RenderPipeline.h"
 #include "../RenderPipeline/DrawCommand/OpenGLMultiDrawElementsCommand.h"
-#include "../Wrappers/OpenGLBuffer.h"
+#include "../RenderPipeline/RenderPipelineSteps/OpenGL/OpenGLDrawScene.h"
 #include "../Wrappers/VertexArray/OpenGLVertexArray.h"
 #include "../Wrappers/MeshManagers/OpenGLMeshManager.h"
+#include "../Wrappers/BufferManagers/OpenGLBufferManager.h"
 
-OpenGLRenderer::OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManager):
-    RasterRenderer(primitiveManager),
-    m_defaultShader(std::make_shared<OpenGLShader>()),
-    m_depthShader(std::make_shared<OpenGLShader>()),
-    m_omnidirectionalDepthShader(std::make_shared<OpenGLShader>()),
-    m_openGLLightContainer(std::make_unique<OpenGLLightContainer>()),
-    m_openGLTextureCache(std::make_unique<OpenGLTextureCache>())
-{
-    m_meshManager = std::make_shared<OpenGLMeshManager>(m_sceneHierarchy, m_primitiveManager);
-
-    m_sceneHierarchy->SubscribeToSceneNodeAdded([this](const std::shared_ptr<SceneNode>& sceneNode)
-    {
-        std::shared_ptr<PrimitiveComponent> primitiveComponent = sceneNode->GetObject().GetFirstComponentOfType<
-            PrimitiveComponent>();
-        if (primitiveComponent)
-        {
-            primitiveComponent->GetPrimitiveNameDataBinding().Subscribe(this, [this](const std::string&, std::string)
-            {
-                RebuildSceneMultiDrawElementsCommand();
-            });
-        }
-    });
-
-    m_sceneHierarchy->SubscribeToSceneNodeRemoved([this](const std::shared_ptr<SceneNode>& sceneNode)
-    {
-        std::shared_ptr<PrimitiveComponent> primitiveComponent = sceneNode->GetObject().GetFirstComponentOfType<
-            PrimitiveComponent>();
-        if (primitiveComponent)
-        {
-            RebuildSceneMultiDrawElementsCommand();
-        }
-    });
-}
-
-OpenGLRenderer::~OpenGLRenderer()
-{
-}
 
 void APIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
                                      const GLchar* message, const void* userParam)
@@ -110,7 +74,14 @@ void APIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLen
     std::cout << "---------------------opengl-callback-end--------------" << std::endl;
 }
 
-void OpenGLRenderer::Initialize()
+OpenGLRenderer::OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManager,
+                               std::shared_ptr<SceneHierarchy> sceneHierarchy):
+    RasterRenderer(primitiveManager, sceneHierarchy),
+    m_defaultShader(std::make_shared<OpenGLShader>()),
+    m_depthShader(std::make_shared<OpenGLShader>()),
+    m_omnidirectionalDepthShader(std::make_shared<OpenGLShader>()),
+    m_openGLLightContainer(std::make_unique<OpenGLLightContainer>()),
+    m_openGLTextureCache(std::make_shared<OpenGLTextureCache>())
 {
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -126,29 +97,46 @@ void OpenGLRenderer::Initialize()
 
     m_openGLLightContainer->Initialize(m_defaultShader);
 
+    m_bufferManager = std::make_shared<OpenGLBufferManager>(m_sceneHierarchy, m_openGLTextureCache,
+                                                            m_defaultShader->GetShaderStorageBlock("ModelMatrixBuffer"),
+                                                            m_defaultShader->GetShaderStorageBlock(
+                                                                "InverseTransposeModelMatrixBuffer"),
+                                                            m_defaultShader->GetShaderStorageBlock("MaterialBuffer"));
+
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    m_meshManager = std::make_shared<OpenGLMeshManager>(m_sceneHierarchy, m_primitiveManager);
+
+    m_sceneMultiDrawElementsCommand = std::make_shared<OpenGLMultiDrawElementsCommand>(
+        m_meshManager->GetVertexArray(), std::vector<DrawElementsIndirectCommand>());
+
+    m_sceneHierarchy->SubscribeToSceneNodeAdded([this](std::shared_ptr<SceneNode> node)
+    {
+        if (node->GetObject().GetFirstComponentOfType<Primitive>())
+        {
+            RebuildMultiDrawCommand();
+        }
+    });
+
+    m_sceneHierarchy->SubscribeToSceneNodeRemoved([this](std::shared_ptr<SceneNode> node)
+    {
+        if (node->GetObject().GetFirstComponentOfType<Primitive>())
+        {
+            RebuildMultiDrawCommand();
+        }
+    });
 }
 
 void OpenGLRenderer::SetCamera(std::shared_ptr<SceneViewCamera> camera)
 {
     m_camera = camera;
-}
-
-void OpenGLRenderer::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy)
-{
-    m_sceneHierarchy = sceneHierarchy;
-
-    m_openGLLightContainer->SetSceneHierarchy(m_sceneHierarchy);
-
-    m_sceneHierarchy->SubscribeToSceneNodeAdded([this](const std::shared_ptr<SceneNode>& newSceneNode)
-    {
-        OnSceneNodeAdded(newSceneNode);
-    });
+    m_renderPipeline->AddRenderPipelineStep<OpenGLDrawScene>("DrawScene", m_sceneMultiDrawElementsCommand, m_camera,
+                                                             m_defaultShader, m_bufferManager);
 }
 
 void OpenGLRenderer::ResetOpenGLTextureCache(OpenGLTextureCache* openGLTextureCache)
@@ -212,19 +200,26 @@ void OpenGLRenderer::DecrementTextureUsage(const std::string& filePath, void* us
     m_openGLTextureCache->DecrementTextureUsage(filePath, user);
 }
 
-const std::unique_ptr<OpenGLTextureCache>& OpenGLRenderer::GetTextureCache() const
+const std::shared_ptr<OpenGLTextureCache>& OpenGLRenderer::GetTextureCache() const
 {
     return m_openGLTextureCache;
 }
 
-void OpenGLRenderer::RebuildSceneMultiDrawElementsCommand()
+void OpenGLRenderer::RebuildMultiDrawCommand()
 {
     std::vector<DrawElementsIndirectCommand> drawCommands;
+
     m_sceneHierarchy->BreadthFirstProcessAllSceneNodes([this, drawCommands](std::shared_ptr<SceneNode> node) mutable
     {
+        std::shared_ptr<TransformComponent> transformComponent = node->GetObject().GetFirstComponentOfType<
+            TransformComponent>();
         std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
             PrimitiveComponent>();
-        if (primitiveComponent == nullptr)
+        std::shared_ptr<MaterialComponent> materialComponent = node->GetObject().GetFirstComponentOfType<
+            MaterialComponent>();
+        bool drawable = transformComponent && primitiveComponent && materialComponent;
+
+        if (!drawable)
         {
             return;
         }
@@ -285,9 +280,4 @@ void OpenGLRenderer::SetAmbientLightColor() const
             m_defaultShader->SetUniform<glm::vec3>("ambientColor", openGLSettingsComponent->GetAmbientLight());
         }
     }
-}
-
-void OpenGLRenderer::OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const
-{
-    m_openGLLightContainer->TryAddLight(newSceneNode);
 }

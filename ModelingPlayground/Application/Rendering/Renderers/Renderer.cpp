@@ -8,8 +8,8 @@
 #include "../Primitives/PrimitiveManager.h"
 #include "../Primitives/Primitive.h"
 
-Renderer::Renderer(std::shared_ptr<PrimitiveManager> primitiveManager):
-    m_sceneHierarchy(std::make_shared<SceneHierarchy>()),
+Renderer::Renderer(std::shared_ptr<PrimitiveManager> primitiveManager, std::shared_ptr<SceneHierarchy> sceneHierarchy):
+    m_sceneHierarchy(sceneHierarchy),
     m_primitiveManager(primitiveManager)
 {
 }
@@ -32,7 +32,7 @@ void Renderer::SelectObjectAtPixel(int x, int y) const
             }
 
             std::pair<glm::vec3, glm::vec3> ray = m_camera->GetWorldSpaceRayThroughPixel(x, y);
-            glm::mat4 modelMatrix = transformComponent->GetCumulativeModelMatrix();
+            glm::mat4 modelMatrix = transformComponent->GetCumulativeModelMatrixDataBinding().GetData();
             glm::vec3 p = modelMatrix * glm::vec4(ray.first, 1.0);
             glm::vec3 d = modelMatrix * glm::vec4(ray.second, 0.0);
 

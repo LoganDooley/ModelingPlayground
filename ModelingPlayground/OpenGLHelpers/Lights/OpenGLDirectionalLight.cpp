@@ -23,23 +23,17 @@ OpenGLDirectionalLight::OpenGLDirectionalLight(std::shared_ptr<OpenGLShader> def
             SetLightColorUniform(lightColor);
         });
 
-    m_transformComponent->GetLocalXUnitVectorDataBinding().Subscribe(this,
-                                                                     [this](const glm::vec3&, glm::vec3)
-                                                                     {
-                                                                         SetLightDirectionUniform(
-                                                                             m_transformComponent->
-                                                                             GetWorldSpaceXUnitVector());
-                                                                         UpdateLightMatrix();
-                                                                         SetShadowMapDirty();
-                                                                     });
+    m_transformComponent->GetWorldSpaceXUnitVectorDataBinding().Subscribe(this,
+                                                                          [this](
+                                                                          const glm::vec3& newWorldSpaceXUnitVector,
+                                                                          glm::vec3)
+                                                                          {
+                                                                              SetLightDirectionUniform(
+                                                                                  newWorldSpaceXUnitVector);
+                                                                              UpdateLightMatrix();
+                                                                              SetShadowMapDirty();
+                                                                          });
 
-    m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(this,
-        [this](const glm::mat4&, glm::mat4)
-        {
-            SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
-            UpdateLightMatrix();
-            SetShadowMapDirty();
-        });
 
     m_lightMatrix.Subscribe(this, [this](const glm::mat4& lightMatrix, glm::mat4)
     {
@@ -63,7 +57,7 @@ void OpenGLDirectionalLight::SetAllUniforms()
     SetLightTypeUniform();
     SetLightShadowMapHandleUniform();
     SetLightColorUniform(m_directionalLightComponent->GetLightColor());
-    SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVector());
+    SetLightDirectionUniform(m_transformComponent->GetWorldSpaceXUnitVectorDataBinding().GetData());
     SetHasShadowMapUniform(true);
     SetLightMatrixUniform(m_lightMatrix.GetData());
 }
@@ -84,7 +78,7 @@ void OpenGLDirectionalLight::SetLightShadowMapHandleUniform() const
 void OpenGLDirectionalLight::UpdateLightMatrix()
 {
     glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.f);
-    glm::vec3 lightPosition = m_transformComponent->GetWorldSpaceXUnitVector() * -50.f;
+    glm::vec3 lightPosition = m_transformComponent->GetWorldSpaceXUnitVectorDataBinding().GetData() * -50.f;
     glm::mat4 lightView = lookAt(lightPosition, glm::vec3(0), glm::vec3(0, 1, 0));
     m_lightMatrix.SetAndNotify(lightProjection * lightView);
 }

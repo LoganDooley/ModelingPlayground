@@ -7,6 +7,7 @@
 
 #include "../../OpenGLHelpers/OpenGLTextureCache.h"
 
+class OpenGLBufferManager;
 class OpenGLMeshManager;
 class OpenGLMultiDrawElementsCommand;
 class OpenGLVertexArray;
@@ -19,18 +20,16 @@ class SceneViewCamera;
 class OpenGLRenderer : public RasterRenderer
 {
 public:
-    OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManager);
-    ~OpenGLRenderer() override;
+    OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManager, std::shared_ptr<SceneHierarchy> sceneHierarchy);
+    ~OpenGLRenderer() override = default;
 
     /* Renderer Public Methods */
 
-    void Initialize() override;
     void SetCamera(std::shared_ptr<SceneViewCamera> camera) override;
-    void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy) override;
     void AddTexture(const std::string& filePath) const override;
     void IncrementTextureUsage(const std::string& filePath, void* user) const override;
     void DecrementTextureUsage(const std::string& filePath, void* user) const override;
-    const std::unique_ptr<OpenGLTextureCache>& GetTextureCache() const override;
+    const std::shared_ptr<OpenGLTextureCache>& GetTextureCache() const override;
 
     /* Raster Renderer Public Methods */
 
@@ -44,8 +43,6 @@ public:
 private:
     /* Renderer Protected Methods */
 
-    void OnSceneNodeAdded(const std::shared_ptr<SceneNode>& newSceneNode) const override;
-
     /* Raster Renderer Protected Methods */
 
     void ClearCameraFramebuffer() const override;
@@ -53,16 +50,16 @@ private:
     void SetAmbientLightColor() const override;
 
     /* OpenGLRenderer Protected Methods */
-
-    void RebuildSceneMultiDrawElementsCommand();
+    void RebuildMultiDrawCommand();
 
     std::shared_ptr<OpenGLShader> m_defaultShader;
     std::shared_ptr<OpenGLShader> m_depthShader;
     std::shared_ptr<OpenGLShader> m_omnidirectionalDepthShader;
 
     std::unique_ptr<OpenGLLightContainer> m_openGLLightContainer;
-    std::unique_ptr<OpenGLTextureCache> m_openGLTextureCache;
+    std::shared_ptr<OpenGLTextureCache> m_openGLTextureCache;
 
     std::shared_ptr<OpenGLMeshManager> m_meshManager;
+    std::shared_ptr<OpenGLBufferManager> m_bufferManager;
     std::shared_ptr<OpenGLMultiDrawElementsCommand> m_sceneMultiDrawElementsCommand;
 };

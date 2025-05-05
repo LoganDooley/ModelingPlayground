@@ -16,10 +16,36 @@ OpenGLBuffer::OpenGLBuffer(unsigned int sizeInBytes, GLenum target, GLenum usage
 
 OpenGLBuffer::~OpenGLBuffer()
 {
-    if (m_handle != 0)
+    if (m_shouldDeleteOpenGLObjectsWhenDestroyed && m_handle != 0)
     {
         glDeleteBuffers(1, &m_handle);
     }
+}
+
+OpenGLBuffer::OpenGLBuffer(OpenGLBuffer&& other)
+    noexcept
+{
+    m_handle = std::move(other.m_handle);
+    m_target = std::move(other.m_target);
+    m_usageMode = std::move(other.m_usageMode);
+    m_dataType = std::move(other.m_dataType);
+    other.m_shouldDeleteOpenGLObjectsWhenDestroyed = false;
+}
+
+OpenGLBuffer& OpenGLBuffer::operator=(OpenGLBuffer&& other)
+    noexcept
+{
+    if (m_handle != 0 && m_handle != other.m_handle)
+    {
+        glDeleteBuffers(1, &m_handle);
+    }
+
+    m_handle = std::move(other.m_handle);
+    m_target = std::move(other.m_target);
+    m_usageMode = std::move(other.m_usageMode);
+    m_dataType = std::move(other.m_dataType);
+    other.m_shouldDeleteOpenGLObjectsWhenDestroyed = false;
+    return *this;
 }
 
 void OpenGLBuffer::BindBase(GLuint index) const

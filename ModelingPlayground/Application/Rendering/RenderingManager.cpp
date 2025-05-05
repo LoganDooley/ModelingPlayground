@@ -4,27 +4,18 @@
 #include "Primitives/PrimitiveManager.h"
 #include "Renderers/OpenGLRenderer.h"
 
-RenderingManager::RenderingManager():
+RenderingManager::RenderingManager(std::shared_ptr<SceneHierarchy> sceneHierarchy):
     m_renderingMode(RenderingMode::Raster),
     m_primitiveManager(std::make_shared<PrimitiveManager>()),
-    m_renderer(std::make_unique<OpenGLRenderer>(m_primitiveManager))
+    m_renderer(std::make_unique<OpenGLRenderer>(m_primitiveManager, sceneHierarchy)),
+    m_sceneHierarchy(sceneHierarchy)
 {
-}
-
-void RenderingManager::Initialize() const
-{
-    m_renderer->Initialize();
 }
 
 void RenderingManager::SetCamera(std::shared_ptr<SceneViewCamera>& sceneViewCamera)
 {
     m_camera = sceneViewCamera;
     m_renderer->SetCamera(sceneViewCamera);
-}
-
-void RenderingManager::SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy)
-{
-    m_renderer->SetSceneHierarchy(sceneHierarchy);
 }
 
 void RenderingManager::Render() const
@@ -52,7 +43,7 @@ void RenderingManager::DecrementTextureUsage(const std::string& filePath, void* 
     m_renderer->DecrementTextureUsage(filePath, user);
 }
 
-const std::unique_ptr<OpenGLTextureCache>& RenderingManager::GetTextureCache() const
+const std::shared_ptr<OpenGLTextureCache>& RenderingManager::GetTextureCache() const
 {
     return m_renderer->GetTextureCache();
 }

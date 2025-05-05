@@ -24,6 +24,9 @@ public:
 
     ~OpenGLBuffer();
 
+    OpenGLBuffer(OpenGLBuffer&& other) noexcept;
+    OpenGLBuffer& operator=(OpenGLBuffer&& other) noexcept;
+
     void BindBase(GLuint index) const;
 
     void Bind() const;
@@ -53,4 +56,5 @@ private:
     GLenum m_target;
     GLenum m_usageMode;
     GLenum m_dataType;
+    bool m_shouldDeleteOpenGLObjectsWhenDestroyed = true;
 };

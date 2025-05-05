@@ -10,15 +10,12 @@ class TransformComponent : public Component
 {
 public:
     TransformComponent();
+    TransformComponent(const std::shared_ptr<TransformComponent>& parentTransformComponent);
 
     void RenderInspector() override;
 
-    glm::mat4 GetCumulativeModelMatrix() const;
-    glm::mat4 GetInverseCumulativeModelMatrix() const;
-
-    void SetParentCumulativeModelMatrix(glm::mat4 parentCumulativeModelMatrix);
-    glm::mat4 GetParentCumulativeModelMatrix() const;
-    DataBinding<glm::mat4>& GetParentCumulativeModelMatrixDataBinding();
+    DataBinding<glm::mat4>& GetCumulativeModelMatrixDataBinding();
+    glm::mat3 GetInverseTransposeCumulativeModelMatrix() const;
 
     const glm::mat4& GetLocalModelMatrix() const;
     DataBinding<glm::mat4>& GetLocalModelMatrixDataBinding();
@@ -32,24 +29,23 @@ public:
     const glm::vec3& GetScale() const;
     DataBinding<glm::vec3>& GetScaleDataBinding();
 
-    const glm::vec3& GetLocalXUnitVector() const;
-    DataBinding<glm::vec3>& GetLocalXUnitVectorDataBinding();
-
     glm::vec3 GetWorldSpacePosition() const;
-    glm::vec3 GetWorldSpaceXUnitVector() const;
+    DataBinding<glm::vec3>& GetWorldSpaceXUnitVectorDataBinding();
 
     friend void to_json(nlohmann::json& json, const TransformComponent& transformComponent);
     friend void from_json(const nlohmann::json& json, TransformComponent& transformComponent);
 
 private:
     void UpdateLocalModelMatrix();
-    void UpdateLocalXUnitVector();
+    void UpdateCumulativeModelMatrix();
+    void UpdateWorldXUnitVector();
 
-    DataBinding<glm::mat4> m_parentCumulativeModelMatrix;
+    std::weak_ptr<TransformComponent> m_parentTransformComponent;
     DataBinding<glm::mat4> m_localModelMatrix;
+    DataBinding<glm::mat4> m_cumulativeModelMatrix;
 
     DataBinding<glm::vec3> m_position;
     DataBinding<glm::vec3> m_rotation;
     DataBinding<glm::vec3> m_scale;
-    DataBinding<glm::vec3> m_localXUnitVector;
+    DataBinding<glm::vec3> m_worldXUnitVector;
 };

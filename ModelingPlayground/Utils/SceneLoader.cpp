@@ -327,8 +327,8 @@ void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<Rend
             {
                 std::shared_ptr<SceneNode> pointLightSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
                     SceneNodeType::PointLight, sceneHierarchy->GetRootSceneNode(), renderingManager, sceneHierarchy);
-                pointLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->GetPositionDataBinding()
-                                   .SetAndNotify(lightPosition);
+                /*pointLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->GetPositionDataBinding()
+                                   .SetAndNotify(lightPosition);*/
             }
             break;
         case aiLightSource_DIRECTIONAL:
@@ -336,20 +336,20 @@ void SceneLoader::ProcessLights(const aiScene* scene, const std::shared_ptr<Rend
                 std::shared_ptr<SceneNode> directionalLightSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
                     SceneNodeType::DirectionalLight, sceneHierarchy->GetRootSceneNode(), renderingManager,
                     sceneHierarchy);
-                directionalLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->
+                /*directionalLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->
                                            GetLocalXUnitVectorDataBinding()
-                                           .SetAndNotify(lightDirection);
+                                           .SetAndNotify(lightDirection);*/
             }
             break;
         case aiLightSource_SPOT:
             {
                 std::shared_ptr<SceneNode> spotLightSceneNode = SceneNodeGenerator::CreateSceneNodeAndAddAsChild(
                     SceneNodeType::SpotLight, sceneHierarchy->GetRootSceneNode(), renderingManager, sceneHierarchy);
-                spotLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->GetPositionDataBinding()
+                /*spotLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->GetPositionDataBinding()
                                   .SetAndNotify(lightPosition);
                 spotLightSceneNode->GetObject().GetFirstComponentOfType<TransformComponent>()->
                                     GetLocalXUnitVectorDataBinding()
-                                    .SetAndNotify(lightDirection);
+                                    .SetAndNotify(lightDirection);*/
             }
             break;
         case aiLightSource_AMBIENT:

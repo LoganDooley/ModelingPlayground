@@ -11,7 +11,7 @@ public:
     virtual ~RenderPipelineStep();
 
     const std::string& GetName() const;
-
+    
     virtual void Execute() const = 0;
 
 private:

@@ -9,13 +9,18 @@
 #include "../../Utils/PropertyDrawer.h"
 
 TransformComponent::TransformComponent():
-    m_parentCumulativeModelMatrix(glm::mat4(1)),
+    TransformComponent(nullptr)
+{
+}
+
+TransformComponent::TransformComponent(const std::shared_ptr<TransformComponent>& parentTransformComponent):
+    m_parentTransformComponent(parentTransformComponent),
     m_localModelMatrix(glm::mat4(1)),
+    m_cumulativeModelMatrix(glm::mat4(1)),
     m_position(glm::vec3(0)),
     m_rotation(glm::vec3(0)),
     m_scale(glm::vec3(1)),
-    m_localXUnitVector(glm::vec3(1, 0, 0))
-
+    m_worldXUnitVector(glm::vec3(1, 0, 0))
 {
     m_position.Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
@@ -25,12 +30,29 @@ TransformComponent::TransformComponent():
     m_rotation.Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
         UpdateLocalModelMatrix();
-        UpdateLocalXUnitVector();
     });
 
     m_scale.Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
         UpdateLocalModelMatrix();
+    });
+
+    m_localModelMatrix.Subscribe(this, [this](const glm::mat4&, glm::mat4)
+    {
+        UpdateCumulativeModelMatrix();
+    });
+
+    if (std::shared_ptr<TransformComponent> parentTransform = m_parentTransformComponent.lock())
+    {
+        parentTransform->GetCumulativeModelMatrixDataBinding().Subscribe(this, [this](const glm::mat4&, glm::mat4)
+        {
+            UpdateCumulativeModelMatrix();
+        });
+    }
+
+    m_cumulativeModelMatrix.Subscribe(this, [this](const glm::mat4&, glm::mat4)
+    {
+        UpdateWorldXUnitVector();
     });
 }
 
@@ -57,29 +79,14 @@ void TransformComponent::RenderInspector()
     }
 }
 
-glm::mat4 TransformComponent::GetCumulativeModelMatrix() const
+DataBinding<glm::mat4>& TransformComponent::GetCumulativeModelMatrixDataBinding()
 {
-    return m_parentCumulativeModelMatrix.GetData() * m_localModelMatrix.GetData();
+    return m_cumulativeModelMatrix;
 }
 
-glm::mat4 TransformComponent::GetInverseCumulativeModelMatrix() const
+glm::mat3 TransformComponent::GetInverseTransposeCumulativeModelMatrix() const
 {
-    return glm::inverse(GetCumulativeModelMatrix());
-}
-
-void TransformComponent::SetParentCumulativeModelMatrix(glm::mat4 parentCumulativeModelMatrix)
-{
-    m_parentCumulativeModelMatrix.SetAndNotify(parentCumulativeModelMatrix, true);
-}
-
-glm::mat4 TransformComponent::GetParentCumulativeModelMatrix() const
-{
-    return m_parentCumulativeModelMatrix.GetData();
-}
-
-DataBinding<glm::mat4>& TransformComponent::GetParentCumulativeModelMatrixDataBinding()
-{
-    return m_parentCumulativeModelMatrix;
+    return glm::transpose(glm::inverse(m_cumulativeModelMatrix.GetData()));
 }
 
 const glm::mat4& TransformComponent::GetLocalModelMatrix() const
@@ -122,24 +129,19 @@ DataBinding<glm::vec3>& TransformComponent::GetScaleDataBinding()
     return m_scale;
 }
 
-const glm::vec3& TransformComponent::GetLocalXUnitVector() const
-{
-    return m_localXUnitVector.GetData();
-}
-
-DataBinding<glm::vec3>& TransformComponent::GetLocalXUnitVectorDataBinding()
-{
-    return m_localXUnitVector;
-}
-
 glm::vec3 TransformComponent::GetWorldSpacePosition() const
 {
-    return glm::vec3(m_parentCumulativeModelMatrix.GetData() * glm::vec4(m_position.GetData(), 1.0f));
+    if (std::shared_ptr<TransformComponent> parentTransformComponent = m_parentTransformComponent.lock())
+    {
+        return parentTransformComponent->GetCumulativeModelMatrixDataBinding().GetData() * glm::vec4(
+            m_position.GetData(), 1);
+    }
+    return m_position.GetData();
 }
 
-glm::vec3 TransformComponent::GetWorldSpaceXUnitVector() const
+DataBinding<glm::vec3>& TransformComponent::GetWorldSpaceXUnitVectorDataBinding()
 {
-    return glm::vec3(m_parentCumulativeModelMatrix.GetData() * glm::vec4(m_localXUnitVector.GetData(), 0.0f));
+    return m_worldXUnitVector;
 }
 
 void TransformComponent::UpdateLocalModelMatrix()
@@ -159,10 +161,17 @@ void TransformComponent::UpdateLocalModelMatrix()
     m_localModelMatrix.SetAndNotify(translationMatrix * rotationMatrix * scaleMatrix);
 }
 
-void TransformComponent::UpdateLocalXUnitVector()
+void TransformComponent::UpdateCumulativeModelMatrix()
 {
-    glm::mat4 rotationMatrix = glm::eulerAngleXYZ(glm::radians(m_rotation.GetData().x),
-                                                  glm::radians(m_rotation.GetData().y),
-                                                  glm::radians(m_rotation.GetData().z));
-    m_localXUnitVector.SetAndNotify(rotationMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    if (std::shared_ptr<TransformComponent> parentTransformComponent = m_parentTransformComponent.lock())
+    {
+        m_cumulativeModelMatrix.SetAndNotify(
+            parentTransformComponent->GetCumulativeModelMatrixDataBinding().GetData() * m_localModelMatrix.GetData());
+    }
+}
+
+void TransformComponent::UpdateWorldXUnitVector()
+{
+    m_worldXUnitVector.SetAndNotify(
+        glm::normalize(glm::vec3(m_cumulativeModelMatrix.GetData() * glm::vec4(1, 0, 0, 0))));
 }

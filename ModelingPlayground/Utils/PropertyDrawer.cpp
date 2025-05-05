@@ -163,7 +163,7 @@ bool PropertyDrawer::DrawCombo(const char* propertyName, std::vector<std::string
 }
 
 bool PropertyDrawer::DrawTextureCacheCombo(const char* propertyName,
-                                           const std::unique_ptr<OpenGLTextureCache>& openGLTextureCache,
+                                           const std::shared_ptr<OpenGLTextureCache>& openGLTextureCache,
                                            DataBinding<std::string>& currentTextureKey)
 {
     bool returnValue = false;

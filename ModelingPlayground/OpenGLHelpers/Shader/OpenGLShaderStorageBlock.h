@@ -51,13 +51,20 @@ struct BufferProperty
     {
         return m_cumulativeOffset;
     }
+
+    unsigned int GetArrayStride() const
+    {
+        return m_arrayStride;
+    }
 };
 
 class OpenGLShaderStorageBlock
 {
 public:
-    OpenGLShaderStorageBlock(GLuint uniformBlockIndex, GLuint programId);
+    OpenGLShaderStorageBlock(GLuint shaderStorageBlockIndex, GLuint programId);
     ~OpenGLShaderStorageBlock() = default;
+
+    GLint GetShaderStorageBlockBinding() const;
 
     BufferProperty operator()(const std::string& memberName) const;
 
@@ -71,6 +78,9 @@ private:
     static int GetMemberArrayIndex(const std::string& memberName);
     static std::string GetMemberNameFromArrayName(const std::string& arrayName);
     static void UpdateArrayMembers(std::unordered_map<std::string, BufferProperty>* members);
+
     GLuint m_programId;
+    GLint m_dataSize;
+    GLint m_binding;
     std::unordered_map<std::string, BufferProperty> m_members;
 };

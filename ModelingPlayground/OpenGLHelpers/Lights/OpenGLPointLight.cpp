@@ -23,12 +23,14 @@ OpenGLPointLight::OpenGLPointLight(std::shared_ptr<OpenGLShader> defaultShader,
         SetShadowMapDirty();
     });
 
-    m_transformComponent->GetParentCumulativeModelMatrixDataBinding().Subscribe(this,
-        [this](const glm::mat4&, glm::mat4)
-        {
-            SetLightPositionUniform(m_transformComponent->GetWorldSpacePosition());
-            SetShadowMapDirty();
-        });
+    m_transformComponent->GetCumulativeModelMatrixDataBinding().Subscribe(this,
+                                                                          [this](const glm::mat4&, glm::mat4)
+                                                                          {
+                                                                              SetLightPositionUniform(
+                                                                                  m_transformComponent->
+                                                                                  GetWorldSpacePosition());
+                                                                              SetShadowMapDirty();
+                                                                          });
 
     m_pointLightComponent->GetFalloffDataBinding().Subscribe(this, [this](const glm::vec3& falloff, glm::vec3)
     {

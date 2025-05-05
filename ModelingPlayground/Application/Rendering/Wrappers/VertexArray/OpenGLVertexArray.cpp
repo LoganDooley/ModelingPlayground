@@ -27,10 +27,24 @@ OpenGLVertexArray::OpenGLVertexArray(const std::shared_ptr<OpenGLBuffer>& vbo,
 
 OpenGLVertexArray::~OpenGLVertexArray()
 {
-    if (m_vao != 0)
+    if (m_shouldDeleteOpenGLObjectsWhenDestroyed && m_vao != 0)
     {
         glDeleteVertexArrays(1, &m_vao);
     }
+}
+
+OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray&& other)
+    noexcept
+{
+    m_vao = std::move(other.m_vao);
+    other.m_shouldDeleteOpenGLObjectsWhenDestroyed = false;
+}
+
+OpenGLVertexArray& OpenGLVertexArray::operator=(OpenGLVertexArray&& other) noexcept
+{
+    m_vao = std::move(other.m_vao);
+    other.m_shouldDeleteOpenGLObjectsWhenDestroyed = false;
+    return *this;
 }
 
 void OpenGLVertexArray::Bind() const

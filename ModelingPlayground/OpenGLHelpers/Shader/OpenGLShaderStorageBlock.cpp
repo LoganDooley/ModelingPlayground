@@ -3,18 +3,27 @@
 #include <algorithm>
 #include <ranges>
 
-OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint uniformBlockIndex, GLuint programId):
+OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint shaderStorageBlockIndex, GLuint programId):
     m_programId(programId)
 {
     GLenum property[1] = {GL_NUM_ACTIVE_VARIABLES};
     GLint numActiveVariables;
-    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, uniformBlockIndex, 1, property, 1, nullptr,
+    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property, 1, nullptr,
                            &numActiveVariables);
 
     std::vector<GLint> activeVariables(numActiveVariables);
     property[0] = GL_ACTIVE_VARIABLES;
-    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, uniformBlockIndex, 1, property, numActiveVariables,
+    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property,
+                           numActiveVariables,
                            nullptr, activeVariables.data());
+
+    property[0] = GL_BUFFER_DATA_SIZE;
+    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property, 1, nullptr,
+                           &m_dataSize);
+
+    property[0] = GL_BUFFER_BINDING;
+    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property, 1, nullptr,
+                           &m_binding);
 
     for (const auto& activeVariableIndex : activeVariables)
     {
@@ -51,6 +60,11 @@ OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint uniformBlockIndex, GLu
     }
 
     UpdateArrayMembers(&m_members);
+}
+
+GLint OpenGLShaderStorageBlock::GetShaderStorageBlockBinding() const
+{
+    return m_binding;
 }
 
 BufferProperty OpenGLShaderStorageBlock::operator()(const std::string& memberName) const

@@ -19,6 +19,10 @@ OpenGLMultiDrawElementsCommand::~OpenGLMultiDrawElementsCommand()
 
 void OpenGLMultiDrawElementsCommand::Execute() const
 {
+    if (!m_vao)
+    {
+        return;
+    }
     m_vao->Bind();
     m_drawIndirectBuffer->Bind();
     glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, m_drawCount, 0);

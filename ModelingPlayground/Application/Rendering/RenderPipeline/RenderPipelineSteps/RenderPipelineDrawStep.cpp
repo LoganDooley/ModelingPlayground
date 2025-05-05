@@ -14,6 +14,7 @@ RenderPipelineDrawStep::~RenderPipelineDrawStep()
 
 void RenderPipelineDrawStep::Execute() const
 {
-    SetupAndBindShader();
+    PreExecute();
     m_drawCommand->Execute();
+    PostExecute();
 }

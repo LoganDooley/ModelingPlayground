@@ -352,6 +352,7 @@
             <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include</AdditionalIncludeDirectories>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
+        <ClCompile Include="Application\Rendering\RenderPipeline\RenderPipelineSteps\OpenGL\OpenGLDrawScene.cpp"/>
         <ClCompile Include="Application\Rendering\RenderPipeline\RenderPipelineSteps\RenderPipelineDrawStep.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -502,6 +503,7 @@
             <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include</AdditionalIncludeDirectories>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
+        <ClCompile Include="Application\Rendering\Wrappers\BufferManagers\OpenGLBufferManager.cpp"/>
         <ClCompile Include="Application\Rendering\Wrappers\MeshManagers\OpenGLMeshManager.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -800,8 +802,10 @@
         <ClInclude Include="Application\Rendering\RenderPipeline\DrawCommand\DrawCommand.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\DrawCommand\OpenGLMultiDrawElementsCommand.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipeline.h"/>
+        <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipelineSteps\OpenGL\OpenGLDrawScene.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipelineSteps\RenderPipelineDrawStep.h"/>
         <ClInclude Include="Application\Rendering\RenderPipeline\RenderPipelineSteps\RenderPipelineStep.h"/>
+        <ClInclude Include="Application\Rendering\Wrappers\BufferManagers\OpenGLBufferManager.h"/>
         <ClInclude Include="Application\Rendering\Wrappers\MeshManagers\OpenGLMeshManager.h"/>
         <ClInclude Include="Application\Rendering\Wrappers\OpenGLBuffer.h"/>
         <ClInclude Include="Application\Rendering\Wrappers\VertexArray\OpenGLVertexArray.h"/>

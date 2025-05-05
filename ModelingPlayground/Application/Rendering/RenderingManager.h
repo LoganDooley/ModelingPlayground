@@ -21,11 +21,9 @@ enum class RenderingMode : int
 class RenderingManager
 {
 public:
-    RenderingManager();
+    RenderingManager(std::shared_ptr<SceneHierarchy> sceneHierarchy);
 
-    void Initialize() const;
     void SetCamera(std::shared_ptr<SceneViewCamera>& sceneViewCamera);
-    void SetSceneHierarchy(std::shared_ptr<SceneHierarchy> sceneHierarchy);
 
     void Render() const;
 
@@ -35,7 +33,7 @@ public:
     void IncrementTextureUsage(const std::string& filePath, void* user) const;
     void DecrementTextureUsage(const std::string& filePath, void* user) const;
 
-    const std::unique_ptr<OpenGLTextureCache>& GetTextureCache() const;
+    const std::shared_ptr<OpenGLTextureCache>& GetTextureCache() const;
 
     std::vector<std::string> GetPrimitiveNames() const;
 
@@ -48,4 +46,5 @@ private:
     std::shared_ptr<PrimitiveManager> m_primitiveManager;
     std::unique_ptr<Renderer> m_renderer;
     std::shared_ptr<SceneViewCamera> m_camera;
+    std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
 };

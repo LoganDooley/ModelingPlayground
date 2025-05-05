@@ -11,9 +11,13 @@ public:
                       const std::vector<VertexAttribute>& vertexAttributes);
     ~OpenGLVertexArray();
 
+    OpenGLVertexArray(OpenGLVertexArray&& other) noexcept;
+    OpenGLVertexArray& operator=(OpenGLVertexArray&& other) noexcept;
+
     void Bind() const;
     static void Unbind();
 
 private:
     GLuint m_vao;
+    bool m_shouldDeleteOpenGLObjectsWhenDestroyed = true;
 };

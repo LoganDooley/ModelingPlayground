@@ -47,14 +47,23 @@ public:
         return true;
     }
 
-    void Subscribe(const void* subscriber, std::function<void(const T&, T)> callback)
+    void Subscribe(const void* subscriber, std::function<void(const T&, T)> callback, bool initialCall = false,
+                   bool logOnDoubleSubscription = true)
     {
         if (m_subscribers.contains(subscriber))
         {
-            std::cout << "DataBinding|Subscribe: Attempting to subscribe twice with the same object!\n";
+            if (logOnDoubleSubscription)
+            {
+                std::cout << "DataBinding|Subscribe: Attempting to subscribe twice with the same object!\n";
+            }
             return;
         }
         m_subscribers[subscriber] = callback;
+        if (initialCall)
+        {
+            T defaultValue;
+            m_subscribers[subscriber](m_data, defaultValue);
+        }
     }
 
     void Unsubscribe(const void* subscriber)

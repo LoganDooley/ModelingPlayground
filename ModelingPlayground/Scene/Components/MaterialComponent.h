@@ -17,19 +17,19 @@ public:
 
     void RenderInspector() override;
 
-    bool GetUseColorTexture() const;
-    glm::vec4 GetMaterialColor() const;
-    const std::string& GetMaterialTexture() const;
+    DataBinding<bool>& GetUseColorTextureDataBinding();
+    DataBinding<glm::vec4>& GetMaterialColorDataBinding();
+    DataBinding<std::string>& GetMaterialTextureDataBinding();
     void SetMaterialTexture(const std::string& materialTexture, bool setUseColorTexture = true);
 
-    bool GetUseMetallicMap() const;
-    float GetMetallic() const;
-    const std::string& GetMetallicMap() const;
+    DataBinding<bool>& GetUseMetallicMapDataBinding();
+    DataBinding<float>& GetMetallicDataBinding();
+    DataBinding<std::string>& GetMetallicMapDataBinding();
     void SetMetallicMap(const std::string& metallicMap, bool setUseMetallicMap = true);
 
-    bool GetUseRoughnessMap() const;
-    float GetRoughness() const;
-    const std::string& GetRoughnessMap() const;
+    DataBinding<bool>& GetUseRoughnessMapDataBinding();
+    DataBinding<float>& GetRoughnessDataBinding();
+    DataBinding<std::string>& GetRoughnessMapDataBinding();
     void SetRoughnessMap(const std::string& roughnessMap, bool setUseRoughnessMap = true);
 
     friend void to_json(nlohmann::json& json, const MaterialComponent& materialComponent);
@@ -39,12 +39,12 @@ private:
     std::shared_ptr<RenderingManager> m_renderingManager;
 
     DataBinding<bool> m_useColorTexture;
-    glm::vec4 m_materialColor;
+    DataBinding<glm::vec4> m_materialColor;
     DataBinding<std::string> m_materialColorTexturePath;
     DataBinding<bool> m_useMetallicMap;
-    float m_metallic;
+    DataBinding<float> m_metallic;
     DataBinding<std::string> m_metallicMapPath;
     DataBinding<bool> m_useRoughnessMap;
-    float m_roughness;
+    DataBinding<float> m_roughness;
     DataBinding<std::string> m_roughnessMapPath;
 };

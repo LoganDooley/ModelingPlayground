@@ -158,19 +158,19 @@ void MaterialComponent::RenderInspector()
     }
 }
 
-bool MaterialComponent::GetUseColorTexture() const
+DataBinding<bool>& MaterialComponent::GetUseColorTextureDataBinding()
 {
-    return m_useColorTexture.GetData() && !m_materialColorTexturePath.GetData().empty();
+    return m_useColorTexture;
 }
 
-glm::vec4 MaterialComponent::GetMaterialColor() const
+DataBinding<glm::vec4>& MaterialComponent::GetMaterialColorDataBinding()
 {
     return m_materialColor;
 }
 
-const std::string& MaterialComponent::GetMaterialTexture() const
+DataBinding<std::string>& MaterialComponent::GetMaterialTextureDataBinding()
 {
-    return m_materialColorTexturePath.GetData();
+    return m_materialColorTexturePath;
 }
 
 void MaterialComponent::SetMaterialTexture(const std::string& materialTexture, bool setUseColorTexture)
@@ -184,19 +184,19 @@ void MaterialComponent::SetMaterialTexture(const std::string& materialTexture, b
     }
 }
 
-bool MaterialComponent::GetUseMetallicMap() const
+DataBinding<bool>& MaterialComponent::GetUseMetallicMapDataBinding()
 {
-    return m_useMetallicMap.GetData() && !m_metallicMapPath.GetData().empty();
+    return m_useMetallicMap;
 }
 
-float MaterialComponent::GetMetallic() const
+DataBinding<float>& MaterialComponent::GetMetallicDataBinding()
 {
     return m_metallic;
 }
 
-const std::string& MaterialComponent::GetMetallicMap() const
+DataBinding<std::string>& MaterialComponent::GetMetallicMapDataBinding()
 {
-    return m_metallicMapPath.GetData();
+    return m_metallicMapPath;
 }
 
 void MaterialComponent::SetMetallicMap(const std::string& metallicMap, bool setUseMetallicMap)
@@ -210,19 +210,19 @@ void MaterialComponent::SetMetallicMap(const std::string& metallicMap, bool setU
     }
 }
 
-bool MaterialComponent::GetUseRoughnessMap() const
+DataBinding<bool>& MaterialComponent::GetUseRoughnessMapDataBinding()
 {
-    return m_useRoughnessMap.GetData() && !m_roughnessMapPath.GetData().empty();
+    return m_useRoughnessMap;
 }
 
-float MaterialComponent::GetRoughness() const
+DataBinding<float>& MaterialComponent::GetRoughnessDataBinding()
 {
     return m_roughness;
 }
 
-const std::string& MaterialComponent::GetRoughnessMap() const
+DataBinding<std::string>& MaterialComponent::GetRoughnessMapDataBinding()
 {
-    return m_roughnessMapPath.GetData();
+    return m_roughnessMapPath;
 }
 
 void MaterialComponent::SetRoughnessMap(const std::string& roughnessMap, bool setUseRoughnessMap)
