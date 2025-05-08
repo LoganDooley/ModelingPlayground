@@ -113,11 +113,11 @@ OpenGLRenderer::OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManage
     m_meshManager = std::make_shared<OpenGLMeshManager>(m_sceneHierarchy, m_primitiveManager);
 
     m_sceneMultiDrawElementsCommand = std::make_shared<OpenGLMultiDrawElementsCommand>(
-        m_meshManager->GetVertexArray(), std::vector<DrawElementsIndirectCommand>());
+        m_meshManager->GetVertexArray(), m_meshManager->GetIndexBuffer(), std::vector<DrawElementsIndirectCommand>());
 
     m_sceneHierarchy->SubscribeToSceneNodeAdded([this](std::shared_ptr<SceneNode> node)
     {
-        if (node->GetObject().GetFirstComponentOfType<Primitive>())
+        if (node->GetObject().GetFirstComponentOfType<PrimitiveComponent>())
         {
             RebuildMultiDrawCommand();
         }
@@ -125,7 +125,7 @@ OpenGLRenderer::OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManage
 
     m_sceneHierarchy->SubscribeToSceneNodeRemoved([this](std::shared_ptr<SceneNode> node)
     {
-        if (node->GetObject().GetFirstComponentOfType<Primitive>())
+        if (node->GetObject().GetFirstComponentOfType<PrimitiveComponent>())
         {
             RebuildMultiDrawCommand();
         }
@@ -209,7 +209,7 @@ void OpenGLRenderer::RebuildMultiDrawCommand()
 {
     std::vector<DrawElementsIndirectCommand> drawCommands;
 
-    m_sceneHierarchy->BreadthFirstProcessAllSceneNodes([this, drawCommands](std::shared_ptr<SceneNode> node) mutable
+    m_sceneHierarchy->BreadthFirstProcessAllSceneNodes([this, &drawCommands](std::shared_ptr<SceneNode> node) mutable
     {
         std::shared_ptr<TransformComponent> transformComponent = node->GetObject().GetFirstComponentOfType<
             TransformComponent>();
@@ -231,8 +231,7 @@ void OpenGLRenderer::RebuildMultiDrawCommand()
                 primitiveComponent->GetPrimitiveNameDataBinding().GetData()));
     });
 
-    m_sceneMultiDrawElementsCommand = std::make_shared<OpenGLMultiDrawElementsCommand>(
-        m_meshManager->GetVertexArray(), drawCommands);
+    m_sceneMultiDrawElementsCommand->ResetCommands(drawCommands);
 }
 
 void OpenGLRenderer::ClearCameraFramebuffer() const

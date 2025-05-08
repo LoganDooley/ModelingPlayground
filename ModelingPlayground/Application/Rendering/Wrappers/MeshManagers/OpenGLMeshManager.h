@@ -26,6 +26,7 @@ public:
 
     DrawElementsIndirectCommand CreateDrawElementsIndirectCommand(const std::string& primitiveName) const;
     const std::shared_ptr<OpenGLVertexArray>& GetVertexArray() const;
+    const std::shared_ptr<OpenGLBuffer>& GetIndexBuffer() const;
 
 private:
     void RegeneratePrimitiveBatch();

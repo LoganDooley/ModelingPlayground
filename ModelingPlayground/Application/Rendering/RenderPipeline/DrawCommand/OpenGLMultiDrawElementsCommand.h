@@ -20,14 +20,17 @@ using DrawElementsIndirectCommand = struct
 class OpenGLMultiDrawElementsCommand : public DrawCommand
 {
 public:
-    OpenGLMultiDrawElementsCommand(std::shared_ptr<OpenGLVertexArray> vao,
+    OpenGLMultiDrawElementsCommand(std::shared_ptr<OpenGLVertexArray> vao, std::shared_ptr<OpenGLBuffer> ebo,
                                    const std::vector<DrawElementsIndirectCommand>& drawElementsIndirectCommands);
     ~OpenGLMultiDrawElementsCommand() override;
+
+    void ResetCommands(const std::vector<DrawElementsIndirectCommand>& drawElementsIndirectCommands);
 
     void Execute() const override;
 
 private:
     std::shared_ptr<OpenGLVertexArray> m_vao;
+    std::shared_ptr<OpenGLBuffer> m_ebo;
     std::unique_ptr<OpenGLBuffer> m_drawIndirectBuffer;
     GLsizei m_drawCount;
 };

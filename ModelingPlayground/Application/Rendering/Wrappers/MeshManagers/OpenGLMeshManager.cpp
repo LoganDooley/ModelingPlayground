@@ -20,6 +20,8 @@ OpenGLMeshManager::OpenGLMeshManager(std::shared_ptr<SceneHierarchy> sceneHierar
     {
         RegeneratePrimitiveBatch();
     });
+
+    RegeneratePrimitiveBatch();
 }
 
 OpenGLMeshManager::~OpenGLMeshManager()
@@ -49,6 +51,11 @@ DrawElementsIndirectCommand OpenGLMeshManager::CreateDrawElementsIndirectCommand
 const std::shared_ptr<OpenGLVertexArray>& OpenGLMeshManager::GetVertexArray() const
 {
     return m_vao;
+}
+
+const std::shared_ptr<OpenGLBuffer>& OpenGLMeshManager::GetIndexBuffer() const
+{
+    return m_ebo;
 }
 
 void OpenGLMeshManager::RegeneratePrimitiveBatch()

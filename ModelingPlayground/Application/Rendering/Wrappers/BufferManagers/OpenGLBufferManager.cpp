@@ -105,9 +105,14 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
-                    m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("materialTexture").GetCumulativeOffset(),
-                                                 m_textureCache->GetTexture(
-                                                     materialFilePath)->GetTextureHandle());
+                    std::shared_ptr<OpenGLTexture> materialTexture = m_textureCache->GetTexture(
+                        materialFilePath);
+                    if (materialTexture)
+                    {
+                        m_materialBuffer->SetSubData(
+                            materialBlockArray[drawIndex]("materialTexture").GetCumulativeOffset(),
+                            materialTexture->GetTextureHandle());
+                    }
                 },
                 true);
 
@@ -135,9 +140,14 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
-                    m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("roughnessMap").GetCumulativeOffset(),
-                                                 m_textureCache->GetTexture(
-                                                     roughnessMapFilePath)->GetTextureHandle());
+                    std::shared_ptr<OpenGLTexture> roughnessMap = m_textureCache->GetTexture(
+                        roughnessMapFilePath);
+                    if (roughnessMap)
+                    {
+                        m_materialBuffer->SetSubData(
+                            materialBlockArray[drawIndex]("roughnessMap").GetCumulativeOffset(),
+                            roughnessMap->GetTextureHandle());
+                    }
                 },
                 true);
 
@@ -165,9 +175,13 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
-                    m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("metallicMap").GetCumulativeOffset(),
-                                                 m_textureCache->GetTexture(metallicMapFilePath)->
-                                                                 GetTextureHandle());
+                    std::shared_ptr<OpenGLTexture> metallicMap = m_textureCache->GetTexture(metallicMapFilePath);
+                    if (metallicMap)
+                    {
+                        m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("metallicMap").GetCumulativeOffset(),
+                                                     metallicMap->
+                                                     GetTextureHandle());
+                    }
                 },
                 true);
 

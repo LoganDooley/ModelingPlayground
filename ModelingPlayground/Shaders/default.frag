@@ -251,6 +251,9 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity,
 
 void main()
 {
+    FragColor = vec4(1);
+    return;
+    
     vec3 normal = normalize(vertexNormal);
     vec3 toCamera = normalize(cameraPosition - vertexWorldPosition);
     
