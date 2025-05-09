@@ -20,6 +20,7 @@ void OpenGLDrawScene::PreExecute() const
     m_camera->SetViewport();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_shader->BindShader();
+    m_shader->SetUniform("cameraMatrix", false, m_camera->GetCameraMatrix());
     if (!m_bufferManager->GetModelMatrixBuffer() || !m_bufferManager->GetInverseTransposeModelMatrixBuffer() || !
         m_bufferManager->GetMaterialBuffer())
     {

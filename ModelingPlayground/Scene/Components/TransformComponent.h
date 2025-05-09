@@ -15,7 +15,6 @@ public:
     void RenderInspector() override;
 
     DataBinding<glm::mat4>& GetCumulativeModelMatrixDataBinding();
-    glm::mat3 GetInverseTransposeCumulativeModelMatrix() const;
 
     const glm::mat4& GetLocalModelMatrix() const;
     DataBinding<glm::mat4>& GetLocalModelMatrixDataBinding();

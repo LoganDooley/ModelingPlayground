@@ -84,11 +84,6 @@ DataBinding<glm::mat4>& TransformComponent::GetCumulativeModelMatrixDataBinding(
     return m_cumulativeModelMatrix;
 }
 
-glm::mat3 TransformComponent::GetInverseTransposeCumulativeModelMatrix() const
-{
-    return glm::transpose(glm::inverse(m_cumulativeModelMatrix.GetData()));
-}
-
 const glm::mat4& TransformComponent::GetLocalModelMatrix() const
 {
     return m_localModelMatrix.GetData();
