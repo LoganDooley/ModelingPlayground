@@ -21,7 +21,7 @@ OpenGLMeshManager::OpenGLMeshManager(std::shared_ptr<SceneHierarchy> sceneHierar
         RegeneratePrimitiveBatch();
     });
 
-    RegeneratePrimitiveBatch();
+    RegeneratePrimitiveBatch(true);
 }
 
 OpenGLMeshManager::~OpenGLMeshManager()
@@ -58,19 +58,23 @@ const std::shared_ptr<OpenGLBuffer>& OpenGLMeshManager::GetIndexBuffer() const
     return m_ebo;
 }
 
-void OpenGLMeshManager::RegeneratePrimitiveBatch()
+void OpenGLMeshManager::RegeneratePrimitiveBatch(bool initial)
 {
     m_meshData.clear();
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
-    unsigned int vertexOffset = 0;
+    int vertexOffset = 0;
     unsigned int indexOffset = 0;
     for (const auto& primitive : m_primitiveManager->GetAllPrimitives())
     {
         vertices.insert(vertices.end(), primitive.second->GetVertices().begin(), primitive.second->GetVertices().end());
         indices.insert(indices.end(), primitive.second->GetIndices().begin(), primitive.second->GetIndices().end());
-        unsigned int vertexCount = primitive.second->GetVertices().size() / 8;
+        int vertexCount = primitive.second->GetVertices().size() / 8;
         unsigned int indexCount = primitive.second->GetIndices().size();
+        for (int i = 0; i < indexCount; i++)
+        {
+            indices[indexOffset + i] += vertexOffset;
+        }
         m_meshData[primitive.first] = {
             .m_vertexOffset = vertexOffset,
             .m_indexOffset = indexOffset,
@@ -80,12 +84,28 @@ void OpenGLMeshManager::RegeneratePrimitiveBatch()
         indexOffset += indexCount;
     }
 
-    m_vbo = std::make_shared<OpenGLBuffer>(vertices, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-    m_vao = std::make_shared<OpenGLVertexArray>(m_vbo, std::vector({
-                                                    VertexAttribute::PositionF3, VertexAttribute::NormalF3,
-                                                    VertexAttribute::UVF2
-                                                }));
+    if (initial)
+    {
+        m_vbo = std::make_shared<OpenGLBuffer>(vertices, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+        m_vao = std::make_shared<OpenGLVertexArray>(m_vbo, std::vector({
+                                                        VertexAttribute::PositionF3, VertexAttribute::NormalF3,
+                                                        VertexAttribute::UVF2
+                                                    }));
+        m_vao->Bind();
+        m_ebo = std::make_shared<OpenGLBuffer>(indices, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+        OpenGLVertexArray::Unbind();
+        return;
+    }
+    auto newVbo = new OpenGLBuffer(vertices, GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+    *m_vbo = std::move(*newVbo);
+    auto newVao = new OpenGLVertexArray(m_vbo, std::vector({
+                                            VertexAttribute::PositionF3, VertexAttribute::NormalF3,
+                                            VertexAttribute::UVF2
+                                        }));
+    *m_vao = std::move(*newVao);
+
     m_vao->Bind();
-    m_ebo = std::make_shared<OpenGLBuffer>(indices, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+    auto newEbo = new OpenGLBuffer(indices, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+    *m_ebo = std::move(*newEbo);
     OpenGLVertexArray::Unbind();
 }

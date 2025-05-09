@@ -61,8 +61,8 @@ public:
         m_subscribers[subscriber] = callback;
         if (initialCall)
         {
-            T defaultValue;
-            m_subscribers[subscriber](m_data, defaultValue);
+            //T defaultValue;
+            m_subscribers[subscriber](m_data, m_data);
         }
     }
 

@@ -20,6 +20,9 @@ out int drawID;
 
 void main()
 {
+    gl_Position = cameraMatrix * vec4(aPos, 1.0);
+    return;
+    
     drawID = gl_DrawID;
     mat4 modelMatrix = modelMatrices[gl_DrawID];
     mat3 inverseTransposeModelMatrix = inverseTransposeModelMatrices[gl_DrawID];

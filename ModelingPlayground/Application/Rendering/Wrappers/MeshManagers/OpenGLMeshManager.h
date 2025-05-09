@@ -12,7 +12,7 @@ class OpenGLBuffer;
 
 struct OpenGLMeshData
 {
-    unsigned int m_vertexOffset;
+    int m_vertexOffset;
     unsigned int m_indexOffset;
     unsigned int m_indexCount;
 };
@@ -29,7 +29,7 @@ public:
     const std::shared_ptr<OpenGLBuffer>& GetIndexBuffer() const;
 
 private:
-    void RegeneratePrimitiveBatch();
+    void RegeneratePrimitiveBatch(bool initial = false);
 
     std::shared_ptr<OpenGLBuffer> m_vbo;
     std::shared_ptr<OpenGLBuffer> m_ebo;

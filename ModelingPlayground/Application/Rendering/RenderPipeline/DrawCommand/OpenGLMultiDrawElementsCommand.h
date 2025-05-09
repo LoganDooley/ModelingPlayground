@@ -13,7 +13,7 @@ using DrawElementsIndirectCommand = struct
     unsigned int count; // Number of indices to draw
     unsigned int instanceCount; // Number of instances
     unsigned int firstIndex; // Base index in the index buffer
-    unsigned int baseVertex; // Base index in the vertex buffer
+    int baseVertex; // Base index in the vertex buffer
     unsigned int baseInstance; // Instance number to start at
 };
 

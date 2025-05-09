@@ -56,11 +56,11 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
         {
             std::shared_ptr<TransformComponent> transformComponent = sceneNode->GetObject().GetFirstComponentOfType<
                 TransformComponent>();
-            /*std::shared_ptr<PrimitiveComponent> primitiveComponent = sceneNode->GetObject().GetFirstComponentOfType<
-                PrimitiveComponent>();*/
+            std::shared_ptr<PrimitiveComponent> primitiveComponent = sceneNode->GetObject().GetFirstComponentOfType<
+                PrimitiveComponent>();
             std::shared_ptr<MaterialComponent> materialComponent = sceneNode->GetObject().GetFirstComponentOfType<
                 MaterialComponent>();
-            if (!transformComponent /*|| !primitiveComponent*/ || !materialComponent)
+            if (!transformComponent || !primitiveComponent || !materialComponent)
             {
                 return;
             }
