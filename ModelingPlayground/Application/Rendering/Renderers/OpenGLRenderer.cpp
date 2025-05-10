@@ -117,16 +117,23 @@ OpenGLRenderer::OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManage
 
     m_sceneHierarchy->SubscribeToSceneNodeAdded([this](std::shared_ptr<SceneNode> node)
     {
-        if (node->GetObject().GetFirstComponentOfType<PrimitiveComponent>())
+        if (std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
+            PrimitiveComponent>())
         {
-            RebuildMultiDrawCommand();
+            primitiveComponent->GetPrimitiveNameDataBinding().Subscribe(this, [this](const std::string&, std::string)
+                                                                        {
+                                                                            RebuildMultiDrawCommand();
+                                                                        },
+                                                                        true);
         }
     });
 
     m_sceneHierarchy->SubscribeToSceneNodeRemoved([this](std::shared_ptr<SceneNode> node)
     {
-        if (node->GetObject().GetFirstComponentOfType<PrimitiveComponent>())
+        if (std::shared_ptr<PrimitiveComponent> primitiveComponent = node->GetObject().GetFirstComponentOfType<
+            PrimitiveComponent>())
         {
+            primitiveComponent->GetPrimitiveNameDataBinding().Unsubscribe(this);
             RebuildMultiDrawCommand();
         }
     });

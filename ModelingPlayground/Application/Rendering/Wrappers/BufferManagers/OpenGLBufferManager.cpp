@@ -77,11 +77,6 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                     m_inverseTransposeModelMatrixBuffer->SetSubData(m_inverseTransposeModelMatrixBlock->operator(
                                                                     )("inverseTransposeModelMatrices")[drawIndex].
                                                                     GetCumulativeOffset(), invTranspose);
-                    /*m_inverseTransposeModelMatrixBuffer->SetSubData(m_inverseTransposeModelMatrixBlock->operator(
-                                                                    )("inverseTransposeModelMatrices")[drawIndex].
-                                                                    GetCumulativeOffset(),
-                                                                    transformComponent->
-                                                                    GetInverseTransposeCumulativeModelMatrix());*/
                 },
                 true);
 

@@ -71,15 +71,13 @@ void OpenGLMeshManager::RegeneratePrimitiveBatch(bool initial)
         indices.insert(indices.end(), primitive.second->GetIndices().begin(), primitive.second->GetIndices().end());
         int vertexCount = primitive.second->GetVertices().size() / 8;
         unsigned int indexCount = primitive.second->GetIndices().size();
-        for (int i = 0; i < indexCount; i++)
-        {
-            indices[indexOffset + i] += vertexOffset;
-        }
+
         m_meshData[primitive.first] = {
             .m_vertexOffset = vertexOffset,
             .m_indexOffset = indexOffset,
             .m_indexCount = indexCount
         };
+
         vertexOffset += vertexCount;
         indexOffset += indexCount;
     }
