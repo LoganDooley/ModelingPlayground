@@ -76,6 +76,21 @@ public:
         m_subscribers.erase(subscriber);
     }
 
+    bool TryUnsubscribe(const void* subscriber)
+    {
+        if (!m_subscribers.contains(subscriber))
+        {
+            return false;
+        }
+        m_subscribers.erase(subscriber);
+        return true;
+    }
+
+    bool IsSubscribed(const void* subscriber)
+    {
+        return m_subscribers.contains(subscriber);
+    }
+
 private:
     T m_data;
     std::unordered_map<const void*, std::function<void(const T&, T)>> m_subscribers;

@@ -64,7 +64,7 @@ MaterialComponent::MaterialComponent():
         }
     });
 
-    m_useMetallicMap.Subscribe(this, [this](const bool& currentValue, bool)
+    m_useRoughnessMap.Subscribe(this, [this](const bool& currentValue, bool)
     {
         if (!m_renderingManager || m_roughnessMapPath.GetData().empty())
         {
@@ -96,19 +96,28 @@ void MaterialComponent::SetOpenGLRenderer(std::shared_ptr<RenderingManager> rend
     m_renderingManager = renderingManager;
 
     // Load textures into memory
-    m_renderingManager->AddTexture(m_materialColorTexturePath.GetData());
+    if (!m_materialColorTexturePath.GetData().empty())
+    {
+        m_renderingManager->AddTexture(m_materialColorTexturePath.GetData());
+    }
     if (m_useColorTexture.GetData())
     {
         m_renderingManager->IncrementTextureUsage(m_materialColorTexturePath.GetData(), this);
     }
 
-    m_renderingManager->AddTexture(m_metallicMapPath.GetData());
+    if (!m_metallicMapPath.GetData().empty())
+    {
+        m_renderingManager->AddTexture(m_metallicMapPath.GetData());
+    }
     if (m_useMetallicMap.GetData())
     {
         m_renderingManager->IncrementTextureUsage(m_metallicMapPath.GetData(), this);
     }
 
-    m_renderingManager->AddTexture(m_roughnessMapPath.GetData());
+    if (!m_roughnessMapPath.GetData().empty())
+    {
+        m_renderingManager->AddTexture(m_roughnessMapPath.GetData());
+    }
     if (m_useRoughnessMap.GetData())
     {
         m_renderingManager->IncrementTextureUsage(m_roughnessMapPath.GetData(), this);

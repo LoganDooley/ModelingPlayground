@@ -6,7 +6,8 @@ OpenGLBuffer::OpenGLBuffer(unsigned int sizeInBytes, GLenum target, GLenum usage
     m_handle(0),
     m_target(target),
     m_usageMode(usageMode),
-    m_dataType(GL_NONE)
+    m_dataType(GL_NONE),
+    m_dataSize(sizeInBytes)
 {
     glGenBuffers(1, &m_handle);
     Bind();
@@ -29,6 +30,7 @@ OpenGLBuffer::OpenGLBuffer(OpenGLBuffer&& other)
     m_target = std::move(other.m_target);
     m_usageMode = std::move(other.m_usageMode);
     m_dataType = std::move(other.m_dataType);
+    m_dataSize = std::move(other.m_dataSize);
     other.m_shouldDeleteOpenGLObjectsWhenDestroyed = false;
 }
 
@@ -44,6 +46,7 @@ OpenGLBuffer& OpenGLBuffer::operator=(OpenGLBuffer&& other)
     m_target = std::move(other.m_target);
     m_usageMode = std::move(other.m_usageMode);
     m_dataType = std::move(other.m_dataType);
+    m_dataSize = std::move(other.m_dataSize);
     other.m_shouldDeleteOpenGLObjectsWhenDestroyed = false;
     return *this;
 }

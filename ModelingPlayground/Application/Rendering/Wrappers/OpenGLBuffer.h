@@ -13,7 +13,6 @@ public:
         m_handle(0),
         m_target(target),
         m_usageMode(usageMode),
-        m_immutable(immutable),
         m_dataType(OpenGLTypeMap::ToGLEnum<T>())
     {
         glGenBuffers(1, &m_handle);
@@ -83,7 +82,6 @@ private:
     GLuint m_handle;
     GLenum m_target;
     unsigned int m_usageMode;
-    bool m_immutable;
     GLenum m_dataType;
     GLsizeiptr m_dataSize;
     bool m_shouldDeleteOpenGLObjectsWhenDestroyed = true;

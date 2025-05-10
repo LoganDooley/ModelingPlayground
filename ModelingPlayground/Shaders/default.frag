@@ -38,7 +38,7 @@ layout (std140, binding = 0) uniform LightsBlock
     int lightCount; // lightCount = 144 * MAX_LIGHTS
 };
 
-uniform vec3 ambientColor;
+uniform vec3 ambientColor = vec3(0.5, 0.5, 0.5);
 
 struct Material{
     bool useMaterialTexture;
@@ -52,7 +52,7 @@ struct Material{
     sampler2D metallicMap;
 };
 
-layout (binding = 5, std430) readonly buffer MaterialBuffer {
+layout (std430, binding = 5) readonly buffer MaterialBuffer {
     Material materials[];
 };
 
@@ -251,9 +251,6 @@ vec3 getLightContribution(int lightIndex, vec3 N, vec3 V, vec3 baseReflectivity,
 
 void main()
 {
-    FragColor = vec4(1);
-    return;
-    
     vec3 normal = normalize(vertexNormal);
     vec3 toCamera = normalize(cameraPosition - vertexWorldPosition);
     

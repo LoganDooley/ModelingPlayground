@@ -65,7 +65,7 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                 return;
             }
             // Transform Buffers
-            transformComponent->GetCumulativeModelMatrixDataBinding().Unsubscribe(this);
+            transformComponent->GetCumulativeModelMatrixDataBinding().TryUnsubscribe(this);
             transformComponent->GetCumulativeModelMatrixDataBinding().Subscribe(
                 this, [this, drawIndex, &transformComponent](const glm::mat4& modelMatrix, glm::mat4)
                 {
@@ -81,18 +81,20 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                 true);
 
             // Material Buffer
+            materialComponent->GetUseColorTextureDataBinding().TryUnsubscribe(this);
             materialComponent->GetUseColorTextureDataBinding().Subscribe(
                 this, [this, drawIndex](const bool& useColorTexture, bool)
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
-                    m_materialBuffer->SetSubData(
+                    m_materialBuffer->SetSubData<int>(
                         materialBlockArray[drawIndex]("useMaterialTexture").GetCumulativeOffset(),
                         useColorTexture);
                 },
                 true);
+            materialComponent->GetMaterialColorDataBinding().TryUnsubscribe(this);
             materialComponent->GetMaterialColorDataBinding().Subscribe(
-                this, [this, drawIndex](const glm::vec3& color, glm::vec3)
+                this, [this, drawIndex](const glm::vec4& color, glm::vec4)
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
@@ -100,31 +102,34 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                                                  color);
                 },
                 true);
+            materialComponent->GetMaterialTextureDataBinding().TryUnsubscribe(this);
             materialComponent->GetMaterialTextureDataBinding().Subscribe(
                 this, [this, drawIndex](const std::string& materialFilePath, std::string)
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
+                    if (materialFilePath.empty())
+                    {
+                        return;
+                    }
                     std::shared_ptr<OpenGLTexture> materialTexture = m_textureCache->GetTexture(
                         materialFilePath);
-                    if (materialTexture)
-                    {
-                        m_materialBuffer->SetSubData(
+                    m_materialBuffer->SetSubData(
                             materialBlockArray[drawIndex]("materialTexture").GetCumulativeOffset(),
                             materialTexture->GetTextureHandle());
-                    }
                 },
                 true);
-
+            materialComponent->GetUseRoughnessMapDataBinding().TryUnsubscribe(this);
             materialComponent->GetUseRoughnessMapDataBinding().Subscribe(
                 this, [this, drawIndex](const bool& useRoughnessMap, bool)
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
-                    m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("useRoughnessMap").GetCumulativeOffset(),
+                    m_materialBuffer->SetSubData<int>(materialBlockArray[drawIndex]("useRoughnessMap").GetCumulativeOffset(),
                                                  useRoughnessMap);
                 },
                 true);
+            materialComponent->GetRoughnessDataBinding().TryUnsubscribe(this);
             materialComponent->GetRoughnessDataBinding().Subscribe(
                 this, [this, drawIndex](const float& roughness, float)
                 {
@@ -135,31 +140,34 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                         GetCumulativeOffset(), roughness);
                 },
                 true);
+            materialComponent->GetRoughnessMapDataBinding().TryUnsubscribe(this);
             materialComponent->GetRoughnessMapDataBinding().Subscribe(
                 this, [this, drawIndex](const std::string& roughnessMapFilePath, std::string)
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
+                    if (roughnessMapFilePath.empty())
+                    {
+                        return;
+                    }
                     std::shared_ptr<OpenGLTexture> roughnessMap = m_textureCache->GetTexture(
                         roughnessMapFilePath);
-                    if (roughnessMap)
-                    {
-                        m_materialBuffer->SetSubData(
+                    m_materialBuffer->SetSubData(
                             materialBlockArray[drawIndex]("roughnessMap").GetCumulativeOffset(),
                             roughnessMap->GetTextureHandle());
-                    }
                 },
                 true);
-
+            materialComponent->GetUseMetallicMapDataBinding().TryUnsubscribe(this);
             materialComponent->GetUseMetallicMapDataBinding().Subscribe(
                 this, [this, drawIndex](const bool& useMetallicMap, bool)
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
-                    m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("useMetallicMap").GetCumulativeOffset(),
+                    m_materialBuffer->SetSubData<int>(materialBlockArray[drawIndex]("useMetallicMap").GetCumulativeOffset(),
                                                  useMetallicMap);
                 },
                 true);
+            materialComponent->GetMetallicDataBinding().TryUnsubscribe(this);
             materialComponent->GetMetallicDataBinding().Subscribe(this, [this, drawIndex](const float& metallic, float)
                                                                   {
                                                                       BufferProperty materialBlockArray =
@@ -170,18 +178,20 @@ OpenGLBufferManager::OpenGLBufferManager(std::shared_ptr<SceneHierarchy> sceneHi
                                                                           GetCumulativeOffset(), metallic);
                                                                   },
                                                                   true);
+            materialComponent->GetMetallicMapDataBinding().TryUnsubscribe(this);
             materialComponent->GetMetallicMapDataBinding().Subscribe(
                 this, [this, drawIndex](const std::string& metallicMapFilePath, std::string)
                 {
                     BufferProperty materialBlockArray = m_materialBlock->operator(
                     )("materials");
-                    std::shared_ptr<OpenGLTexture> metallicMap = m_textureCache->GetTexture(metallicMapFilePath);
-                    if (metallicMap)
+                    if (metallicMapFilePath.empty())
                     {
-                        m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("metallicMap").GetCumulativeOffset(),
+                        return;
+                    }
+                    std::shared_ptr<OpenGLTexture> metallicMap = m_textureCache->GetTexture(metallicMapFilePath);
+                    m_materialBuffer->SetSubData(materialBlockArray[drawIndex]("metallicMap").GetCumulativeOffset(),
                                                      metallicMap->
                                                      GetTextureHandle());
-                    }
                 },
                 true);
 
