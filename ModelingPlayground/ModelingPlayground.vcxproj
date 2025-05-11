@@ -690,8 +690,7 @@
             <AdditionalIncludeDirectories>C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\assimp\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glm;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\tinyfiledialogs;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glad\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\glfw\include;C:\Users\Logan\GraphicsProjects\ModelingPlayground\ModelingPlayground\Libraries\imgui-docking;;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include</AdditionalIncludeDirectories>
             <LinkCompiled>true</LinkCompiled>
         </ClCompile>
-        <ClCompile Include="OpenGLHelpers\Shader\OpenGLShaderStorageBlock.cpp"/>
-        <ClCompile Include="OpenGLHelpers\Shader\OpenGLUniformBlock.cpp"/>
+        <ClCompile Include="OpenGLHelpers\Shader\OpenGLShaderBlock.cpp"/>
         <ClCompile Include="OpenGLHelpers\Shader\OpenGLUniformVariable.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -844,9 +843,9 @@
         <ClInclude Include="OpenGLHelpers\OpenGLTexture.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLTextureCache.h"/>
         <ClInclude Include="OpenGLHelpers\OpenGLTypeMap.h"/>
+        <ClInclude Include="OpenGLHelpers\Shader\BlockMember.h"/>
         <ClInclude Include="OpenGLHelpers\Shader\OpenGLShader.h"/>
-        <ClInclude Include="OpenGLHelpers\Shader\OpenGLShaderStorageBlock.h"/>
-        <ClInclude Include="OpenGLHelpers\Shader\OpenGLUniformBlock.h"/>
+        <ClInclude Include="OpenGLHelpers\Shader\OpenGLShaderBlock.h"/>
         <ClInclude Include="OpenGLHelpers\Shader\OpenGLUniformVariable.h"/>
         <ClInclude Include="OpenGLHelpers\ShadowMaps\OmnidirectionalLightShadowMap.h"/>
         <ClInclude Include="OpenGLHelpers\ShadowMaps\UnidirectionalLightShadowMap.h"/>

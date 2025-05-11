@@ -2,12 +2,8 @@
 
 #include <iostream>
 #include <ostream>
-#include <utility>
 
-#include "OpenGLUniformBlock.h"
 #include "../../Application/ShaderLoader.h"
-#include "glm/ext.hpp"
-#include "glm/glm.hpp"
 
 OpenGLShader::OpenGLShader():
     m_shaderProgramId(0)
@@ -48,7 +44,7 @@ void OpenGLShader::UnbindShader() const
     glUseProgram(0);
 }
 
-const std::shared_ptr<OpenGLUniformBlock>& OpenGLShader::GetUniformBlock(const std::string& name) const
+const std::shared_ptr<OpenGLShaderBlock>& OpenGLShader::GetUniformBlock(const std::string& name) const
 {
     if (!m_uniformBlocks.contains(name))
     {
@@ -58,7 +54,7 @@ const std::shared_ptr<OpenGLUniformBlock>& OpenGLShader::GetUniformBlock(const s
     return m_uniformBlocks.at(name);
 }
 
-const std::shared_ptr<OpenGLShaderStorageBlock>& OpenGLShader::GetShaderStorageBlock(const std::string& name) const
+const std::shared_ptr<OpenGLShaderBlock>& OpenGLShader::GetShaderStorageBlock(const std::string& name) const
 {
     if (!m_shaderStorageBlocks.contains(name))
     {
@@ -161,8 +157,8 @@ void OpenGLShader::RegisterUniformBlock(std::string uniformBlockName, GLuint uni
         return;
     }
 
-    m_uniformBlocks[uniformBlockName] = std::make_shared<OpenGLUniformBlock>(
-        uniformBlockIndex, m_shaderProgramId);
+    m_uniformBlocks[uniformBlockName] = std::make_shared<OpenGLShaderBlock>(
+        uniformBlockIndex, m_shaderProgramId, GL_UNIFORM_BLOCK, GL_UNIFORM);
 }
 
 void OpenGLShader::RegisterShaderStorageBlock(std::string shaderStorageBlockName, GLuint shaderStorageBlockIndex)
@@ -174,8 +170,8 @@ void OpenGLShader::RegisterShaderStorageBlock(std::string shaderStorageBlockName
         return;
     }
 
-    m_shaderStorageBlocks[shaderStorageBlockName] = std::make_shared<OpenGLShaderStorageBlock>(
-        shaderStorageBlockIndex, m_shaderProgramId);
+    m_shaderStorageBlocks[shaderStorageBlockName] = std::make_shared<OpenGLShaderBlock>(
+        shaderStorageBlockIndex, m_shaderProgramId, GL_SHADER_STORAGE_BLOCK, GL_BUFFER_VARIABLE);
 }
 
 void OpenGLShader::RegisterAttribute(const std::string& attributeName, GLenum attributeType)

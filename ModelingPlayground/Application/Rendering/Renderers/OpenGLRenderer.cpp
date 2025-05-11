@@ -101,7 +101,8 @@ OpenGLRenderer::OpenGLRenderer(std::shared_ptr<PrimitiveManager> primitiveManage
                                                             m_defaultShader->GetShaderStorageBlock("ModelMatrixBuffer"),
                                                             m_defaultShader->GetShaderStorageBlock(
                                                                 "InverseTransposeModelMatrixBuffer"),
-                                                            m_defaultShader->GetShaderStorageBlock("MaterialBuffer"));
+                                                            m_defaultShader->GetShaderStorageBlock("MaterialBuffer"),
+                                                            m_defaultShader->GetUniformBlock("LightsBlock"));
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);

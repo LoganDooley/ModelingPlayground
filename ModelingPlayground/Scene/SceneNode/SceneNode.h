@@ -9,11 +9,11 @@
 #include "../../nlohmann/json_fwd.hpp"
 #include "../Components/MaterialComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Object.h"
 
 class MaterialComponent;
 class PrimitiveComponent;
 class TransformComponent;
-class Object;
 
 class SceneNode
 {
@@ -46,6 +46,16 @@ public:
     void RenderInspector() const;
 
     void SubscribeToOnDestroyed(const std::function<void()>& callback);
+
+    template <typename T>
+    bool ContainsComponent() const
+    {
+        if (!m_object)
+        {
+            return false;
+        }
+        return m_object->GetFirstComponentOfType<T>() != nullptr;
+    }
 
     friend void to_json(nlohmann::json& json, const SceneNode& sceneNode);
     friend void from_json(const nlohmann::json& json, SceneNode& sceneNode);

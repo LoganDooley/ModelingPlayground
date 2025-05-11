@@ -1,9 +1,10 @@
-﻿#include "OpenGLShaderStorageBlock.h"
+﻿#include "OpenGLShaderBlock.h"
 
 #include <algorithm>
 #include <ranges>
 
-OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint shaderStorageBlockIndex, GLuint programId):
+OpenGLShaderBlock::OpenGLShaderBlock(GLuint shaderStorageBlockIndex, GLuint programId, GLenum blockType,
+                                     GLenum variableType):
     m_programId(programId)
 {
     GLenum property[1] = {GL_NUM_ACTIVE_VARIABLES};
@@ -47,27 +48,32 @@ OpenGLShaderStorageBlock::OpenGLShaderStorageBlock(GLuint shaderStorageBlockInde
         glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
                                &offset); // Total offset
 
-        TryCreateBufferProperties(variableName.data(), offset, topLevelStride, arrayStride);
+        TryCreateBlockMembers(variableName.data(), offset, topLevelStride, arrayStride);
     }
 
-    for (auto& bufferProperty : m_members | std::views::values)
+    for (auto& blockMember : m_members | std::views::values)
     {
-        UpdateOffset(bufferProperty);
+        UpdateOffset(blockMember);
     }
-    for (auto& bufferProperty : m_members | std::views::values)
+    for (auto& blockMember : m_members | std::views::values)
     {
-        SwitchToRelativeOffset(bufferProperty, 0);
+        SwitchToRelativeOffset(blockMember, 0);
     }
 
     UpdateArrayMembers(&m_members);
 }
 
-GLint OpenGLShaderStorageBlock::GetShaderStorageBlockBinding() const
+GLint OpenGLShaderBlock::GetShaderStorageBlockBinding() const
 {
     return m_binding;
 }
 
-BufferProperty OpenGLShaderStorageBlock::operator()(const std::string& memberName) const
+GLint OpenGLShaderBlock::GetDataSize() const
+{
+    return m_dataSize;
+}
+
+BlockMember OpenGLShaderBlock::operator()(const std::string& memberName) const
 {
     if (!m_members.contains(memberName))
     {
@@ -75,13 +81,13 @@ BufferProperty OpenGLShaderStorageBlock::operator()(const std::string& memberNam
         return {};
     }
 
-    BufferProperty accessedProperty = m_members.at(memberName);
+    BlockMember accessedProperty = m_members.at(memberName);
     accessedProperty.m_cumulativeOffset = accessedProperty.m_offset;
     return accessedProperty;
 }
 
-void OpenGLShaderStorageBlock::TryCreateBufferProperties(const std::string& name, unsigned int offset,
-                                                         int topLevelArrayStride, int arrayStride)
+void OpenGLShaderBlock::TryCreateBlockMembers(const std::string& name, unsigned int offset,
+                                              int topLevelArrayStride, int arrayStride)
 {
     std::vector<std::string> memberPath;
     std::vector<bool> arrayTypes;
@@ -105,16 +111,16 @@ void OpenGLShaderStorageBlock::TryCreateBufferProperties(const std::string& name
     }
     memberPath.push_back(name.substr(lastDotIndex + 1, name.size()));
 
-    std::unordered_map<std::string, BufferProperty>* memberMap = &m_members;
+    std::unordered_map<std::string, BlockMember>* memberMap = &m_members;
     bool hasSetTopLevelArrayStride = false;
     for (const auto& memberName : memberPath)
     {
         if (!memberMap->contains(memberName))
         {
             memberMap->insert({
-                memberName, BufferProperty{
+                memberName, BlockMember{
                     .m_offset = offset,
-                    .m_members = std::unordered_map<std::string, BufferProperty>(),
+                    .m_members = std::unordered_map<std::string, BlockMember>(),
                 }
             });
             if (MemberNameIsArray(memberName))
@@ -144,7 +150,7 @@ void OpenGLShaderStorageBlock::TryCreateBufferProperties(const std::string& name
     }
 }
 
-bool OpenGLShaderStorageBlock::ShouldAddMember(const std::string& memberName)
+bool OpenGLShaderBlock::ShouldAddMember(const std::string& memberName)
 {
     if (memberName.find('[') != std::string::npos)
     {
@@ -157,47 +163,47 @@ bool OpenGLShaderStorageBlock::ShouldAddMember(const std::string& memberName)
     return true;
 }
 
-unsigned int OpenGLShaderStorageBlock::UpdateOffset(BufferProperty& bufferProperty)
+unsigned int OpenGLShaderBlock::UpdateOffset(BlockMember& blockMember)
 {
-    unsigned int minOffset = bufferProperty.m_offset;
+    unsigned int minOffset = blockMember.m_offset;
 
-    for (auto& val : bufferProperty.m_members | std::views::values)
+    for (auto& val : blockMember.m_members | std::views::values)
     {
         minOffset = std::min(minOffset, UpdateOffset(val));
     }
 
-    bufferProperty.m_offset = minOffset;
+    blockMember.m_offset = minOffset;
 
     return minOffset;
 }
 
-void OpenGLShaderStorageBlock::SwitchToRelativeOffset(BufferProperty& bufferProperty,
-                                                      unsigned int parentCumulativeOffset)
+void OpenGLShaderBlock::SwitchToRelativeOffset(BlockMember& blockMember,
+                                               unsigned int parentCumulativeOffset)
 {
-    unsigned int cumulativeOffset = bufferProperty.m_offset;
-    bufferProperty.m_offset -= parentCumulativeOffset;
-    for (auto& member : bufferProperty.m_members | std::views::values)
+    unsigned int cumulativeOffset = blockMember.m_offset;
+    blockMember.m_offset -= parentCumulativeOffset;
+    for (auto& member : blockMember.m_members | std::views::values)
     {
         SwitchToRelativeOffset(member, cumulativeOffset);
     }
 }
 
-bool OpenGLShaderStorageBlock::MemberNameIsArray(const std::string& memberName)
+bool OpenGLShaderBlock::MemberNameIsArray(const std::string& memberName)
 {
     return memberName.find('[') != std::string::npos;
 }
 
-int OpenGLShaderStorageBlock::GetMemberArrayIndex(const std::string& memberName)
+int OpenGLShaderBlock::GetMemberArrayIndex(const std::string& memberName)
 {
     return memberName.find("[0]") != std::string::npos ? 0 : 1;
 }
 
-std::string OpenGLShaderStorageBlock::GetMemberNameFromArrayName(const std::string& arrayName)
+std::string OpenGLShaderBlock::GetMemberNameFromArrayName(const std::string& arrayName)
 {
     return arrayName.substr(0, arrayName.find('['));
 }
 
-void OpenGLShaderStorageBlock::UpdateArrayMembers(std::unordered_map<std::string, BufferProperty>* members)
+void OpenGLShaderBlock::UpdateArrayMembers(std::unordered_map<std::string, BlockMember>* members)
 {
     // get keys for array members
     std::vector<std::string> arrayMemberNames;

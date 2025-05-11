@@ -3,6 +3,7 @@
 #include "../../../../../OpenGLHelpers/Shader/OpenGLShader.h"
 #include "../../../../Window/SceneViewCamera.h"
 #include "../../../Wrappers/BufferManagers/OpenGLBufferManager.h"
+#include "../../../Wrappers/OpenGLBuffer.h"
 
 OpenGLDrawScene::OpenGLDrawScene(const std::string& name, std::shared_ptr<DrawCommand> drawCommand,
                                  std::shared_ptr<SceneViewCamera> camera, std::shared_ptr<OpenGLShader> shader,

@@ -3,9 +3,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "OpenGLUniformBlock.h"
 #include "OpenGLUniformVariable.h"
-#include "OpenGLShaderStorageBlock.h"
+#include "OpenGLShaderBlock.h"
 #include "../../Application/Rendering/Primitives/Primitive.h"
 #include "glad/glad.h"
 
@@ -20,8 +19,8 @@ public:
     void BindShader() const;
     void UnbindShader() const;
 
-    const std::shared_ptr<OpenGLUniformBlock>& GetUniformBlock(const std::string& name) const;
-    const std::shared_ptr<OpenGLShaderStorageBlock>& GetShaderStorageBlock(const std::string& name) const;
+    const std::shared_ptr<OpenGLShaderBlock>& GetUniformBlock(const std::string& name) const;
+    const std::shared_ptr<OpenGLShaderBlock>& GetShaderStorageBlock(const std::string& name) const;
 
     template <typename T>
     void SetUniform(const std::string& uniformName, T uniformValue)
@@ -54,8 +53,8 @@ private:
     bool ValidateUniformBlockName(const std::string& uniformBlockName) const;
 
     std::unordered_map<std::string, std::unique_ptr<OpenGLUniformVariable>> m_uniforms;
-    std::unordered_map<std::string, std::shared_ptr<OpenGLUniformBlock>> m_uniformBlocks;
-    std::unordered_map<std::string, std::shared_ptr<OpenGLShaderStorageBlock>> m_shaderStorageBlocks;
+    std::unordered_map<std::string, std::shared_ptr<OpenGLShaderBlock>> m_uniformBlocks;
+    std::unordered_map<std::string, std::shared_ptr<OpenGLShaderBlock>> m_shaderStorageBlocks;
     std::vector<VertexAttribute> m_attributes;
     GLuint m_shaderProgramId;
 };
