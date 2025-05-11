@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 
+class SceneNode;
 class OpenGLTextureCache;
 class OpenGLShaderBlock;
 class OpenGLBuffer;
@@ -24,6 +25,8 @@ public:
 
 private:
     void RegenerateBuffers();
+    void SubscribeToPrimitiveSceneNode(const std::shared_ptr<SceneNode>& sceneNode, int drawIndex) const;
+    void SubscribeToLightSceneNode(const std::shared_ptr<SceneNode>& sceneNode, int lightIndex) const;
 
     std::shared_ptr<SceneHierarchy> m_sceneHierarchy;
     std::shared_ptr<OpenGLTextureCache> m_textureCache;

@@ -14,7 +14,6 @@ TransformComponent::TransformComponent():
 }
 
 TransformComponent::TransformComponent(const std::shared_ptr<TransformComponent>& parentTransformComponent):
-    m_parentTransformComponent(parentTransformComponent),
     m_localModelMatrix(glm::mat4(1)),
     m_cumulativeModelMatrix(glm::mat4(1)),
     m_position(glm::vec3(0)),
@@ -22,6 +21,15 @@ TransformComponent::TransformComponent(const std::shared_ptr<TransformComponent>
     m_scale(glm::vec3(1)),
     m_worldXUnitVector(glm::vec3(1, 0, 0))
 {
+    if (parentTransformComponent)
+    {
+        m_parentTransformComponent = parentTransformComponent;
+    }
+    else
+    {
+        m_parentTransformComponent = std::weak_ptr<TransformComponent>();
+    }
+    
     m_position.Subscribe(this, [this](const glm::vec3&, glm::vec3)
     {
         UpdateLocalModelMatrix();
@@ -42,12 +50,12 @@ TransformComponent::TransformComponent(const std::shared_ptr<TransformComponent>
         UpdateCumulativeModelMatrix();
     });
 
-    if (std::shared_ptr<TransformComponent> parentTransform = m_parentTransformComponent.lock())
+    if (std::shared_ptr<TransformComponent> parentTransform = GetParentTransformComponent())
     {
         parentTransform->GetCumulativeModelMatrixDataBinding().Subscribe(this, [this](const glm::mat4&, glm::mat4)
-        {
-            UpdateCumulativeModelMatrix();
-        });
+            {
+                UpdateCumulativeModelMatrix();
+            });
     }
 
     m_cumulativeModelMatrix.Subscribe(this, [this](const glm::mat4&, glm::mat4)
@@ -126,7 +134,7 @@ DataBinding<glm::vec3>& TransformComponent::GetScaleDataBinding()
 
 glm::vec3 TransformComponent::GetWorldSpacePosition() const
 {
-    if (std::shared_ptr<TransformComponent> parentTransformComponent = m_parentTransformComponent.lock())
+    if (std::shared_ptr<TransformComponent> parentTransformComponent = GetParentTransformComponent())
     {
         return parentTransformComponent->GetCumulativeModelMatrixDataBinding().GetData() * glm::vec4(
             m_position.GetData(), 1);
@@ -158,15 +166,30 @@ void TransformComponent::UpdateLocalModelMatrix()
 
 void TransformComponent::UpdateCumulativeModelMatrix()
 {
-    if (std::shared_ptr<TransformComponent> parentTransformComponent = m_parentTransformComponent.lock())
+    if (std::shared_ptr<TransformComponent> parentTransformComponent = GetParentTransformComponent())
     {
         m_cumulativeModelMatrix.SetAndNotify(
             parentTransformComponent->GetCumulativeModelMatrixDataBinding().GetData() * m_localModelMatrix.GetData());
+        return;
     }
+    m_cumulativeModelMatrix.SetAndNotify(m_localModelMatrix.GetData());
 }
 
 void TransformComponent::UpdateWorldXUnitVector()
 {
     m_worldXUnitVector.SetAndNotify(
         glm::normalize(glm::vec3(m_cumulativeModelMatrix.GetData() * glm::vec4(1, 0, 0, 0))));
+}
+
+std::shared_ptr<TransformComponent> TransformComponent::GetParentTransformComponent() const
+{
+    if (m_parentTransformComponent.expired())
+    {
+        return nullptr;
+    }
+    if (std::shared_ptr<TransformComponent> parentTransformComponent = m_parentTransformComponent.lock())
+    {
+        return parentTransformComponent;
+    }
+    return nullptr;
 }

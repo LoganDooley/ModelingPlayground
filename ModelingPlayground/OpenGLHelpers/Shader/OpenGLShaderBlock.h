@@ -12,7 +12,7 @@ public:
     OpenGLShaderBlock(GLuint shaderStorageBlockIndex, GLuint programId, GLenum blockType, GLenum variableType);
     ~OpenGLShaderBlock() = default;
 
-    GLint GetShaderStorageBlockBinding() const;
+    GLint GetShaderBlockBinding() const;
     GLint GetDataSize() const;
 
     BlockMember operator()(const std::string& memberName) const;

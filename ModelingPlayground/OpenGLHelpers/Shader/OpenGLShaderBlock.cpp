@@ -9,43 +9,46 @@ OpenGLShaderBlock::OpenGLShaderBlock(GLuint shaderStorageBlockIndex, GLuint prog
 {
     GLenum property[1] = {GL_NUM_ACTIVE_VARIABLES};
     GLint numActiveVariables;
-    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property, 1, nullptr,
+    glGetProgramResourceiv(m_programId, blockType, shaderStorageBlockIndex, 1, property, 1, nullptr,
                            &numActiveVariables);
 
     std::vector<GLint> activeVariables(numActiveVariables);
     property[0] = GL_ACTIVE_VARIABLES;
-    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property,
+    glGetProgramResourceiv(m_programId, blockType, shaderStorageBlockIndex, 1, property,
                            numActiveVariables,
                            nullptr, activeVariables.data());
 
     property[0] = GL_BUFFER_DATA_SIZE;
-    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property, 1, nullptr,
+    glGetProgramResourceiv(m_programId, blockType, shaderStorageBlockIndex, 1, property, 1, nullptr,
                            &m_dataSize);
 
     property[0] = GL_BUFFER_BINDING;
-    glGetProgramResourceiv(m_programId, GL_SHADER_STORAGE_BLOCK, shaderStorageBlockIndex, 1, property, 1, nullptr,
+    glGetProgramResourceiv(m_programId, blockType, shaderStorageBlockIndex, 1, property, 1, nullptr,
                            &m_binding);
 
     for (const auto& activeVariableIndex : activeVariables)
     {
         GLint variableNameLength;
         property[0] = GL_NAME_LENGTH;
-        glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
+        glGetProgramResourceiv(m_programId, variableType, activeVariableIndex, 1, property, 1, nullptr,
                                &variableNameLength);
         std::vector<GLchar> variableName(variableNameLength);
-        glGetProgramResourceName(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, variableNameLength, nullptr,
+        glGetProgramResourceName(m_programId, variableType, activeVariableIndex, variableNameLength, nullptr,
                                  variableName.data());
-        property[0] = GL_TOP_LEVEL_ARRAY_STRIDE;
-        GLint topLevelStride;
-        glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
-                               &topLevelStride); // Useful for array of structs
+        GLint topLevelStride = 0;
+        if (variableType == GL_BUFFER_VARIABLE)
+        {
+            property[0] = GL_TOP_LEVEL_ARRAY_STRIDE;
+            glGetProgramResourceiv(m_programId, variableType, activeVariableIndex, 1, property, 1, nullptr,
+                                   &topLevelStride); // Useful for array of structs
+        }
         property[0] = GL_ARRAY_STRIDE;
         GLint arrayStride;
-        glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
+        glGetProgramResourceiv(m_programId, variableType, activeVariableIndex, 1, property, 1, nullptr,
                                &arrayStride); // Useful for array of basic types
         property[0] = GL_OFFSET;
         GLint offset;
-        glGetProgramResourceiv(m_programId, GL_BUFFER_VARIABLE, activeVariableIndex, 1, property, 1, nullptr,
+        glGetProgramResourceiv(m_programId, variableType, activeVariableIndex, 1, property, 1, nullptr,
                                &offset); // Total offset
 
         TryCreateBlockMembers(variableName.data(), offset, topLevelStride, arrayStride);
@@ -63,7 +66,7 @@ OpenGLShaderBlock::OpenGLShaderBlock(GLuint shaderStorageBlockIndex, GLuint prog
     UpdateArrayMembers(&m_members);
 }
 
-GLint OpenGLShaderBlock::GetShaderStorageBlockBinding() const
+GLint OpenGLShaderBlock::GetShaderBlockBinding() const
 {
     return m_binding;
 }
@@ -77,7 +80,7 @@ BlockMember OpenGLShaderBlock::operator()(const std::string& memberName) const
 {
     if (!m_members.contains(memberName))
     {
-        std::cerr << "OpenGLShaderStorageBlock|operator(): Member with name \"" << memberName << "\" not found!\n";
+        std::cerr << "OpenGLShaderBlock|operator(): Member with name \"" << memberName << "\" not found!\n";
         return {};
     }
 

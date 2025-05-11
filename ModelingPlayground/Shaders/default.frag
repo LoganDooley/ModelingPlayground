@@ -38,7 +38,7 @@ layout (std140, binding = 0) uniform LightsBlock
     int lightCount; // lightCount = 144 * MAX_LIGHTS
 };
 
-uniform vec3 ambientColor = vec3(0.5, 0.5, 0.5);
+uniform vec3 ambientColor = vec3(0.01, 0.01, 0.01);
 
 struct Material{
     bool useMaterialTexture;

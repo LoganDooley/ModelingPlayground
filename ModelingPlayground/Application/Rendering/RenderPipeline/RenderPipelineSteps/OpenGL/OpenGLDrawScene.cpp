@@ -28,11 +28,12 @@ void OpenGLDrawScene::PreExecute() const
         return;
     }
     m_bufferManager->GetModelMatrixBuffer()->BindBase(
-        m_shader->GetShaderStorageBlock("ModelMatrixBuffer")->GetShaderStorageBlockBinding());
+        m_shader->GetShaderStorageBlock("ModelMatrixBuffer")->GetShaderBlockBinding());
     m_bufferManager->GetInverseTransposeModelMatrixBuffer()->BindBase(
-        m_shader->GetShaderStorageBlock("InverseTransposeModelMatrixBuffer")->GetShaderStorageBlockBinding());
+        m_shader->GetShaderStorageBlock("InverseTransposeModelMatrixBuffer")->GetShaderBlockBinding());
     m_bufferManager->GetMaterialBuffer()->BindBase(
-        m_shader->GetShaderStorageBlock("MaterialBuffer")->GetShaderStorageBlockBinding());
+        m_shader->GetShaderStorageBlock("MaterialBuffer")->GetShaderBlockBinding());
+    m_bufferManager->GetLightBuffer()->BindBase(m_shader->GetUniformBlock("LightsBlock")->GetShaderBlockBinding());
 }
 
 void OpenGLDrawScene::PostExecute() const

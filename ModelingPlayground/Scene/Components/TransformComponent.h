@@ -39,6 +39,8 @@ private:
     void UpdateCumulativeModelMatrix();
     void UpdateWorldXUnitVector();
 
+    std::shared_ptr<TransformComponent> GetParentTransformComponent() const;
+
     std::weak_ptr<TransformComponent> m_parentTransformComponent;
     DataBinding<glm::mat4> m_localModelMatrix;
     DataBinding<glm::mat4> m_cumulativeModelMatrix;
