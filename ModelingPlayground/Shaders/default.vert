@@ -8,7 +8,7 @@ layout (binding = 3, std430) readonly buffer ModelMatrixBuffer {
 };
 
 layout (binding = 4, std430) readonly buffer InverseTransposeModelMatrixBuffer {
-    mat3 inverseTransposeModelMatrices[];
+    mat4 inverseTransposeModelMatrices[];
 };
 
 uniform mat4 cameraMatrix;
@@ -22,7 +22,7 @@ void main()
 {
     drawID = gl_DrawID;
     mat4 modelMatrix = modelMatrices[gl_DrawID];
-    mat3 inverseTransposeModelMatrix = inverseTransposeModelMatrices[gl_DrawID];
+    mat3 inverseTransposeModelMatrix = mat3(inverseTransposeModelMatrices[gl_DrawID]);
     
     vec4 vertexWorldPosition4;
     vertexWorldPosition4 = modelMatrix * vec4(aPos, 1.0);

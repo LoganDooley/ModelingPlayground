@@ -66,6 +66,14 @@ void OpenGLBuffer::Unbind() const
     glBindBuffer(m_target, 0);
 }
 
+void OpenGLBuffer::SetSubData(unsigned int offset, const glm::mat3& value) const
+{
+    Bind();
+    glBufferSubData(m_target, offset, sizeof(glm::mat3),
+                    glm::value_ptr(value));
+    Unbind();
+}
+
 void OpenGLBuffer::SetSubData(unsigned int offset, const glm::mat4& value) const
 {
     Bind();

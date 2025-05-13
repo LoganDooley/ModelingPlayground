@@ -48,6 +48,7 @@ public:
         Unbind();
     }
 
+    void SetSubData(unsigned int offset, const glm::mat3& value) const;
     void SetSubData(unsigned int offset, const glm::mat4& value) const;
 
     template <typename T>

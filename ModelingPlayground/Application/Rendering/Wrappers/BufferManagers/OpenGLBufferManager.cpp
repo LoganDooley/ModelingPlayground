@@ -121,7 +121,7 @@ void OpenGLBufferManager::SubscribeToPrimitiveSceneNode(const std::shared_ptr<Sc
                 m_modelMatrixBlock->operator()("modelMatrices")[drawIndex].
                 GetCumulativeOffset(), modelMatrix);
 
-            glm::mat3 invTranspose = glm::transpose(glm::inverse(modelMatrix));
+            glm::mat4 invTranspose = glm::transpose(glm::inverse(modelMatrix));
             m_inverseTransposeModelMatrixBuffer->SetSubData(m_inverseTransposeModelMatrixBlock->operator(
                                                             )("inverseTransposeModelMatrices")[drawIndex].
                                                             GetCumulativeOffset(), invTranspose);
